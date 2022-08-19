@@ -5,9 +5,23 @@
 
 import 'package:flutter/material.dart';
 import 'dart:developer';
+import 'home.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+
+bool firstModifyFlag = true;
+List<String> userInfo = [];
+String account = "";
+String name = "";
+String gender = "";
+String age = "";
+String weight = "";
+String phone = "";
+String email = "";
+String address = "";
+String doctor = "";
 
 class ProfileModify extends StatefulWidget {
   const ProfileModify({Key? key}) : super(key: key);
@@ -17,50 +31,104 @@ class ProfileModify extends StatefulWidget {
 }
 
 class _ProfileModifyState extends State<ProfileModify> {
-  bool termIsChecked = false;
+  
 
   @override
   Widget build(BuildContext context) {
-    //判斷帳號密碼是否只有盈文或數字
-    bool stringFilter(String str) {
-      var oriLen = str.length;
-      String temp = '';
-      temp = str.replaceAll(RegExp('[A-Z]'), '');
-      temp = temp.replaceAll(RegExp('[a-z]'), '');
-      temp = temp.replaceAll(RegExp('[0-9]'), '');
-      log(temp.length.toString());
+    
+    _loadUserInfo() async {// 抓取UserInfo
+      log('loading user info');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      account = (prefs.getString('account') ?? '');
 
-      if (temp.length == 0) {
-        return true;
-      } else {
-        return false;
-      }
+      //與server溝通
+      Socket socket = await Socket.connect('140.117.168.12', 54444);
+      print('connected');
+
+      // listen to the received data event stream
+      socket.listen((List<int> event) {
+        String serverMsg = utf8.decode(event);
+        print(serverMsg);
+        userInfo = serverMsg.split("&");
+        print(userInfo);
+        name = userInfo[0];
+        gender = userInfo[1];
+        age = userInfo[2];
+        weight = userInfo[3];
+        phone = userInfo[4];
+        email = userInfo[5];
+        address = userInfo[6];
+        doctor = userInfo[7].split(';')[0];
+      });
+
+      String msg = account + ";";
+
+      // send hello
+      socket.add(utf8.encode(msg));
+
+      // wait 5 seconds
+      await Future.delayed(Duration(seconds: 5));
+
+      // .. and close the socket
+      socket.close();
+      firstModifyFlag = false;
+      setState(() {});
+      
     }
 
-    // get color function
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
-      }
-      return Colors.red;
+    if (firstModifyFlag == true) {
+      log('第一次進編輯頁面');
+      _loadUserInfo();
+    };
+
+    //更改userInfo
+    _modifyUserInfo(nameCon, genderCon, ageCon, weightCon, phoneCon, emailCon,
+        addressCon, doctorCon) async {
+      //與server溝通
+      Socket socket = await Socket.connect('140.117.168.12', 54544);
+      print('connected');
+
+      // listen to the received data event stream
+      socket.listen((List<int> event) {
+        print(utf8.decode(event));
+      });
+      String msg = account +
+          "<" +
+          nameCon.text +
+          "<" +
+          genderCon.text +
+          "<" +
+          ageCon.text +
+          "<" +
+          weightCon.text +
+          "<" +
+          phoneCon.text +
+          "<" +
+          emailCon.text +
+          "<" +
+          addressCon.text +
+          "<" +
+          doctorCon.text +
+          ";";
+      // send hello
+      socket.add(utf8.encode(msg));
+      // wait 5 seconds
+      await Future.delayed(Duration(seconds: 5));
+      // .. and close the socket
+      socket.close();
     }
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-    final TextEditingController name = TextEditingController();
-    final TextEditingController gender = TextEditingController();
-    final TextEditingController age = TextEditingController();
-    final TextEditingController weight = TextEditingController();
-    final TextEditingController phone = TextEditingController();
-    final TextEditingController email = TextEditingController();
-    final TextEditingController address = TextEditingController();
-    final TextEditingController doctor = TextEditingController();
+    final TextEditingController nameCon = TextEditingController();
+    final TextEditingController genderCon = TextEditingController();
+    final TextEditingController ageCon = TextEditingController();
+    final TextEditingController weightCon = TextEditingController();
+    final TextEditingController phoneCon = TextEditingController();
+    final TextEditingController emailCon = TextEditingController();
+    final TextEditingController addressCon = TextEditingController();
+    final TextEditingController doctorCon = TextEditingController();
 
     return Scaffold(
         body: Container(
@@ -116,7 +184,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: name,
+                                controller: nameCon..text = name,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -160,7 +228,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: gender,
+                                controller: genderCon..text = gender,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -204,7 +272,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: age,
+                                controller: ageCon..text = age,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -248,7 +316,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: weight,
+                                controller: weightCon..text = weight,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -292,7 +360,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: phone,
+                                controller: phoneCon..text = phone,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -336,7 +404,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: email,
+                                controller: emailCon..text = email,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -380,7 +448,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: address,
+                                controller: addressCon..text = address,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -424,7 +492,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: doctor,
+                                controller: doctorCon..text = doctor,
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -451,7 +519,7 @@ class _ProfileModifyState extends State<ProfileModify> {
                 ),
 
                 //按鈕們
-                
+
                 Container(
                   padding: const EdgeInsets.only(
                     top: 10,
@@ -470,6 +538,27 @@ class _ProfileModifyState extends State<ProfileModify> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: () async {
                           log('按下完成按鈕');
+                          //AlertDialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                const AlertDialog(
+                              title: Text('修改成功!'),
+                              content: Text('修改中......'),
+                            ),
+                          );
+
+                          //更新userInfo至server
+                          _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
+                              phoneCon, emailCon, addressCon, doctorCon);
+
+                          //延遲一秒後跳轉進入APP
+                          Future.delayed(Duration(milliseconds: 1000), () {
+                            Navigator.pop(context);
+                          });
+                          // 重新從server下載userInfo
+                          _loadUserInfo();
+                          setState(() {});
                           // log("${myController.text}");
                         },
                       ),
@@ -483,9 +572,14 @@ class _ProfileModifyState extends State<ProfileModify> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: () {
                           log('按下取消按鈕');
-                          
-                          // log('account: ${account.text}');
-                          // log('password: ${password.text}');
+                          // Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(),
+                              maintainState: false,
+                            ),
+                          );
                         },
                       ),
                     ],

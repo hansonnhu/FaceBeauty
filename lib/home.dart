@@ -13,8 +13,14 @@ import 'dart:convert';
 import 'dart:async';
 import 'profileModify.dart';
 import 'package:camera/camera.dart';
+import "package:image_picker/image_picker.dart";
+import 'previewPage.dart';
 
 //全域變數
+//例項化選擇圖片
+final ImagePicker picker = new ImagePicker();
+//使用者本地圖片
+// File _userImage;//存放獲取到的本地路徑
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -26,6 +32,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+
+
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
@@ -95,7 +103,27 @@ class _HomeState extends State<Home> {
                               color: Colors.white,
                               size: 40,
                             ),
-                            onPressed: () async {},
+                            onPressed: () async {
+                              //選擇相簿
+                              final pickerImages = await picker.getImage(source: ImageSource.gallery);
+                              if(mounted){
+                                setState(() {
+                                  if(pickerImages != null){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PreviewPage(
+                                                picture: XFile(pickerImages.path),
+                                              )));
+                                    // _userImage = File(pickerImages.path);
+                                    // print('你選擇的本地路徑是：${_userImage.toString()}');
+                                  }else{
+                                    print('沒有照片可以選擇');
+                                  }
+                                });
+                              }
+
+                            },
                           ),
                         ),
 

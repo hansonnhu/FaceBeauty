@@ -48,6 +48,8 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>用以辨識您的面相。</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>用以辨識您的面相。</string>
 	<false/>
 </dict>
 </plist>
