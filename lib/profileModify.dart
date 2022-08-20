@@ -67,7 +67,7 @@ class _ProfileModifyState extends State<ProfileModify> {
       socket.add(utf8.encode(msg));
 
       // wait 5 seconds
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(milliseconds: 500));
 
       // .. and close the socket
       socket.close();

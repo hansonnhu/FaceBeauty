@@ -11,7 +11,6 @@ import 'register.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
-import 'main.dart';
 import 'previewPage.dart';
 import 'package:flutter/cupertino.dart';
 
