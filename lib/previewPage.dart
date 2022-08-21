@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String account = "";
 bool firstModifyFlag = true;
@@ -55,8 +56,11 @@ class PreviewPage extends StatelessWidget {
       Uint8List oriImgBytes = await oriImg.readAsBytes();
       Uint8List smallImgBytes = await smallImg.readAsBytes();
       String oriImgString = base64Encode(oriImgBytes);
+
       String smallImgString = base64Encode(smallImgBytes);
 
+
+      /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
       Socket socket = await Socket.connect('140.117.168.12', 50886);
       print('connected');
 
@@ -67,6 +71,7 @@ class PreviewPage extends StatelessWidget {
         String temp = utf8.decode(event);
         serverMsg = serverMsg+temp; 
       });
+      
 
       String msg = account + "<" + oriImgString + "<" + smallImgString + ";";
 
@@ -74,13 +79,18 @@ class PreviewPage extends StatelessWidget {
       socket.add(utf8.encode(msg));
 
       // wait 5 seconds
-      await Future.delayed(Duration(seconds: 20));
+      await Future.delayed(Duration(seconds: 10));
 
       // .. and close the socket
       socket.close();
       print('data = '+serverMsg);
       SharedPreferences prefs = await SharedPreferences.getInstance();  //讀取本機資料庫
+      List<String> oriImgStringList = prefs.getStringList('oriImgStringList') ?? [];
+      oriImgStringList.insert(oriImgStringList.length, oriImgString);
+      await prefs.setStringList('oriImgStringList', oriImgStringList);
       await prefs.setString('resultAllMsg', serverMsg);
+      /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
+
     }
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度

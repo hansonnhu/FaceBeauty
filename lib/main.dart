@@ -23,7 +23,7 @@ Future<void> main() async {
   }
 
   runApp(const MaterialApp(
-    home: Login(),
+    home: Result(),
   ));
 }
 
