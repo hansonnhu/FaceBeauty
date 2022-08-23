@@ -23,7 +23,7 @@ Future<void> main() async {
   }
 
   runApp(const MaterialApp(
-    home: Result(),
+    home: Home(),  //這裡切換頁面
   ));
 }
 

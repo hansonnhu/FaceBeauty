@@ -73,6 +73,7 @@ flutter:
     - assets/guide_src3.imageset/guide_src3@3x.png
     - assets/guide_src4.imageset/guide_src4@3x.png
     - assets/guide_src5.imageset/guide_src5@3x.png
+    - assets/face_3.imageset/face_3@3x.png
     - iconv4.gif
     - iconv3.png
 

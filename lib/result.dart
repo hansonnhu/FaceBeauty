@@ -11,7 +11,9 @@ import 'dart:async';
 import "package:image_picker/image_picker.dart";
 import 'basicResult.dart';
 import 'detailResult.dart';
+import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'proportionalAnalysis.dart';
 
 
 //全域變數
@@ -60,8 +62,16 @@ class _ResultState extends State<Result> {
                       textStyle: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.normal)),
                   onPressed: () async {
-                    log('按下繼續按鈕');
+                    log('按下返回按鈕');
                     Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(),
+                              maintainState: false,
+                            ),
+                          );
                   },
                 ),
               )
@@ -69,9 +79,9 @@ class _ResultState extends State<Result> {
           ),
           body: const TabBarView(
             children: [
-              BasicResult(),
+              BasicResult(),//  一開始會先跳到簡要斷語頁面，所以所有server data 之處理會在簡要段語頁面處理
               DetailResult(),
-              BasicResult(),
+              PorportionalAnalysis(),
             ],
           ),
         ));

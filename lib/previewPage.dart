@@ -10,20 +10,26 @@ import 'package:cross_file/cross_file.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'result.dart';
+import 'dart:async';
+import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// String serverMsg = ''; 
 String account = "";
 bool firstModifyFlag = true;
+bool imgUploadOK = true;
+
 
 class PreviewPage extends StatelessWidget {
   const PreviewPage({Key? key, required this.picture}) : super(key: key);
+  
 
   final XFile picture;
   @override
   Widget build(BuildContext context) {
-
+    
     // 抓取UserInfo
     _loadUserInfo() async {
       log('loading user info');
@@ -38,59 +44,91 @@ class PreviewPage extends StatelessWidget {
 
     //將照片上傳
     _uploadImg(File oriImg) async {
-      print('帳號為 : '+account);
-      //將原圖長邊縮小為80，短編等比例縮小
-      var decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
-      double scale = 0;
-      if (decodedImage.width > decodedImage.height) {
-        scale = 80 / decodedImage.width;
-      } else {
-        scale = 80 / decodedImage.height;
+      
+      String serverMsg = "";
+      String oriImgString = "";
+      String smallImgString = "";
+      print('帳號為 : ' + account);
+      
+      makeImg()async {
+        var decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
+        double scale = 0;
+        //將原圖長邊縮小為80，短編等比例縮小
+        if (decodedImage.width > decodedImage.height) {
+          scale = 80 / decodedImage.width;
+        } else {
+          scale = 80 / decodedImage.height;
+        }
+        //縮小圖
+        File smallImg = await FlutterNativeImage.compressImage(oriImg.path,
+            targetWidth: (scale * decodedImage.width).round(),
+            targetHeight: (scale * decodedImage.height).round());
+
+        //獲取原圖及小圖的bytes
+        Uint8List oriImgBytes = await oriImg.readAsBytes();
+        Uint8List smallImgBytes = await smallImg.readAsBytes();
+        oriImgString = base64Encode(oriImgBytes);
+        smallImgString = base64Encode(smallImgBytes);
       }
-      //縮小圖
-      File smallImg = await FlutterNativeImage.compressImage(oriImg.path,
-          targetWidth: (scale * decodedImage.width).round(),
-          targetHeight: (scale * decodedImage.height).round());
+      
+      await makeImg();
 
-      //獲取原圖及小圖的bytes
-      Uint8List oriImgBytes = await oriImg.readAsBytes();
-      Uint8List smallImgBytes = await smallImg.readAsBytes();
-      String oriImgString = base64Encode(oriImgBytes);
-
-      String smallImgString = base64Encode(smallImgBytes);
-
-
-      /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////傳給server////////////////////////////////////////////////
+      // Future<String> getNetworkData() async {
+      //   Socket s = await Socket.connect('140.117.168.12', 50886);
+      //   String msg =  (account + "<" + oriImgString + "<" + smallImgString + ";");
+      //   s.add(utf8.encode(msg));
+      //   String result = await s.transform(utf8.decoder).join();
+      //   await s.close(); // probably need to close the socket
+      //   return result;
+      // }
+      
       Socket socket = await Socket.connect('140.117.168.12', 50886);
       print('connected');
 
-      // listen to the received data event stream
-      
-      String serverMsg = '';  //serverMsg
-      socket.listen((List<int> event) async {
-        String temp = utf8.decode(event);
-        serverMsg = serverMsg+temp; 
-      });
-      
-
-      String msg = account + "<" + oriImgString + "<" + smallImgString + ";";
+      String msg =  (account + "<" + oriImgString + "<" + smallImgString + ";");
+      List<int> sendMsg = utf8.encode(msg);
 
       // send hello
-      socket.add(utf8.encode(msg));
+      socket.add(sendMsg);
 
-      // wait 5 seconds
-      await Future.delayed(Duration(seconds: 10));
+      // listen to the received data event stream
+      List<int> intListServerMsg = [];
+      socket.listen((List<int> event) async {
+          intListServerMsg.addAll(event);//server訊息不會一次傳完，須將每次存下來
+        }
+      );
 
+      // wait 10 seconds
+      await Future.delayed(const Duration(seconds: 5));
+      serverMsg = utf8.decode(intListServerMsg);//將 intListServerMsg 解碼為 String
       // .. and close the socket
       socket.close();
-      print('data = '+serverMsg);
-      SharedPreferences prefs = await SharedPreferences.getInstance();  //讀取本機資料庫
-      List<String> oriImgStringList = prefs.getStringList('oriImgStringList') ?? [];
+
+      print('server長度');
+      print(serverMsg.split('&').length);
+      // print('data = ' + serverMsg);
+      // 若回傳data不正確(有漏)，請使用者重新拍照
+      if (serverMsg.split('&').length != 14) {
+        print('失敗');
+        imgUploadOK = false;
+        return;
+      }else{
+        imgUploadOK = true;
+      }
+      
+
+      SharedPreferences prefs = await SharedPreferences.getInstance(); //讀取資料庫
+      List<String> oriImgStringList = prefs.getStringList('oriImgStringList') ??
+          []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
+
+      //將最新拍的 oriImgString insert 到資料庫中 oriImgString List
       oriImgStringList.insert(oriImgStringList.length, oriImgString);
       await prefs.setStringList('oriImgStringList', oriImgStringList);
+
+      //將此次resultAllMsg更新至資料庫
       await prefs.setString('resultAllMsg', serverMsg);
       /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
-
     }
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
@@ -105,13 +143,23 @@ class PreviewPage extends StatelessWidget {
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Expanded(
               flex: 10,
-              child: Container(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: Image.file(File(picture.path),
-                        fit: BoxFit.cover, width: screenWidth - 20),
-                  ))),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
+                        child: Image.file(File(picture.path),
+                            fit: BoxFit.cover, width: screenWidth - 20),
+                      )
+                    ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Image.asset('assets/face_3.imageset/face_3@3x.png'),
+                  )
+                ],
+              )),
           Expanded(
               flex: 1,
               child: Row(
@@ -129,27 +177,6 @@ class PreviewPage extends StatelessWidget {
                         log('按下送出按鈕');
                         var oriImg = File(picture.path); //原圖
 
-
-                        // //將原圖長邊縮小為80，短編等比例縮小
-                        // var decodedImage =
-                        //     await decodeImageFromList(oriImg.readAsBytesSync());
-                        // double scale = 0;
-                        // if (decodedImage.width > decodedImage.height) {
-                        //   scale = 80 / decodedImage.width;
-                        // } else {
-                        //   scale = 80 / decodedImage.height;
-                        // }
-                        // File smallImg = await FlutterNativeImage.compressImage(
-                        //     oriImg.path,
-                        //     targetWidth: (scale * decodedImage.width).round(),
-                        //     targetHeight:
-                        //         (scale * decodedImage.height).round());
-
-                        // //獲取原圖及小圖的byte
-                        // Uint8List oriImgBytes = await oriImg.readAsBytes();
-                        // Uint8List smallImgBytes = await smallImg.readAsBytes();
-                        // String oriImgString = base64Encode(oriImgBytes);
-                        // String smallImgString = base64Encode(smallImgBytes);
                         showDialog(
                           context: context,
                           builder: (BuildContext context) => const AlertDialog(
@@ -161,16 +188,32 @@ class PreviewPage extends StatelessWidget {
                         //上傳至server
                         await _uploadImg(oriImg);
 
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Result(),
-                            maintainState: false,
-                          ),
-                        );
+                        if (imgUploadOK == true) {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Result(),
+                              maintainState: false,
+                            ),
+                          );
+                        } else {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('上傳失敗!'),
+                              content: const Text('位置不正確，請重新拍照!'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'OK'),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       },
                     ),
                     ElevatedButton(
@@ -184,6 +227,15 @@ class PreviewPage extends StatelessWidget {
                       onPressed: () {
                         log('按下重拍按鈕');
                         Navigator.pop(context);
+                        // Navigator.pop(context);
+                        // Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) => const Home(),
+                        //           maintainState: false,
+                        //         ),
+                        //       );
+                        
                         // log('account: ${account.text}');
                         // log('password: ${password.text}');
                       },

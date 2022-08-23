@@ -10,9 +10,20 @@ import 'register.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
+//flag
+bool imgLoadedFlag = false;
 
-String resultAllMsg = "";
+//資料庫data
+String resultAllMsg = "";//server 回傳的所有data，包含斷語。
+String basicImgString = "";//全臉點圖String
+
+//此頁面要用到之data
+Uint8List basicImgByte = Uint8List(1000000);//全臉點圖
+
+
+
 String resultDetailMsg = '';
 // List<String> temp = [];
 //detail文字架構
@@ -42,10 +53,9 @@ class _DetailResultState extends State<DetailResult>
     //server回傳之字串處理
     resultAllMsg = (prefs.getString('resultAllMsg') ?? '');
     resultDetailMsg = resultAllMsg.split('&')[1];
-    // print(resultDetailMsg);
     List<String> temp1 = resultDetailMsg.split('[');
 
-    //title
+    //擷取title
     int count = 0;
     for (String s in temp1) {
       if (s == '') continue;
@@ -53,13 +63,17 @@ class _DetailResultState extends State<DetailResult>
       count++;
     }
 
-    //title content
+    //擷取title content
     count = 0;
     for (String s in temp1) {
       if (s == '') continue;
       detail_contentOfTitle.insert(count, s.split(']')[1].replaceAll('{', '').replaceAll('}', '').replaceAll('#', '\n\n'));
       count++;
     }
+    //擷取basicImgString
+    basicImgString = prefs.getString('basicImgString') ?? '';
+    basicImgByte = await base64Decode(basicImgString);//將basicImgString轉成byte，才能渲染於頁面
+    imgLoadedFlag = true;
 
     if (firstGetResult_detail_flag) {
       if (mounted) {
@@ -95,11 +109,26 @@ class _DetailResultState extends State<DetailResult>
       child: Column(
         children: [
           //切割圖
-          Expanded(flex: 1, child: Container()),
+          Expanded(
+            flex: 1, 
+            child: (imgLoadedFlag == false) ? Container():
+              Container(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: 
+                    Image.memory(
+                      (basicImgByte),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                )
+          
+          ),
 
           
 
-          //簡要內容
+          //詳細內容
           Expanded(
               flex: 1,
               child: ListView.builder(
