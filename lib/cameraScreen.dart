@@ -73,9 +73,11 @@ class _CameraScreenState extends State<CameraScreen> {
       debugPrint("camera error $e");
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
+    double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
     return Scaffold(
         body: SafeArea(
       child: Stack(children: [
@@ -84,6 +86,16 @@ class _CameraScreenState extends State<CameraScreen> {
             : Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
+              Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: 
+                    ClipRRect(
+                      child:Image.asset('assets/face_3.imageset/face_3@3x.png',
+                      fit: BoxFit.cover,
+                      width: screenWidth -12), 
+                    )
+                    
+                  ),
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(

@@ -368,20 +368,21 @@ class _LoginState extends State<Login> {
                                     _modifyUserInfo(accountCon, passwordCon);
 
                                     //AlertDialog
+                                    BuildContext dialogContext = context;
                                     showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          const AlertDialog(
-                                        title: Text('登入成功!'),
-                                        content: Text('登入中......'),
-                                      ),
-                                    );
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          dialogContext = context;
+                                          return AlertDialog(
+                                            title: Text('登入成功!'),
+                                            content: Text('登入中......'),
+                                          );
+                                        });
 
                                     //延遲一秒後跳轉進入APP
-                                    Future.delayed(Duration(milliseconds: 1500),
-                                        () {
-                                      Navigator.pop(context);
-
+                                    await Future.delayed(
+                                        Duration(milliseconds: 1500), () {
+                                      Navigator.pop(dialogContext);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

@@ -156,7 +156,13 @@ class PreviewPage extends StatelessWidget {
                     ),
                   Container(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Image.asset('assets/face_3.imageset/face_3@3x.png'),
+                    child: 
+                    ClipRRect(
+                      child:Image.asset('assets/face_3.imageset/face_3@3x.png',
+                      fit: BoxFit.cover,
+                      width: screenWidth -12), 
+                    )
+                    
                   )
                 ],
               )),
@@ -177,19 +183,23 @@ class PreviewPage extends StatelessWidget {
                         log('按下送出按鈕');
                         var oriImg = File(picture.path); //原圖
 
+                        //AlertDialog
+                        BuildContext dialogContext = context; 
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) => const AlertDialog(
+                          builder: (BuildContext context) { 
+                            dialogContext = context;
+                            return AlertDialog(
                             title: Text('上傳成功!'),
                             content: Text('分析中......'),
-                          ),
+                          );}
                         );
 
                         //上傳至server
                         await _uploadImg(oriImg);
 
                         if (imgUploadOK == true) {
-                          Navigator.pop(context);
+                          Navigator.pop(dialogContext);
                           Navigator.pop(context);
                           Navigator.push(
                             context,
@@ -199,7 +209,7 @@ class PreviewPage extends StatelessWidget {
                             ),
                           );
                         } else {
-                          Navigator.pop(context);
+                          Navigator.pop(dialogContext);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(

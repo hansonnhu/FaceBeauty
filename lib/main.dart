@@ -23,7 +23,7 @@ Future<void> main() async {
   }
 
   runApp(const MaterialApp(
-    home: Home(),  //這裡切換頁面
+    home: MyApp(),  //這裡切換頁面
   ));
 }
 
@@ -32,31 +32,25 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
+  
   Widget build(BuildContext context) {
+      bool loadingOK = false;
+      // _counting(){
+      //   print('counting');
+      //   Future.delayed(Duration(seconds: 5),);
+      //   loadingOK = true;
+      // }
     return FutureBuilder(
-        future: Future.delayed(Duration(seconds: 3)),
+        future: Future.delayed(const Duration(seconds: 4),(){loadingOK = true;}),
         builder: (context, AsyncSnapshot snapshot) {
           // Loading
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return MaterialApp(
-              home: SplashPage(),
+          if (loadingOK == false) {
+            return const MaterialApp(
+              home: SplashScreen(),
             );
           } else {
-            return MaterialApp(
-              title: 'Flutter Demo',
-              theme: ThemeData(
-                // This is the theme of your application.
-                //
-                // Try running your application with "flutter run". You'll see the
-                // application has a blue toolbar. Then, without quitting the app, try
-                // changing the primarySwatch below to Colors.green and then invoke
-                // "hot reload" (press "r" in the console where you ran "flutter run",
-                // or simply save your changes to "hot reload" in a Flutter IDE).
-                // Notice that the counter didn't reset back to zero; the application
-                // is not restarted.
-                primarySwatch: Colors.blue,
-              ),
-              home: const MyHomePage(title: 'Flutter Demo Home Page'),
+            return const MaterialApp(
+              home: Login(),
             );
           }
         });
@@ -64,18 +58,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// SplashPage
-class SplashPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF333333),
-      body: Center(
-        child: Center(child: Image.asset('iconv4.gif')),
-      ),
-    );
-  }
-}
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -96,37 +79,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // final String account = "";
-  // final String password = "";
-  // final String name = "";
-  // final String gender = "";
-  // final String age = "";
-  // final String weight = "";
-  // final String phone = "";
-  // final String email = "";
-  // final String address = "";
-  // final String doctor = "";
-  // final String welcome_show = "";
-  // final String guide_show = "";
-  // final String account_remember = "";
-  // final String detect_dialog_show = "";
-  // final String camera_direction = "";
-  // final String realtime_detection = "";
-  // final String sync_footprints = "";
 
   int _counter = 0;
-  @override
-  void initState() {
-    super.initState();
-    _loadUserInfo();
-  }
 
-  _loadUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      // _counter = (prefs.getInt(userInfo) ?? 0);
-    });
-  }
 
   void _incrementCounter() {
     setState(() {

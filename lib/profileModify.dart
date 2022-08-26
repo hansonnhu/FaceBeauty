@@ -31,12 +31,10 @@ class ProfileModify extends StatefulWidget {
 }
 
 class _ProfileModifyState extends State<ProfileModify> {
-  
-
   @override
   Widget build(BuildContext context) {
-    
-    _loadUserInfo() async {// 抓取UserInfo
+    _loadUserInfo() async {
+      // 抓取UserInfo
       log('loading user info');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       account = (prefs.getString('account') ?? '');
@@ -73,13 +71,13 @@ class _ProfileModifyState extends State<ProfileModify> {
       socket.close();
       firstModifyFlag = false;
       setState(() {});
-      
     }
 
     if (firstModifyFlag == true) {
       log('第一次進編輯頁面');
       _loadUserInfo();
-    };
+    }
+    ;
 
     //更改userInfo
     _modifyUserInfo(nameCon, genderCon, ageCon, weightCon, phoneCon, emailCon,
@@ -539,22 +537,32 @@ class _ProfileModifyState extends State<ProfileModify> {
                         onPressed: () async {
                           log('按下完成按鈕');
                           //AlertDialog
+                          BuildContext dialogContext = context;
                           showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                const AlertDialog(
-                              title: Text('修改成功!'),
-                              content: Text('修改中......'),
-                            ),
-                          );
+                              context: context,
+                              builder: (BuildContext context) {
+                                dialogContext = context;
+                                return AlertDialog(
+                                  title: Text('修改成功!'),
+                                  content: Text('修改中......'),
+                                );
+                              });
 
                           //更新userInfo至server
                           _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
                               phoneCon, emailCon, addressCon, doctorCon);
 
-                          //延遲一秒後跳轉進入APP
+                          //延遲一秒後將AlertDialog pop
                           Future.delayed(Duration(milliseconds: 1000), () {
+                            Navigator.pop(dialogContext);
                             Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProfileModify(),
+                                maintainState: false,
+                              ),
+                            );
                           });
                           // 重新從server下載userInfo
                           _loadUserInfo();
