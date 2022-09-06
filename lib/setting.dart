@@ -20,13 +20,13 @@ String iniPassword = "";
 
 //所有的 flags list
 List<int> allFlag = [
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
 ];
 List<String> allFlagString = [
   'welcomeFlag',
@@ -107,7 +107,9 @@ class _SettingState extends State<Setting> {
 
                 //intor text
                 Expanded(
-                    child: Container(
+                    child: 
+                    !isFirstLoad ?
+                    Container(
                         padding: const EdgeInsets.only(
                           top: 10,
                           bottom: 40,
@@ -135,7 +137,7 @@ class _SettingState extends State<Setting> {
                               setState(() {});
                             },
                           )),
-                        ))),
+                        )) : Container()),
 
                 //按鈕
                 Container(
