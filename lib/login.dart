@@ -65,6 +65,19 @@ class _LoginState extends State<Login> {
       iniAccount = (prefs.getString('account') ?? '');
       iniPassword = (prefs.getString('password') ?? '');
       firstLoginFlag = false;
+
+      ////////////////////////////////////////////////////////////////////重製資料庫(release版本請註解)
+      prefs.setStringList('oriImgStringList',[]); // oriImgStringList 清空
+      prefs.setStringList('resultAllMsgList', []);// resultAllMsgList 清空
+      prefs.setStringList('allDateTimeList',[]);// allDateTimeList 清空
+      for(int i = 0; i < 34;i++){ // ratio_0 ~ ratio_33 list 清空
+        String tempName = 'ratio_' + i.toString();
+        prefs.setStringList(tempName, []);
+      }
+
+      ////////////////////////////////////////////////////////////////////重製資料庫(release版本請註解)
+
+
       setState(() {});
     }
 
@@ -373,7 +386,7 @@ class _LoginState extends State<Login> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           dialogContext = context;
-                                          return AlertDialog(
+                                          return const AlertDialog(
                                             title: Text('登入成功!'),
                                             content: Text('登入中......'),
                                           );

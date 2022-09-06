@@ -17,7 +17,7 @@ bool imgLoadedFlag = false;
 
 //資料庫data
 String resultAllMsg = "";//server 回傳的所有data，包含斷語。
-String basicImgString = "";//全臉點圖String
+String cropFace_points_string = "";//全臉點圖String
 
 //此頁面要用到之data
 Uint8List basicImgByte = Uint8List(1000000);//全臉點圖
@@ -52,7 +52,7 @@ class _DetailResultState extends State<DetailResult>
 
     //server回傳之字串處理
     resultAllMsg = (prefs.getString('resultAllMsg') ?? '');
-    resultDetailMsg = resultAllMsg.split('&')[1];
+    resultDetailMsg = resultAllMsg.split('&')[1];//[1]為詳細斷語內文
     List<String> temp1 = resultDetailMsg.split('[');
 
     //擷取title
@@ -70,9 +70,9 @@ class _DetailResultState extends State<DetailResult>
       detail_contentOfTitle.insert(count, s.split(']')[1].replaceAll('{', '').replaceAll('}', '').replaceAll('#', '\n\n'));
       count++;
     }
-    //擷取basicImgString
-    basicImgString = prefs.getString('basicImgString') ?? '';
-    basicImgByte = await base64Decode(basicImgString);//將basicImgString轉成byte，才能渲染於頁面
+    //擷取cropFace_points_string
+    cropFace_points_string = prefs.getString('cropFace_points_string') ?? '';
+    basicImgByte = await base64Decode(cropFace_points_string);//將cropFace_points_string轉成byte，才能渲染於頁面
     imgLoadedFlag = true;
 
     if (firstGetResult_detail_flag) {

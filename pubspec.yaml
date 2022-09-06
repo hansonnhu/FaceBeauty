@@ -35,6 +35,7 @@ dependencies:
   camera: ^0.10.0
   path_provider: ^2.0.11 
   path: ^1.8.1
+  kg_charts: ^0.0.1
   flutter:
     sdk: flutter
 
@@ -45,6 +46,7 @@ dependencies:
   camera_avfoundation: ^0.9.8+4
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.9.0
   flutter_test:
     sdk: flutter
 
@@ -55,6 +57,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/AppIcon.appiconset/Icon-App-60x60@3x.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

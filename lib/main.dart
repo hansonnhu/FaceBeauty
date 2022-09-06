@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camera/camera.dart';
 import 'splashScreen.dart';
+import 'footPrint.dart';
 import 'welcome.dart';
 import 'login.dart';
 import 'register.dart';
@@ -23,7 +24,7 @@ Future<void> main() async {
   }
 
   runApp(const MaterialApp(
-    home: MyApp(),  //這裡切換頁面
+    home: Login(),  //這裡切換頁面(預設為MyApp)
   ));
 }
 

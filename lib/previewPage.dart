@@ -20,13 +20,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 String account = "";
 bool firstModifyFlag = true;
 bool imgUploadOK = true;
-
+var oriImgNum = 0;
 
 class PreviewPage extends StatelessWidget {
   const PreviewPage({Key? key, required this.picture}) : super(key: key);
   
 
   final XFile picture;
+  
   @override
   Widget build(BuildContext context) {
     
@@ -74,14 +75,6 @@ class PreviewPage extends StatelessWidget {
       await makeImg();
 
       /////////////////////////////////////////////////////////////////傳給server////////////////////////////////////////////////
-      // Future<String> getNetworkData() async {
-      //   Socket s = await Socket.connect('140.117.168.12', 50886);
-      //   String msg =  (account + "<" + oriImgString + "<" + smallImgString + ";");
-      //   s.add(utf8.encode(msg));
-      //   String result = await s.transform(utf8.decoder).join();
-      //   await s.close(); // probably need to close the socket
-      //   return result;
-      // }
       
       Socket socket = await Socket.connect('140.117.168.12', 50886);
       print('connected');
@@ -100,7 +93,7 @@ class PreviewPage extends StatelessWidget {
       );
 
       // wait 10 seconds
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 12));
       serverMsg = utf8.decode(intListServerMsg);//將 intListServerMsg 解碼為 String
       // .. and close the socket
       socket.close();
@@ -119,15 +112,31 @@ class PreviewPage extends StatelessWidget {
       
 
       SharedPreferences prefs = await SharedPreferences.getInstance(); //讀取資料庫
-      List<String> oriImgStringList = prefs.getStringList('oriImgStringList') ??
-          []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
-
+      List<String> oriImgStringList = prefs.getStringList('oriImgStringList') ?? []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
+      oriImgNum = oriImgStringList.length;  //取得當前 oriImg 之 index(由於是拍照或選擇照片上傳，因此為最新的一張 oriImg)
+      prefs.setInt('oriImgIndex', oriImgNum);//將oriImg 之 index 存入資料庫
       //將最新拍的 oriImgString insert 到資料庫中 oriImgString List
       oriImgStringList.insert(oriImgStringList.length, oriImgString);
       await prefs.setStringList('oriImgStringList', oriImgStringList);
+      
+      // 將最新的 datetime 更新至資料庫中
+      List<String> allDateTimeList = prefs.getStringList('allDateTimeList') ?? [];
+      DateTime dateTime = DateTime.now();
+      allDateTimeList.insert(allDateTimeList.length, dateTime.toString().substring(0,19));
+      await prefs.setStringList('allDateTimeList', allDateTimeList);
+      
 
-      //將此次resultAllMsg更新至資料庫
-      await prefs.setString('resultAllMsg', serverMsg);
+
+
+      //////////////////////測試//////////////////
+      // List<String> temp = [oriImgString];
+      // await prefs.setStringList('oriImgStringList', temp);
+      ///////////////////////////////////////////
+
+      //將此次resultAllMsg更新至資料庫()
+      List<String> temp = prefs.getStringList('resultAllMsgList') ?? [];
+      temp.insert(temp.length, serverMsg);
+      await prefs.setStringList('resultAllMsgList', temp);
       /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
     }
 

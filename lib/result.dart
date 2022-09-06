@@ -19,12 +19,12 @@ import 'proportionalAnalysis.dart';
 //全域變數
 //例項化選擇圖片
 final ImagePicker picker = new ImagePicker();
+var oriImgNum = 0;
 //使用者本地圖片
 // File _userImage;//存放獲取到的本地路徑
 
 class Result extends StatefulWidget {
-  const Result({Key? key}) : super(key: key);
-
+  const Result({Key? key,}) : super(key: key);
   @override
   _ResultState createState() => _ResultState();
 }
@@ -64,14 +64,7 @@ class _ResultState extends State<Result> {
                   onPressed: () async {
                     log('按下返回按鈕');
                     Navigator.pop(context);
-                    Navigator.pop(context);
-                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Home(),
-                              maintainState: false,
-                            ),
-                          );
+                    
                   },
                 ),
               )

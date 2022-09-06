@@ -14,13 +14,13 @@ import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // flag部分
-bool imgLoadedFlag = false;//是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
+
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。
 List<String> oriImgStringList = []; //資料庫內所有原圖相片(每次拍照上傳後都會把圖片以String方式存在資料庫)
-List<int> pointX = []; List<int> pointY = []; //點x,y座標(server會回傳100多個點)
-String basicImgString = '';//全臉點圖String
+List<int> pointX = []; List<int> pointY = []; //點x,y座標(server會回傳148個點)
+String cropFace_points_string = '';//全臉點圖String
 
 //此頁面要用到之data
 String resultBasicMsg = ''; //簡要斷語String
@@ -30,8 +30,7 @@ List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
 List<String> basic_contentOfTitle = []; //basic_title的內文
 
 class BasicResult extends StatefulWidget {
-  const BasicResult({Key? key}) : super(key: key);
-
+  const BasicResult({Key? key }) : super(key: key);
   @override
   _BasicResultState createState() => _BasicResultState();
 }
@@ -39,26 +38,52 @@ class BasicResult extends StatefulWidget {
 class _BasicResultState extends State<BasicResult>
     with AutomaticKeepAliveClientMixin {
   bool firstGetResult_basic_flag = true;
+  bool imgLoadedFlag = false;//是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
 
   @override
   bool get wantKeepAlive => true;
 
   void _loadResultAllMsg() async {
+    //////////////////////////////////////////// 解析所有server回傳之String，並且寫入前端資料庫
     if (!firstGetResult_basic_flag) return;
     print('loading msg at basic');
-    // List<String> temp1 = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    resultAllMsg = (prefs.getString('resultAllMsg') ?? '');
+    var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0;//此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
+    print('當前 oriImgIndex 為');
+    print(oriImgIndex);
+
+    List<String> tempList = (prefs.getStringList('resultAllMsgList') ?? []);
+    resultAllMsg = tempList[oriImgIndex];//取得該照片之 resultAllMsg
     oriImgStringList = (prefs.getStringList('oriImgStringList') ?? []);
-    oriImgString = oriImgStringList[oriImgStringList.length - 1];
-    // print(resultAllMsg.split('&').length);
+    oriImgString = oriImgStringList[oriImgIndex];//取得該照片
+    
 
-    resultBasicMsg = resultAllMsg.split('&')[0]; //簡要斷語
+    resultBasicMsg = resultAllMsg.split('&')[0];//[0]為簡要斷語內文
 
-    for (int i = 0; i < 148; i++) {
-      pointX.insert(i, int.parse(resultAllMsg.split('&')[2].split('#')[i]));
-      pointY.insert(i, int.parse(resultAllMsg.split('&')[3].split('#')[i]));
+
+    //分割出148個點之座標
+    String pointXString = resultAllMsg.split('&')[2];//[2]為所有點之x座標
+    String pointYString = resultAllMsg.split('&')[3];//[3]為所有點之y座標
+
+    //分割出34種比例，並且寫入資料庫
+    String allRatioString = resultAllMsg.split('&')[11];
+    List<String> allRatio = allRatioString.split('+');
+    for(int i = 0; i < 34;i++){
+      //從 allRatio list中抓取ratio(數字部分)
+      String ratio = allRatio[i];
+      ratio = ratio.split(':')[1];
+      ratio = ratio.replaceAll(' ', '');
+      // print(ratio);
+      String tempName = 'ratio_' + i.toString();//ratio 序號，raiot_0 ~ ratio_33
+      List <String> oneRatioString = await prefs.getStringList(tempName) ?? [];// 先抓取資料庫裡的 list string
+      oneRatioString.insert(oneRatioString.length,ratio);//將新的ratio insert 到此list
+      prefs.setStringList(tempName, oneRatioString);//再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
+
+      //用於清空資料庫內的 ratio_0 ~ ratio_33
+      // prefs.setStringList(tempName, []);//清空資料庫中的ratio
     }
+    
+
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
@@ -67,31 +92,72 @@ class _BasicResultState extends State<BasicResult>
 
     // listen to the received data event stream
 
-    String serverMsg = ''; //serverMsg
+    List<int> intListServerMsg = [];
     await socket.listen((List<int> event) async {
-      String temp = await utf8.decode(event);
-      serverMsg = serverMsg + temp;
+      // String temp = await utf8.decode(event);
+      // serverMsg = serverMsg + temp;
+      intListServerMsg.addAll(event);//server訊息不會一次傳完，須將每次存下來
     });
     
     // print(serverMsg.split(';')[0]);
 
-    String msg = oriImgString + '<' + resultAllMsg.split('&')[2] + '<' + resultAllMsg.split('&')[3] + ';';
+    String msg = oriImgString + '<' + pointXString + '<' + pointYString + ';';
+
 
     // send hello
     socket.add(utf8.encode(msg));
 
     // wait 5 seconds
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 7));
+    String serverMsg = ''; //serverMsg
+    serverMsg = utf8.decode(intListServerMsg);
 
-    basicImgString = serverMsg.split(';')[0];//server回傳的第一張圖片String，即為全臉點圖
-    prefs.setString('basicImgString', basicImgString);//將全臉點圖以String方式存入資料庫，提供其他頁面讀取使用
-    basicImgByte = base64Decode(basicImgString);//將basicImgString轉成byte，才能渲染於頁面
+    // 儲存 Drawing server 回傳的所有圖片(臉型、比例圖、眉毛、眼睛...等等)
+    // 注意 cropFace_points_string 對應至 Drawing server 的 cropFace_points_string
+    //cropFace_points_string
+    cropFace_points_string = serverMsg.split(';')[0];
+    prefs.setString('cropFace_points_string', cropFace_points_string);
+
+    //cropFace_points_string
+    cropFace_points_string = serverMsg.split(';')[1];
+    prefs.setString('cropFace_points_string', cropFace_points_string);
+
+    //cropFace_points_string
+    cropFace_points_string = serverMsg.split(';')[2];
+    prefs.setString('cropFace_points_string', cropFace_points_string);
+
+    //cropFace_points_string
+    cropFace_points_string = serverMsg.split(';')[3];
+    prefs.setString('cropFace_points_string', cropFace_points_string);
+
+    //cropFace_arrow_string
+    String cropFace_arrow_string = serverMsg.split(';')[4];
+    prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
+
+    //cropEyebrow_arrow_string
+    String cropEyebrow_arrow_string = serverMsg.split(';')[5];
+    prefs.setString('cropEyebrow_arrow_string', cropEyebrow_arrow_string);
+
+    //cropEye_arrow_string
+    String cropEye_arrow_string = serverMsg.split(';')[6];
+    prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
+
+    //cropEyesAndNose_arrow_string
+    String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
+    prefs.setString('cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
+
+    //cropMouth_arrow_string
+    String cropMouth_arrow_string = serverMsg.split(';')[8];
+    prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
+
+
+    basicImgByte = base64Decode(cropFace_points_string);//將cropFace_points_string轉成byte，才能渲染於頁面
     imgLoadedFlag = true;//將 flag 設為OK，代表 img 已經 load 完成
 
 
     // .. and close the socket
     socket.close();
-    /////////////////////////////////////////////////////////////// server test//////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
 
     //
     List<String> temp = resultBasicMsg.split('[');
@@ -169,22 +235,26 @@ class _BasicResultState extends State<BasicResult>
                               children: [
                                 Container(
                                   width: screenWidth,
-                                  child: Text(
+                                  child: 
+                                  imgLoadedFlag ?
+                                  Text(
                                     basic_title[index].trim(),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                         color: Colors.yellow[300],
                                         fontSize: 25),
-                                  ),
+                                  ) : Container(),
                                 ),
                                 Container(
                                   width: screenWidth,
-                                  child: Text(
+                                  child: 
+                                  imgLoadedFlag ?
+                                  Text(
                                     basic_contentOfTitle[index].trim(),
                                     textAlign: TextAlign.start,
                                     style: const TextStyle(
                                         color: Colors.white, fontSize: 20),
-                                  ),
+                                  ) : Container(),
                                 ),
                                 const SizedBox(
                                   height: 50,

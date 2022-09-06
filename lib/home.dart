@@ -3,18 +3,17 @@
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
+import 'package:facebeauty/footPrint.dart';
 import 'package:flutter/material.dart';
 import 'cameraScreen.dart';
 import 'dart:developer';
 import 'guide.dart';
-import 'register.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'dart:async';
+import 'setting.dart';
 import 'profileModify.dart';
 import 'package:camera/camera.dart';
 import "package:image_picker/image_picker.dart";
 import 'previewPage.dart';
+import 'result.dart';
 
 //全域變數
 //例項化選擇圖片
@@ -147,7 +146,16 @@ class _HomeState extends State<Home> {
                               color: Colors.white,
                               size: 40,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              print('按下足跡按鈕');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FootPrint(),
+                                  maintainState: false,
+                                ),
+                              );
+                            },
                           ),
                         ),
 
@@ -229,6 +237,13 @@ class _HomeState extends State<Home> {
                                 );
                               } else {
                                 log('點擊設置');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Setting(),
+                                    maintainState: false,
+                                  ),
+                                );
                               }
                             },
                           ),
