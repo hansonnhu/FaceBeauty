@@ -53,7 +53,7 @@ class _GuideState extends State<Guide> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'iconv3.png',
+                          'assets/iconv3.png',
                           width: 38,
                           fit: BoxFit.fill,
                         ),
@@ -111,7 +111,12 @@ class _GuideState extends State<Guide> {
                                       fontWeight: FontWeight.normal)),
                               onPressed: () {
                                 log('按下跳過按鈕');
-                                Navigator.pop(context,);
+                                // Navigator.of(context).popUntil((route) => route.settings.name == "/" ? true : false);
+                                Navigator.of(context).popUntil((route) {
+                                  print(route.toString());
+                                  return route.settings.name == "/" ? true : false;
+                                  
+                                },);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -139,14 +144,25 @@ class _GuideState extends State<Guide> {
                                 } else {
                                   log('指引結束');
                                   srcNum = 0;
-                                  Navigator.pop(context,);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const Home(),
-                                      maintainState: false,
-                                    ),
-                                  );
+                                  Navigator.of(context).popUntil((route) {
+                                  print(route.toString());
+                                  return route.settings.name == "/" ? true : false;
+                                  
+                                },);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Home(),
+                                    maintainState: false,
+                                  ),
+                                );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const Home(),
+                                  //     maintainState: false,
+                                  //   ),
+                                  // );
                                 }
                                 // Navigator.push(
                                 //   context,

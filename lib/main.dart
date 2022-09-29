@@ -1,7 +1,8 @@
+import 'package:facebeauty/allTrend.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:camera/camera.dart';
 import 'splashScreen.dart';
+import 'package:flutter/services.dart';
 import 'footPrint.dart';
 import 'welcome.dart';
 import 'login.dart';
@@ -13,18 +14,23 @@ import 'dart:async';
 import 'profileModify.dart';
 import 'cameraScreen.dart';
 import 'result.dart';
+import 'doctors.dart';
 
 List<CameraDescription> cameras = [];
 Future<void> main() async {
+  
   try {
     WidgetsFlutterBinding.ensureInitialized();
     cameras = await availableCameras();
   } on CameraException catch (e) {
     print('Error in fetching the cameras: $e');
   }
-
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MaterialApp(
-    home: Login(),  //這裡切換頁面(預設為MyApp)
+    home: MyApp(),  //這裡切換頁面(預設為MyApp)
   ));
 }
 
@@ -41,7 +47,9 @@ class MyApp extends StatelessWidget {
       //   Future.delayed(Duration(seconds: 5),);
       //   loadingOK = true;
       // }
-    return FutureBuilder(
+    return 
+    
+    FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4),(){loadingOK = true;}),
         builder: (context, AsyncSnapshot snapshot) {
           // Loading
@@ -50,12 +58,25 @@ class MyApp extends StatelessWidget {
               home: SplashScreen(),
             );
           } else {
-            return const MaterialApp(
-              home: Login(),
+            return 
+            GestureDetector(
+              onTap:(){
+                hideKeyboard(context);
+              },
+            child: const MaterialApp(
+                home: Login(),
+              ) ,
             );
           }
         });
+    
 
+  }
+  void hideKeyboard(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
   }
 }
 

@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 bool imgLoadedFlag = false;
 
 //資料庫data
-String resultAllMsg = "";//server 回傳的所有data，包含斷語。
+List<String> resultAllMsg = [];//server 回傳的所有data，包含斷語。
 String cropFace_points_string = "";//全臉點圖String
 
 //此頁面要用到之data
@@ -40,6 +40,7 @@ class DetailResult extends StatefulWidget {
 class _DetailResultState extends State<DetailResult>
     with AutomaticKeepAliveClientMixin {
   bool firstGetResult_detail_flag = true;
+  String account = '';
 
   @override
   bool get wantKeepAlive => true;
@@ -49,10 +50,13 @@ class _DetailResultState extends State<DetailResult>
     print('loading msg at detail');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    account = prefs.getString('account') ?? '';
+
 
     //server回傳之字串處理
-    resultAllMsg = (prefs.getString('resultAllMsg') ?? '');
-    resultDetailMsg = resultAllMsg.split('&')[1];//[1]為詳細斷語內文
+    int oriImgIndex = prefs.getInt('oriImgIndex') ?? 0;
+    resultAllMsg = (prefs.getStringList(account+'resultAllMsgList') ?? []);
+    resultDetailMsg = resultAllMsg[oriImgIndex].split('&')[1];//[1]為詳細斷語內文
     List<String> temp1 = resultDetailMsg.split('[');
 
     //擷取title
@@ -101,7 +105,9 @@ class _DetailResultState extends State<DetailResult>
     // print(firstGetResult_detail_flag);
 
     return Scaffold(
-        body: Container(
+        body: 
+        (imgLoadedFlag == false) ? Container():
+        Container(
       padding: const EdgeInsets.all(20),
       color: Colors.black87,
       width: screenWidth,
@@ -111,7 +117,7 @@ class _DetailResultState extends State<DetailResult>
           //切割圖
           Expanded(
             flex: 1, 
-            child: (imgLoadedFlag == false) ? Container():
+            child: 
               Container(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: ClipRRect(

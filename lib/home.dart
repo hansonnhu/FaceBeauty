@@ -13,7 +13,8 @@ import 'profileModify.dart';
 import 'package:camera/camera.dart';
 import "package:image_picker/image_picker.dart";
 import 'previewPage.dart';
-import 'result.dart';
+import 'intro.dart';
+import 'doctors.dart';
 
 //全域變數
 //例項化選擇圖片
@@ -66,7 +67,7 @@ class _HomeState extends State<Home> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.asset(
-                                'iconv3.png',
+                                'assets/iconv3.png',
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -113,6 +114,8 @@ class _HomeState extends State<Home> {
                                       MaterialPageRoute(
                                           builder: (context) => PreviewPage(
                                                 picture: XFile(pickerImages.path),
+                                                type:'gallery',
+                                                cameraNum:1,
                                               )));
                                     // _userImage = File(pickerImages.path);
                                     // print('你選擇的本地路徑是：${_userImage.toString()}');
@@ -168,7 +171,15 @@ class _HomeState extends State<Home> {
                               color: Colors.white,
                               size: 40,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Intro(),
+                                  maintainState: false,
+                                ),
+                              );
+                            },
                           ),
                         ),
 
@@ -215,9 +226,16 @@ class _HomeState extends State<Home> {
                             onSelected: (value) {
                               if (value == '專家諮詢') {
                                 log('點擊專家諮詢');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Doctors(),
+                                    maintainState: false,
+                                  ),
+                                );
                               } else if (value == '帳號編輯') {
                                 log('點擊帳號編輯');
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -227,7 +245,7 @@ class _HomeState extends State<Home> {
                                 );
                               } else if (value == '功能介紹') {
                                 log('點擊功能介紹');
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

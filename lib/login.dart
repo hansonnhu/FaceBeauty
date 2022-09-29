@@ -3,6 +3,10 @@
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
+import 'dart:ffi';
+
+import 'package:facebeauty/guide.dart';
+import 'package:facebeauty/welcome.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'register.dart';
@@ -11,28 +15,18 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'home.dart';
 
-bool firstLoginFlag = true;
+
 
 String iniAccount = "";
 String iniPassword = "";
+TextEditingController accountCon = TextEditingController();
+TextEditingController passwordCon = TextEditingController();
 
-// String name = "";
-// String gender = "";
-// String age = "";
-// String weight = "";
-// String phone = "";
-// String email = "";
-// String address = "";
-// String doctor = "";
-// String welcome_show = "";
-// String guide_show = "";
-// String account_remember = "";
-// String detect_dialog_show = "";
-// String camera_direction = "";
-// String realtime_detection = "";
-// String sync_footprints = "";
-
+void hideKeyboard() { // 按空白處影藏鍵盤
+  FocusManager.instance.primaryFocus?.unfocus();
+}
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -41,8 +35,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool firstLoginFlag = true;
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
+    double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+
+
     //判斷帳號密碼是否只有英文或數字
     bool stringFilter(String str) {
       var oriLen = str.length;
@@ -64,19 +63,9 @@ class _LoginState extends State<Login> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       iniAccount = (prefs.getString('account') ?? '');
       iniPassword = (prefs.getString('password') ?? '');
+      accountCon..text = iniAccount;
+      passwordCon..text = iniPassword;
       firstLoginFlag = false;
-
-      ////////////////////////////////////////////////////////////////////重製資料庫(release版本請註解)
-      prefs.setStringList('oriImgStringList',[]); // oriImgStringList 清空
-      prefs.setStringList('resultAllMsgList', []);// resultAllMsgList 清空
-      prefs.setStringList('allDateTimeList',[]);// allDateTimeList 清空
-      for(int i = 0; i < 34;i++){ // ratio_0 ~ ratio_33 list 清空
-        String tempName = 'ratio_' + i.toString();
-        prefs.setStringList(tempName, []);
-      }
-
-      ////////////////////////////////////////////////////////////////////重製資料庫(release版本請註解)
-
 
       setState(() {});
     }
@@ -93,12 +82,16 @@ class _LoginState extends State<Login> {
       prefs.setString('password', passwordCon.text);
     }
 
-    double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
-    double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
-    final TextEditingController accountCon = TextEditingController();
-    final TextEditingController passwordCon = TextEditingController();
-    return Scaffold(
-      body: Container(
+
+    return 
+    Listener(
+            onPointerDown: (_) => hideKeyboard(),
+            child:
+    Scaffold(
+      
+      body: 
+      firstLoginFlag == true ? Container():
+      Container(
           padding: const EdgeInsets.all(30),
           color: Colors.black87,
           width: screenWidth,
@@ -115,7 +108,7 @@ class _LoginState extends State<Login> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
-                      'iconv3.png',
+                      'assets/iconv3.png',
                       width: 38,
                       fit: BoxFit.fill,
                     ),
@@ -173,7 +166,13 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular((20.0)),
                         ),
                         child: TextField(
-                          controller: accountCon..text = iniAccount,
+                          controller: TextEditingController.fromValue(TextEditingValue(
+                  // 设置内容
+                  text: iniAccount,
+                  // 保持光标在最后
+                  selection: TextSelection.fromPosition(TextPosition(
+                      affinity: TextAffinity.downstream,
+                      offset: iniAccount.length)))),
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             fontSize: 30,
@@ -191,6 +190,7 @@ class _LoginState extends State<Login> {
                           ),
                           onChanged: (text) {
                             iniAccount = text;
+                            accountCon..text = text;
                           },
                         )),
 
@@ -229,7 +229,13 @@ class _LoginState extends State<Login> {
                           borderRadius: BorderRadius.circular((20.0)),
                         ),
                         child: TextField(
-                          controller: passwordCon..text = iniPassword,
+                          controller: TextEditingController.fromValue(TextEditingValue(
+                  // 设置内容
+                  text: iniPassword,
+                  // 保持光标在最后
+                  selection: TextSelection.fromPosition(TextPosition(
+                      affinity: TextAffinity.downstream,
+                      offset: iniPassword.length)))),
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             fontSize: 30,
@@ -247,6 +253,7 @@ class _LoginState extends State<Login> {
                           ),
                           onChanged: (text) {
                             iniPassword = text;
+                            passwordCon..text = text;
                           },
                         )),
 
@@ -270,6 +277,8 @@ class _LoginState extends State<Login> {
                                     fontWeight: FontWeight.normal)),
                             onPressed: () async {
                               log('按下登入按鈕');
+                              print(accountCon.text);
+                              print(passwordCon.text);
 
                               if (accountCon.text == '') {
                                 showDialog(
@@ -393,13 +402,31 @@ class _LoginState extends State<Login> {
                                         });
 
                                     //延遲一秒後跳轉進入APP
+                                    //查看資料庫，依照flag情形決定要跳轉之畫面(一開始共有welcome, intro, guide 頁面)
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    int welcomeFlag = prefs.getInt('welcomeFlag') ?? 1;//若為0，直接跳過 welcome, intro 頁面
+                                    int guideFlag = prefs.getInt('guideFlag') ?? 1;//若為0，跳過guide
+
                                     await Future.delayed(
-                                        Duration(milliseconds: 1500), () {
+                                        Duration(milliseconds: 1000), () {
                                       Navigator.pop(dialogContext);
+                                      // push首頁進進去
+                                      
+                                    // if (!(welcomeFlag == 0 && guideFlag == 0)){
+                                    //   Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => const Home(),
+                                    //       maintainState: false,
+                                    //     ),
+                                    //   );
+                                    // }
+                                      
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const Intro(),
+                                          builder: (context) => (welcomeFlag == 1) ? const Welcome() : (guideFlag == 1) ? const Guide() : Home(),
                                           maintainState: false,
                                         ),
                                       );
@@ -414,7 +441,7 @@ class _LoginState extends State<Login> {
                                 socket.add(utf8.encode(msg));
 
                                 // wait 5 seconds
-                                await Future.delayed(Duration(seconds: 5));
+                                await Future.delayed(Duration(seconds: 2));
 
                                 // .. and close the socket
                                 socket.close();
@@ -452,6 +479,6 @@ class _LoginState extends State<Login> {
               ),
             ],
           )),
-    );
+    ));
   }
 }

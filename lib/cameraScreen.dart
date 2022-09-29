@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'previewPage.dart';
 import 'package:flutter/cupertino.dart';
+// import 'package:image/image.dart' as img;
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key, required this.cameras}) : super(key: key);
@@ -26,6 +27,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
   bool _isRearCameraSelected = true;
+  
 
   @override
   void dispose() {
@@ -48,12 +50,16 @@ class _CameraScreenState extends State<CameraScreen> {
     }
     try {
       await _cameraController.setFlashMode(FlashMode.off);
+      await _cameraController.lockCaptureOrientation();
       XFile picture = await _cameraController.takePicture();
+
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => PreviewPage(
                     picture: picture,
+                    type: 'camera',
+                    cameraNum: _isRearCameraSelected ? 0 : 1,
                   )));
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
@@ -65,8 +71,11 @@ class _CameraScreenState extends State<CameraScreen> {
     _cameraController =
         CameraController(cameraDescription, ResolutionPreset.high);
     try {
-      await _cameraController.initialize().then((_) {
+      await _cameraController.initialize().then((_) async{
         if (!mounted) return;
+        await _cameraController.lockCaptureOrientation();
+        await _cameraController.initialize();
+
         setState(() {});
       });
     } on CameraException catch (e) {

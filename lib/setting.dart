@@ -180,8 +180,8 @@ class _SettingState extends State<Setting> {
                             //延遲一秒後跳轉進入APP
                             await Future.delayed(Duration(milliseconds: 1000),
                                 () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
+                              Navigator.pop(dialogContext);
+                              // Navigator.pop(context);
                             });
                           },
                         ),

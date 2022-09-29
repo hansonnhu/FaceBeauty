@@ -6,9 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'result.dart';
+import 'allTrend.dart';
 
 String iniAccount = "";
 String iniPassword = "";
+String account = '';
+
 
 String userName = ''; //使用者名稱
 List<String> allDateTimeList = []; //所有 DateTime string
@@ -26,7 +29,8 @@ class FootPrint extends StatefulWidget {
 }
 
 class _FootPrintState extends State<FootPrint> {
-  bool isFirstLoad = true;
+  bool dataLoadedFlag = false;
+  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
@@ -37,10 +41,14 @@ class _FootPrintState extends State<FootPrint> {
     _loadData() async {
       print('第一次進 FootPrint !');
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      allOriImgString = await prefs.getStringList('oriImgStringList') ?? [];
+      await prefs.setInt('newImgData?', 0);
+      account = prefs.getString('account') ?? '';
+      print(account);
+
+      allOriImgString = prefs.getStringList(account+'oriImgStringList') ?? [];
       oriImgCount = allOriImgString.length;
       userName = prefs.getString('account') ?? '';
-      allDateTimeList = prefs.getStringList('allDateTimeList') ?? [];
+      allDateTimeList = prefs.getStringList(account+'allDateTimeList') ?? [];
 
       print(userName);
       print('count = ' + oriImgCount.toString());
@@ -49,11 +57,11 @@ class _FootPrintState extends State<FootPrint> {
       //   allOriImgByteString[i] = await base64Decode(allOriImgString[i]);
       // }
 
-      isFirstLoad = false;
+      dataLoadedFlag = true;
       setState(() {});
     }
 
-    if (isFirstLoad) _loadData();
+    if (dataLoadedFlag == false) _loadData();
 
     return Scaffold(
         body: Container(
@@ -180,13 +188,49 @@ class _FootPrintState extends State<FootPrint> {
                           child: Text('清除'),
                           style: ElevatedButton.styleFrom(
                               onSurface: Colors.white60,
-                              primary: Colors.teal,
+                              primary: Colors.red,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
                               textStyle: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.normal)),
                           onPressed: () async {
                             log('按下清除按鈕');
+
+                            // 跳出警示視窗確認user是否真的要刪除所有分析紀錄
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  AlertDialog(
+                                title: const Text('警告'),
+                                content: const Text('確定刪除所有分析紀錄?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, '取消'),
+                                    child: const Text('取消'),
+                                  ),
+                                  TextButton(
+                                    child:  Text('確定'),
+                                    onPressed: () async{
+                                        Navigator.pop(context, '確定');
+
+                                        // 清除所有分析紀錄
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                        await prefs.setStringList(account+'oriImgStringList',[]); // oriImgStringList 清空
+                                        await prefs.setStringList(account+'resultAllMsgList', []);// resultAllMsgList 清空
+                                        await prefs.setStringList(account+'allDateTimeList',[]);// allDateTimeList 清空
+                                        for(int i = 0; i < 34;i++){ // ratio_0 ~ ratio_33 list 清空
+                                          String tempName = 'ratio_' + i.toString();
+                                          await prefs.setStringList(account+tempName, []);
+                                        }
+                                        _loadData();
+                                    }
+                                  )
+                                ],
+                              ),
+                            );
+                            
+                            
                           },
                         ),
                         //趨勢按鈕
@@ -194,13 +238,20 @@ class _FootPrintState extends State<FootPrint> {
                           child: Text('趨勢'),
                           style: ElevatedButton.styleFrom(
                               onSurface: Colors.white60,
-                              primary: Colors.teal,
+                              primary: Colors.green.shade900,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
                               textStyle: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.normal)),
                           onPressed: () async {
                             log('按下趨勢按鈕');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AllTrend(),
+                                maintainState: false,
+                              ),
+                            );
                           },
                         ),
                         //返回按鈕

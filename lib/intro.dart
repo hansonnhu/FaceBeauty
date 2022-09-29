@@ -3,14 +3,11 @@
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
+import 'package:facebeauty/home.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'guide.dart';
-import 'register.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'dart:async';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String iniAccount = "";
 String iniPassword = "";
@@ -46,7 +43,7 @@ class _IntroState extends State<Intro> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'iconv3.png',
+                        'assets/iconv3.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -109,16 +106,31 @@ class _IntroState extends State<Intro> {
                                   fontSize: 25, fontWeight: FontWeight.normal)),
                           onPressed: () async {
                             log('按下繼續按鈕');
-                            // SharedPreferences prefs = await SharedPreferences.getInstance();
-                            // log(prefs. getString('acconut')?? '');
-                            // log(prefs. getString('password')?? '');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Guide(),
-                                maintainState: false,
-                              ),
-                            );
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            int guideFlag = prefs. getInt('guideFlag') ?? 1;
+                            
+                            if(guideFlag == 1){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Guide(),
+                                  maintainState: false,
+                                ),
+                              );
+                            }else{
+                              Navigator.of(context).popUntil((route) {
+                                  print(route.toString());
+                                  return route.settings.name == "/" ? true : false;
+                                },);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Home(),
+                                    maintainState: false,
+                                  ),
+                                );
+                            }
+                            
                           },
                         ),
                       ]),

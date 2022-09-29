@@ -231,70 +231,78 @@ class _RegisterState extends State<Register> {
                         onPressed: termIsChecked
                             ? () async {
                                 log('按下註冊按鈕');
+                                BuildContext dialogContext = context;
                                 if (registerAccount.text == '') {
+                                  
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
+                                    builder: (BuildContext context) {
+                                      dialogContext = context;
+                                        return AlertDialog(
                                       title: const Text('錯誤'),
                                       content: const Text('帳號不能為空!'),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
+                                              Navigator.pop(dialogContext, 'Cancel'),
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'OK'),
+                                              Navigator.pop(dialogContext, 'OK'),
                                           child: const Text('OK'),
                                         ),
                                       ],
-                                    ),
+                                    );
+                                    }
                                   );
                                 } else if (registerPassword.text == '') {
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) =>
+                                    builder: (BuildContext context) {
+                                      dialogContext = context;
+                                      return
                                         AlertDialog(
                                       title: const Text('錯誤'),
                                       content: const Text('密碼不能為空!'),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
+                                              Navigator.pop(dialogContext, 'Cancel'),
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'OK'),
+                                              Navigator.pop(dialogContext, 'OK'),
                                           child: const Text('OK'),
                                         ),
                                       ],
-                                    ),
+                                    );
+                                    }
                                   );
                                 } else if (!stringFilter(
                                         registerAccount.text) ||
                                     !stringFilter(registerPassword.text)) {
                                   showDialog(
                                     context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
+                                    builder: (BuildContext context) {
+                                      dialogContext = context;
+                                       return AlertDialog(
                                       title: const Text('錯誤'),
                                       content: const Text('帳號或密碼出現非數字或英文!'),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'Cancel'),
+                                              Navigator.pop(dialogContext, 'Cancel'),
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.pop(context, 'OK'),
+                                              Navigator.pop(dialogContext, 'OK'),
                                           child: const Text('OK'),
                                         ),
                                       ],
-                                    ),
+                                    );}
                                   );
                                 } else {//若帳號密碼格式無誤
                                   Socket socket = await Socket.connect(
@@ -310,47 +318,49 @@ class _RegisterState extends State<Register> {
                                       //AlertDialog
                                       showDialog(
                                         context: context,
-                                        builder: (BuildContext context) =>
-                                            AlertDialog(
+                                        builder: (BuildContext context) {
+                                          dialogContext = context;
+                                           return AlertDialog(
                                           title: const Text('註冊失敗'),
                                           content:
                                               const Text('該帳好已存在\n請重新輸入帳號密碼'),
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () => Navigator.pop(
-                                                  context, 'Cancel'),
+                                                  dialogContext, 'Cancel'),
                                               child: const Text('Cancel'),
                                             ),
                                             TextButton(
                                               onPressed: () =>
-                                                  Navigator.pop(context, 'OK'),
+                                                  Navigator.pop(dialogContext, 'OK'),
                                               child: const Text('OK'),
                                             ),
                                           ],
-                                        ),
+                                        );}
                                       );
                                     } else if (severMsg == 'success;') {
                                       socket.close();
                                       //AlertDialog
                                       showDialog(
                                         context: context,
-                                        builder: (BuildContext context) =>
-                                            AlertDialog(
+                                        builder: (BuildContext context) {
+                                          dialogContext = context;
+                                           return AlertDialog(
                                           title: const Text('註冊成功'),
                                           content: const Text(''),
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () => Navigator.pop(
-                                                  context, 'Cancel'),
+                                                  dialogContext, 'Cancel'),
                                               child: const Text('Cancel'),
                                             ),
                                             TextButton(
                                               onPressed: () =>
-                                                  Navigator.pop(context, 'OK'),
+                                                  Navigator.pop(dialogContext, 'OK'),
                                               child: const Text('OK'),
                                             ),
                                           ],
-                                        ),
+                                        );}
                                       );
                                     }
                                   });

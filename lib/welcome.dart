@@ -5,6 +5,8 @@
 
 import 'package:flutter/material.dart';
 import 'dart:developer';
+import 'intro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({Key? key}) : super(key: key);
@@ -39,6 +41,7 @@ class _WelcomeState extends State<Welcome> {
             width: screenWidth,
             height: screenHeight,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // 歡迎使用
                 Row(
@@ -71,7 +74,7 @@ class _WelcomeState extends State<Welcome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'iconv3.png',
+                        'assets/iconv3.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -100,7 +103,7 @@ class _WelcomeState extends State<Welcome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'light_bulb_on.imageset/light_bulb_on@3x.png',
+                        'assets/light_bulb_on.imageset/light_bulb_on@3x.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -133,7 +136,7 @@ class _WelcomeState extends State<Welcome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'plus_icon.imageset/plus_icon@3x.png',
+                        'assets/plus_icon.imageset/plus_icon@3x.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -166,7 +169,7 @@ class _WelcomeState extends State<Welcome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'cloudup.imageset/cloudup@3x.png',
+                        'assets/cloudup.imageset/cloudup@3x.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -199,7 +202,7 @@ class _WelcomeState extends State<Welcome> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'history.imageset/history@3x.png',
+                        'assets/history.imageset/history@3x.png',
                         width: 38,
                         fit: BoxFit.fill,
                       ),
@@ -243,16 +246,42 @@ class _WelcomeState extends State<Welcome> {
                           },
                         ),
                         const Text(
-                            '以後不再提醒',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
+                          '以後不再提醒',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
-                        
+                        ),
                       ]),
-                )
+                ),
+                ElevatedButton(
+                  child: Text('繼續'),
+                  style: ElevatedButton.styleFrom(
+                      onSurface: Colors.white60,
+                      primary: Colors.teal,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      textStyle: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.normal)),
+                  onPressed: () async {
+                    log('按下繼續按鈕');
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    if (welcomeIsChecked == false) {
+                      prefs.setInt('welcomeFlag', 1);
+                    } else {
+                      prefs.setInt('welcomeFlag', 0);
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Intro(),
+                        maintainState: false,
+                      ),
+                    );
+                  },
+                ),
               ],
             )));
   }

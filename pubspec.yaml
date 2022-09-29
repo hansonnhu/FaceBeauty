@@ -36,6 +36,11 @@ dependencies:
   path_provider: ^2.0.11 
   path: ^1.8.1
   kg_charts: ^0.0.1
+  flutter_swiper_null_safety: ^1.0.2
+  charts_flutter: ^0.12.0
+  url_launcher: ^6.1.5
+  image: ^3.2.0
+  exif: ^3.1.2
   flutter:
     sdk: flutter
 
@@ -74,14 +79,29 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/light_bulb_on.imageset/light_bulb_on@3x.png
+    - assets/plus_icon.imageset/plus_icon@3x.png
+    - assets/cloudup.imageset/cloudup@3x.png
+    - assets/history.imageset/history@3x.png
     - assets/guide_src1.imageset/guide_src1@1x.png
     - assets/guide_src2.imageset/guide_src2@3x.png
     - assets/guide_src3.imageset/guide_src3@3x.png
     - assets/guide_src4.imageset/guide_src4@3x.png
     - assets/guide_src5.imageset/guide_src5@3x.png
     - assets/face_3.imageset/face_3@3x.png
-    - iconv4.gif
-    - iconv3.png
+    - assets/iconv4.gif
+    - assets/iconv3.png
+    - assets/laodingGIF.imageset/loading1.gif
+    - assets/laodingGIF.imageset/loading2.gif
+    - assets/laodingGIF.imageset/loading3.gif
+    - assets/laodingGIF.imageset/loading4.gif
+    - assets/laodingGIF.imageset/loading5.gif
+    - assets/laodingGIF.imageset/loading6.gif
+    - assets/laodingGIF.imageset/loading7.gif
+    - assets/laodingGIF.imageset/loading8.gif
+    - assets/laodingGIF.imageset/loading9.gif
+    - assets/ad.imageset/ad@3x.png
+    - assets/ad2.imageset/ad2@3x.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

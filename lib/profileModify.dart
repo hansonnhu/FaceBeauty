@@ -11,18 +11,19 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool firstModifyFlag = true;
-List<String> userInfo = [];
-String account = "";
-String name = "";
-String gender = "";
-String age = "";
-String weight = "";
-String phone = "";
-String email = "";
-String address = "";
-String doctor = "";
 
+TextEditingController nameCon = TextEditingController();
+TextEditingController genderCon = TextEditingController();
+TextEditingController ageCon = TextEditingController();
+TextEditingController weightCon = TextEditingController();
+TextEditingController phoneCon = TextEditingController();
+TextEditingController emailCon = TextEditingController();
+TextEditingController addressCon = TextEditingController();
+TextEditingController doctorCon = TextEditingController();
+
+void hideKeyboard() { // 按空白處影藏鍵盤
+  FocusManager.instance.primaryFocus?.unfocus();
+}
 class ProfileModify extends StatefulWidget {
   const ProfileModify({Key? key}) : super(key: key);
 
@@ -31,8 +32,23 @@ class ProfileModify extends StatefulWidget {
 }
 
 class _ProfileModifyState extends State<ProfileModify> {
+  bool firstModifyFlag = true;
+  List<String> userInfo = [];
+  String account = "";
+  String name = "";
+  String gender = "";
+  String age = "";
+  String weight = "";
+  String phone = "";
+  String email = "";
+  String address = "";
+  String doctor = "";
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
+    double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+
+
     _loadUserInfo() async {
       // 抓取UserInfo
       log('loading user info');
@@ -44,40 +60,55 @@ class _ProfileModifyState extends State<ProfileModify> {
       print('connected');
 
       // listen to the received data event stream
+      List<int> allEvent = [];
+      String serverMsg = '';
       socket.listen((List<int> event) {
-        String serverMsg = utf8.decode(event);
-        print(serverMsg);
-        userInfo = serverMsg.split("&");
-        print(userInfo);
-        name = userInfo[0];
-        gender = userInfo[1];
-        age = userInfo[2];
-        weight = userInfo[3];
-        phone = userInfo[4];
-        email = userInfo[5];
-        address = userInfo[6];
-        doctor = userInfo[7].split(';')[0];
-      });
+        allEvent.addAll(event);
 
-      String msg = account + ";";
+      });
+      
+
+      
 
       // send hello
+      String msg = account + ";";
       socket.add(utf8.encode(msg));
 
-      // wait 5 seconds
-      await Future.delayed(Duration(milliseconds: 500));
+      // wait 1.1 seconds
+      await Future.delayed(Duration(milliseconds: 1100));
+
+      serverMsg = utf8.decode(allEvent);
+      userInfo = serverMsg.split("&");
+      name = userInfo[0];
+      gender = userInfo[1];
+      age = userInfo[2];
+      weight = userInfo[3];
+      phone = userInfo[4];
+      email = userInfo[5];
+      address = userInfo[6];
+      doctor = userInfo[7].split(';')[0];
 
       // .. and close the socket
       socket.close();
+      nameCon..text = name;
+      genderCon..text = gender;
+      ageCon..text = age;
+      weightCon..text = weight;
+      phoneCon..text = phone;
+      emailCon..text = email;
+      addressCon..text = address;
+      doctorCon..text = doctor;
+
       firstModifyFlag = false;
-      setState(() {});
+      if(mounted)
+        setState(() {});
     }
 
     if (firstModifyFlag == true) {
       log('第一次進編輯頁面');
       _loadUserInfo();
     }
-    ;
+    
 
     //更改userInfo
     _modifyUserInfo(nameCon, genderCon, ageCon, weightCon, phoneCon, emailCon,
@@ -111,30 +142,26 @@ class _ProfileModifyState extends State<ProfileModify> {
       // send hello
       socket.add(utf8.encode(msg));
       // wait 5 seconds
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(seconds: 3));
       // .. and close the socket
       socket.close();
     }
 
-    double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
-    double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-    final TextEditingController nameCon = TextEditingController();
-    final TextEditingController genderCon = TextEditingController();
-    final TextEditingController ageCon = TextEditingController();
-    final TextEditingController weightCon = TextEditingController();
-    final TextEditingController phoneCon = TextEditingController();
-    final TextEditingController emailCon = TextEditingController();
-    final TextEditingController addressCon = TextEditingController();
-    final TextEditingController doctorCon = TextEditingController();
 
-    return Scaffold(
+    return 
+    Listener(
+            onPointerDown: (_) => hideKeyboard(),
+            child:
+    Scaffold(
         body: Container(
             padding: const EdgeInsets.all(30),
             color: Colors.black87,
             width: screenWidth,
             height: screenHeight,
-            child: Column(
+            child: 
+            !firstModifyFlag?
+            Column(
               children: [
                 //個人資料
                 Container(
@@ -182,7 +209,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: nameCon..text = name,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: name,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      name.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -198,7 +235,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  name = text;
+                                  nameCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -226,7 +266,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: genderCon..text = gender,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: gender,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      gender.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -242,7 +292,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  gender= text;
+                                  genderCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -270,7 +323,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: ageCon..text = age,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: age,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      age.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -286,7 +349,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  age= text;
+                                  ageCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -314,7 +380,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: weightCon..text = weight,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: weight,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      weight.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -330,7 +406,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  weight= text;
+                                  weightCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -358,7 +437,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: phoneCon..text = phone,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: phone,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      phone.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -374,7 +463,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  phone= text;
+                                  phoneCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -402,7 +494,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: emailCon..text = email,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: email,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      email.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -418,7 +520,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  email= text;
+                                  emailCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -446,7 +551,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: addressCon..text = address,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: address,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      address.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -462,7 +577,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  address= text;
+                                  addressCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -490,7 +608,17 @@ class _ProfileModifyState extends State<ProfileModify> {
                               ),
                               Expanded(
                                   child: TextField(
-                                controller: doctorCon..text = doctor,
+                                controller: TextEditingController.fromValue(
+                                      TextEditingValue(
+                                          // 设置内容
+                                          text: doctor,
+                                          // 保持光标在最后
+                                          selection: TextSelection.fromPosition(
+                                              TextPosition(
+                                                  affinity:
+                                                      TextAffinity.downstream,
+                                                  offset:
+                                                      doctor.length)))),
                                 keyboardType: TextInputType.text,
                                 style: const TextStyle(
                                   fontSize: 30,
@@ -506,7 +634,10 @@ class _ProfileModifyState extends State<ProfileModify> {
                                     color: Colors.white,
                                   )),
                                 ),
-                                onChanged: (text) {},
+                                onChanged: (text) {
+                                  doctor = text;
+                                  doctorCon..text = text;
+                                },
                               ))
                             ],
                           ),
@@ -536,37 +667,30 @@ class _ProfileModifyState extends State<ProfileModify> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: () async {
                           log('按下完成按鈕');
-                          //AlertDialog
-                          BuildContext dialogContext = context;
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                dialogContext = context;
-                                return AlertDialog(
-                                  title: Text('修改成功!'),
-                                  content: Text('修改中......'),
-                                );
-                              });
 
                           //更新userInfo至server
                           _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
                               phoneCon, emailCon, addressCon, doctorCon);
-
+                          _loadUserInfo();
                           //延遲一秒後將AlertDialog pop
+                          //AlertDialog
+                          BuildContext dialogContext = context;
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              dialogContext = context;
+                              return const AlertDialog(
+                                title: Text('修改成功!'),
+                                content: Text('修改中......'),
+                              );
+                            });
                           Future.delayed(Duration(milliseconds: 1000), () {
                             Navigator.pop(dialogContext);
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ProfileModify(),
-                                maintainState: false,
-                              ),
-                            );
+                            
                           });
                           // 重新從server下載userInfo
-                          _loadUserInfo();
-                          setState(() {});
+                          // _loadUserInfo();
+                          // setState(() {});
                           // log("${myController.text}");
                         },
                       ),
@@ -580,20 +704,20 @@ class _ProfileModifyState extends State<ProfileModify> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: () {
                           log('按下取消按鈕');
-                          // Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Home(),
-                              maintainState: false,
-                            ),
-                          );
+                          Navigator.pop(context);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const Home(),
+                          //     maintainState: false,
+                          //   ),
+                          // );
                         },
                       ),
                     ],
                   ),
                 ),
               ],
-            )));
+            ) : Container())));
   }
 }

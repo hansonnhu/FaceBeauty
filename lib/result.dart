@@ -47,27 +47,27 @@ class _ResultState extends State<Result> {
                 Tab(text: '比例分析'),
               ],
             ),
-            actions: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(
-                  8
-                ),
-                child: ElevatedButton(
-                  child: Text('返回'),
-                  style: ElevatedButton.styleFrom(
-                      onSurface: Colors.white60,
-                      primary: Colors.teal,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      textStyle: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.normal)),
-                  onPressed: () async {
-                    log('按下返回按鈕');
-                    Navigator.pop(context);
+            actions: const <Widget>[
+              // Container(
+              //   padding: const EdgeInsets.all(
+              //     8
+              //   ),
+              //   child: ElevatedButton(
+              //     child: Text('返回'),
+              //     style: ElevatedButton.styleFrom(
+              //         onSurface: Colors.white60,
+              //         primary: Colors.teal,
+              //         padding: const EdgeInsets.symmetric(
+              //             horizontal: 10, vertical: 5),
+              //         textStyle: const TextStyle(
+              //             fontSize: 20, fontWeight: FontWeight.normal)),
+              //     onPressed: () async {
+              //       log('按下返回按鈕');
+              //       Navigator.pop(context);
                     
-                  },
-                ),
-              )
+              //     },
+              //   ),
+              // )
             ],
           ),
           body: const TabBarView(

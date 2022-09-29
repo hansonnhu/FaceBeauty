@@ -11,7 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Center(child: Image.asset('iconv4.gif')),
+      child: Center(child: Image.asset('assets/iconv4.gif')),
     );
   }
 }
