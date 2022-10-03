@@ -97,183 +97,112 @@ class PreviewPage extends StatelessWidget {
       String smallImgString = "";
       print('帳號為 : ' + account);
 
-      makeImg() async {
-        var _decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
-        if(_decodedImage.height > 1000 && _decodedImage.width > 1000){//若原圖太大，將其縮小
-          double resizeRate = 0.0;
-          if(_decodedImage.height >= _decodedImage.width){
-            resizeRate = _decodedImage.height/1000;
-          }else{
-            resizeRate = _decodedImage.width/1000;
-          }
-          if(type == 'camera'){
-            oriImg = await FlutterNativeImage.compressImage(oriImg.path,
-            targetHeight: (_decodedImage.width / resizeRate).round(),
-            targetWidth: (_decodedImage.height / resizeRate).round());
-          }else{
-            oriImg = await FlutterNativeImage.compressImage(oriImg.path,
-            targetWidth: (_decodedImage.width / resizeRate).round(),
-            targetHeight: (_decodedImage.height / resizeRate).round());
-          }
-          
-          // _decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
+      // imgPreprocess() async {///將影像進行前處理
+      var _decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
+      if(_decodedImage.height > 1000 && _decodedImage.width > 1000){//若原圖太大，將其縮小
+        double resizeRate = 0.0;
+        if(_decodedImage.height >= _decodedImage.width){
+          resizeRate = _decodedImage.height/1000;
+        }else{
+          resizeRate = _decodedImage.width/1000;
+        }
+        if(type == 'camera'){///從相簿取得之相片可以直接縮放，但用相機拍攝之照片縮放時長寬需對調
+          oriImg = await FlutterNativeImage.compressImage(oriImg.path,
+          targetHeight: (_decodedImage.width / resizeRate).round(),
+          targetWidth: (_decodedImage.height / resizeRate).round());
+        }else{
+          oriImg = await FlutterNativeImage.compressImage(oriImg.path,
+          targetWidth: (_decodedImage.width / resizeRate).round(),
+          targetHeight: (_decodedImage.height / resizeRate).round());
         }
         
-        
-        // double scale = 0;
-        // //將原圖長邊縮小為80，短編等比例縮小
-        // if (_decodedImage.width > _decodedImage.height) {
-        //   scale = 80 / _decodedImage.width;
-        // } else {
-        //   scale = 80 / _decodedImage.height;
-        // }
-        // //縮小圖
-        // File smallImg = oriImg;
-        // if(type == 'camera'){
-        //   smallImg = await FlutterNativeImage.compressImage(oriImg.path,
-        //   targetHeight: (scale * _decodedImage.width).round(),
-        //   targetWidth: (scale * _decodedImage.height).round());
-        // }else{
-        //   smallImg = await FlutterNativeImage.compressImage(oriImg.path,
-        //   targetHeight: (scale * _decodedImage.width).round(),
-        //   targetWidth: (scale * _decodedImage.height).round());
-        // }
-        //獲取原圖及小圖的bytes
-        Uint8List oriImgBytes = await oriImg.readAsBytes();
-        oriImgString = base64Encode(oriImgBytes);
+        // _decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
+      }
+      
+      /////////////////////////////////////////////////////////////////傳給新新server////////////////////////////////////////////////
+      ///用於將影像送去舊server分析之前進行前處理
+      //獲取原圖及小圖的bytes
+      Uint8List oriImgBytes = await oriImg.readAsBytes();
+      oriImgString = base64Encode(oriImgBytes);
 
-        // Uint8List smallImgBytes = await smallImg.readAsBytes();
-        // smallImgString = base64Encode(smallImgBytes);
-        
+      print('camera img');
+      // Socket socket = await Socket.connect('192.168.0.201', 6969);
+      Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+      print('connected');
 
-        print('camera img');
-        // Socket socket = await Socket.connect('192.168.0.201', 6969);
-        Socket socket = await Socket.connect('140.117.168.12', 6969);
-        print('connected');
+      // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
+      String msg = (oriImgString + '<' + "?");
+      List<int> sendMsg = utf8.encode(msg);
 
-        // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
-        String msg = (oriImgString + '<' + "?");
-        List<int> sendMsg = utf8.encode(msg);
+      // send hello
+      makeImgServerSocket.add(sendMsg);
 
-        // send hello
-        socket.add(sendMsg);
-
-        // listen to the received data event stream
-        
-        List<int> intListServerMsg = [];
-        socket.listen((List<int> event) async {
-          intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
-        });
-        int serverCount = 0;
-        while(true){
-          if(utf8.decode(intListServerMsg).contains(';')){
-            print(';的啦');
-            await socket.close();
-            // await _processingMsg(intListServerMsg, oriImgString);
+      // listen to the received data event stream
+      
+      List<int> intListServerMsg = [];
+      makeImgServerSocket.listen((List<int> event) async {
+        intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
+      });
+      int serverCount = 0;
+      while(true){
+        if(utf8.decode(intListServerMsg).contains(';')){
+          print('已收到新server之結束信號 ;');
+          await makeImgServerSocket.close();
+          // await _processingMsg(intListServerMsg, oriImgString);
+          break;
+        }
+        else {
+          await Future.delayed(const Duration(milliseconds: 100));
+          serverCount += 1;
+          if(serverCount == 50){
+            makeImgServerSocket.close();
             break;
           }
-          
-          else {
-            await Future.delayed(const Duration(seconds: 1));
-            serverCount += 1;
-            if(serverCount == 5){
-              await socket.close();
-              break;
-            }
-          }
         }
-        String tempMsg = utf8.decode(intListServerMsg);
-        oriImgString = tempMsg.split(';')[0].split('>')[0];
-        smallImgString = tempMsg.split(';')[0].split('>')[1];
       }
+      String tempMsg = utf8.decode(intListServerMsg);
+      oriImgString = tempMsg.split(';')[0].split('>')[0];
+      smallImgString = tempMsg.split(';')[0].split('>')[1];
+      // }
+      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      await makeImg();
+      // await imgPreprocess();
 
-      /////////////////////////////////////////////////////////////////傳給server////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
 
       Socket socket = await Socket.connect('140.117.168.12', 50886);
       print('connected');
 
-      String msg = (account + "<" + oriImgString + "<" + smallImgString + ";");
+      msg = (account + "<" + oriImgString + "<" + smallImgString + ";");
       // String msg = (account + "<" + bigImgString + "<" + smallImgString + ";");
-      List<int> sendMsg = utf8.encode(msg);
+      sendMsg = utf8.encode(msg);
 
       // send hello
       socket.add(sendMsg);
 
       // listen to the received data event stream
       
-      List<int> intListServerMsg = [];
+      intListServerMsg = [];
       socket.listen((List<int> event) async {
         intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
-
       });
-      int serverCount = 0;
+      serverCount = 0;
+      int serverMsgOffset = 0;
       while(true){
-        print(utf8.decode(intListServerMsg));
+        // print(utf8.decode(intListServerMsg));
         if(utf8.decode(intListServerMsg).contains(';')){
-          print(';的啦');
-          await socket.close();
+          print('已收到結束信號 ;');
+          socket.close();
           await _processingMsg(intListServerMsg, oriImgString);
           return;
         }
-        
-        else {
-          await Future.delayed(const Duration(seconds: 1));
-          serverCount += 1;
-          if(serverCount == 20){
-            await socket.close();
-            return;
-          }
+        await Future.delayed(const Duration(milliseconds: 100));
+        serverCount += 1;
+        if(serverCount == 200){
+          socket.close();
+          return;
         }
-          
       }
-      // wait 15 seconds
-      await Future.delayed(const Duration(seconds: 15));
-      // .. and close the socket
-      socket.close();
-      // serverMsg = utf8.decode(intListServerMsg); //將 intListServerMsg 解碼為 String
-      
-      // print('server長度');
-      // print(serverMsg.split('&').length);
-      // // print('data = ' + serverMsg);
-      // // 若回傳data不正確(有漏)，請使用者重新拍照
-      // if (serverMsg.split('&').length != 14) {
-      //   print('失敗');
-      //   imgUploadOK = false;
-      //   return;
-      // } else {
-      //   imgUploadOK = true;
-      // }
-
-      // SharedPreferences prefs = await SharedPreferences.getInstance(); //讀取資料庫
-      // await prefs.setInt('newImgData?', 1);
-      // List<String> oriImgStringList = prefs.getStringList(account + 'oriImgStringList') ??
-      //     []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
-      // oriImgNum = oriImgStringList
-      //     .length; //取得當前 oriImg 之 index(由於是拍照或選擇照片上傳，因此為最新的一張 oriImg)
-      // prefs.setInt('oriImgIndex', oriImgNum); //將oriImg 之 index 存入資料庫
-      // //將最新拍的 oriImgString insert 到資料庫中 oriImgString List
-      // oriImgStringList.insert(oriImgStringList.length, oriImgString);
-      // await prefs.setStringList(account+'oriImgStringList', oriImgStringList);
-
-      // // 將最新的 datetime 更新至資料庫中
-      // List<String> allDateTimeList =
-      //     prefs.getStringList(account+'allDateTimeList') ?? [];
-      // DateTime dateTime = DateTime.now();
-      // allDateTimeList.insert(
-      //     allDateTimeList.length, dateTime.toString().substring(0, 19));
-      // await prefs.setStringList(account+'allDateTimeList', allDateTimeList);
-
-      // //////////////////////測試//////////////////
-      // // List<String> temp = [oriImgString];
-      // // await prefs.setStringList('oriImgStringList', temp);
-      // ///////////////////////////////////////////
-
-      // //將此次resultAllMsg更新至資料庫()
-      // List<String> temp = prefs.getStringList(account+'resultAllMsgList') ?? [];
-      // temp.insert(temp.length, serverMsg);
-      // await prefs.setStringList(account+'resultAllMsgList', temp);
       /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
     }
 

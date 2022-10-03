@@ -180,27 +180,29 @@ class _BasicResultState extends State<BasicResult>
     await socket.listen((List<int> event) async {
       intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
     });
-    int returnImgCount = 0;
+  
     int secondCount = 0;
+    int imgNumOffset = 0;
     while(true){
-      if(utf8.decode(intListServerMsg).contains(';')){
-        returnImgCount += 1;
-        print('圖片'+returnImgCount.toString()+'已送達');
-        if(returnImgCount == 9){
+      int returnImgNum = await utf8.decode(intListServerMsg).split(';').length;
+      if(imgNumOffset != returnImgNum){
+        imgNumOffset = returnImgNum;
+        print('已處理至圖片'+imgNumOffset.toString());
+      }
+      if(returnImgNum == 10){
           print('socket closed');
           await socket.close();
           _getAllPic(intListServerMsg);
+          
           return;
-          // returnImgCount = 0;
-        }
       }
       secondCount+=1;
-      if(secondCount == 200){
+      if(secondCount == 1000){
         await socket.close();
-        _getAllPic(intListServerMsg);
+        // _getAllPic(intListServerMsg);
         return;
       }
-      await Future.delayed(Duration(milliseconds: 1000));
+      await Future.delayed(Duration(milliseconds: 100));
     }
     // print(serverMsg.split(';')[0]);
 
