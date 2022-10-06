@@ -91,6 +91,7 @@ flutter:
     - assets/face_3.imageset/face_3@3x.png
     - assets/iconv4.gif
     - assets/iconv3.png
+    - assets/laodingGIF.imageset/loading_0_to_100.gif
     - assets/laodingGIF.imageset/loading1.gif
     - assets/laodingGIF.imageset/loading2.gif
     - assets/laodingGIF.imageset/loading3.gif

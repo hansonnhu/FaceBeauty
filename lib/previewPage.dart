@@ -126,7 +126,7 @@ class PreviewPage extends StatelessWidget {
       oriImgString = base64Encode(oriImgBytes);
 
       print('camera img');
-      // Socket socket = await Socket.connect('192.168.0.201', 6969);
+      // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
       Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
       print('connected');
 
@@ -265,7 +265,8 @@ class PreviewPage extends StatelessWidget {
                                 child: Container(
                                   // color: Colors.white,
                                   child: Image.asset(
-                                    "assets/laodingGIF.imageset/loading6.gif",
+                                    // "assets/laodingGIF.imageset/loading6.gif",
+                                    "assets/laodingGIF.imageset/loading_0_to_100.gif",
                                     height: screenHeight,
                                   ),
                                 ),

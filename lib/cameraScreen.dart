@@ -96,7 +96,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
               Container(
-                    padding: const EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.only(top: screenHeight/5),
                     child: 
                     ClipRRect(
                       child:Image.asset('assets/face_3.imageset/face_3@3x.png',
