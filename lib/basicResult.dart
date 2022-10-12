@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
@@ -157,11 +158,11 @@ class _BasicResultState extends State<BasicResult>
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
-    // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-    Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
+    // Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
     print('connected');
-    
-    String msg = oriImgString + '<' + pointXString + '<' + pointYString + ';';
+    var randomNum = Random().nextInt(10000);
+    String msg = account + randomNum.toString() + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
     // String msg = pointXString + '<' + pointYString + ';';
 
 
@@ -192,7 +193,7 @@ class _BasicResultState extends State<BasicResult>
           return;
       }
       secondCount+=1;
-      if(secondCount == 1000){
+      if(secondCount == 150){
         await makeImgServerSocket.close();
         // _getAllPic(intListServerMsg);
         return;

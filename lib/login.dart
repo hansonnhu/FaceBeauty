@@ -357,6 +357,7 @@ class _LoginState extends State<Login> {
                                   //print出server回傳data
                                   print(utf8.decode(event));
                                   String serverMsg = utf8.decode(event);
+                                  
                                   if (serverMsg == 'fail;') {
                                     socket.close();
                                     //AlertDialog

@@ -14,6 +14,7 @@ import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 // import 'package:image/image.dart';
 
 // String serverMsg = '';
@@ -38,7 +39,7 @@ class PreviewPage extends StatelessWidget {
     String smallImgString = '';
     // 抓取UserInfo
     _loadUserInfo() async {
-      log('loading user info');
+      print('loading user info');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       account = (prefs.getString('account') ?? '');
       firstModifyFlag = false;
@@ -125,12 +126,13 @@ class PreviewPage extends StatelessWidget {
       oriImgString = base64Encode(oriImgBytes);
 
       print('camera img');
-      // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-      Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+      Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
+      // Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
       print('connected');
 
       // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
-      String msg = (oriImgString + '<' + "?");
+      int randomNum = Random().nextInt(10000);
+      String msg = (account + randomNum.toString() + '<' +'imgPreprocessing'+ '<' + oriImgString + '<' + ";");
       List<int> sendMsg = utf8.encode(msg);
 
       // send hello
@@ -251,7 +253,7 @@ class PreviewPage extends StatelessWidget {
                           textStyle: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal)),
                       onPressed: () async {
-                        log('按下送出按鈕');
+                        print('按下送出按鈕');
                         var oriImg = File(picture.path); //原圖
 
                         //AlertDialog
@@ -312,7 +314,7 @@ class PreviewPage extends StatelessWidget {
                           textStyle: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal)),
                       onPressed: () {
-                        log('按下重拍按鈕');
+                        print('按下重拍按鈕');
                         Navigator.pop(context);
                       },
                     ),
