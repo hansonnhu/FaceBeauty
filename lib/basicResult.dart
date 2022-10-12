@@ -1,8 +1,4 @@
-// import 'dart:math';
-
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-
+// 簡要評語頁面
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -10,7 +6,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// flag部分
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。

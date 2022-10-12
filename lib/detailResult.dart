@@ -1,13 +1,5 @@
-// import 'dart:math';
-
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-
+// 詳細評語頁面
 import 'package:flutter/material.dart';
-import 'dart:developer';
-import 'guide.dart';
-import 'register.dart';
-import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';

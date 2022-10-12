@@ -1,4 +1,5 @@
 // app的一些設定調整(綁定硬體裝置)
+// 料庫中，所有特徵點的趨勢頁面
 import 'package:facebeauty/oneTrend.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';

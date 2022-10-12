@@ -1,19 +1,9 @@
-// import 'dart:math';
-
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-
+// 前後鏡頭畫面
 import 'package:flutter/material.dart';
-import 'dart:developer';
-import 'guide.dart';
 import 'package:camera/camera.dart';
-import 'register.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'dart:async';
 import 'previewPage.dart';
 import 'package:flutter/cupertino.dart';
-// import 'package:image/image.dart' as img;
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key, required this.cameras}) : super(key: key);

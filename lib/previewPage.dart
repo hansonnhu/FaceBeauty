@@ -14,7 +14,6 @@ import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image/image.dart' as _img;
 // import 'package:image/image.dart';
 
 // String serverMsg = '';
