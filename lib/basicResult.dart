@@ -15,12 +15,7 @@ List<int> pointX = [];
 List<int> pointY = []; //點x,y座標(server會回傳148個點)
 String cropFace_points_string = ''; //全臉點圖String
 
-//此頁面要用到之data
-String resultBasicMsg = ''; //簡要斷語String
-String oriImgString = ''; //資料庫內最新的原圖相片
-Uint8List basicImgByte = Uint8List(1000000); //全臉點圖
-List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
-List<String> basic_contentOfTitle = []; //basic_title的內文
+
 
 class BasicResult extends StatefulWidget {
   const BasicResult({Key? key}) : super(key: key);
@@ -33,6 +28,12 @@ class _BasicResultState extends State<BasicResult>
   bool firstGetResult_basic_flag = true;
   bool imgLoadedFlag = false; //是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
   String account = '';
+  //此頁面要用到之data
+  String resultBasicMsg = ''; //簡要斷語String
+  String oriImgString = ''; //資料庫內最新的原圖相片
+  Uint8List basicImgByte = Uint8List(1000000); //全臉點圖
+  List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
+  List<String> basic_contentOfTitle = []; //basic_title的內文
 
   @override
   bool get wantKeepAlive => true;
@@ -116,12 +117,12 @@ class _BasicResultState extends State<BasicResult>
     int count = 0;
     for (String s in temp) {
       if (count == 0) {
-        basic_title.insert(count, s.split('\n')[0]);
+        basic_title.insert(count, (s.split('\n')[0]).replaceAll('型', ''));
         basic_contentOfTitle.insert(
             count, s.split('\n')[1].replaceAll('#', ''));
         count++;
       } else {
-        basic_title.insert(count, s.split(']')[0]);
+        basic_title.insert(count, (s.split(']')[0]).replaceAll('型', ''));
         basic_contentOfTitle.insert(count, s.split(']')[1].replaceAll('#', ''));
       }
     }
@@ -165,18 +166,16 @@ class _BasicResultState extends State<BasicResult>
     String msg = account + randomNum.toString() + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
     // String msg = pointXString + '<' + pointYString + ';';
 
-
-    // send hello
-    makeImgServerSocket.add(utf8.encode(msg));
-
     // listen to the received data event stream
-
     List<int> intListServerMsg = [];
     // int returnImgCount = 0;
     await makeImgServerSocket.listen((List<int> event) async {
       intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
     });
-  
+
+    // send hello
+      makeImgServerSocket.add(utf8.encode(msg));
+
     int secondCount = 0;
     int imgNumOffset = 0;
     while(true){

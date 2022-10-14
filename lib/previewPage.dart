@@ -178,8 +178,7 @@ class PreviewPage extends StatelessWidget {
       // String msg = (account + "<" + bigImgString + "<" + smallImgString + ";");
       sendMsg = utf8.encode(msg);
 
-      // send hello
-      socket.add(sendMsg);
+      
 
       // listen to the received data event stream
       
@@ -187,22 +186,30 @@ class PreviewPage extends StatelessWidget {
       socket.listen((List<int> event) async {
         intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
       });
+      // send hello
+      socket.add(sendMsg);
+
       serverCount = 0;
       int serverMsgOffset = 0;
       while(true){
-        // print(utf8.decode(intListServerMsg));
-        if(utf8.decode(intListServerMsg).contains(';')){
-          print('已收到結束信號 ;');
-          socket.close();
-          await _processingMsg(intListServerMsg, oriImgString);
-          return;
+        try{
+          print(utf8.decode(intListServerMsg));
+          if(utf8.decode(intListServerMsg).contains(';')){
+            print('已收到結束信號 ;');
+            socket.close();
+            await _processingMsg(intListServerMsg, oriImgString);
+            return;
+          }
+          await Future.delayed(const Duration(milliseconds: 100));
+          serverCount += 1;
+          if(serverCount == 200){
+            socket.close();
+            return;
+          }
+        }catch(e){
+          print(e);
         }
-        await Future.delayed(const Duration(milliseconds: 100));
-        serverCount += 1;
-        if(serverCount == 200){
-          socket.close();
-          return;
-        }
+        
       }
       /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
     }

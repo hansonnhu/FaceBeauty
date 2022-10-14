@@ -353,11 +353,23 @@ class _LoginState extends State<Login> {
                                 print(
                                     'Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
                                 // listen to the received data event stream
+                                String msg = accountCon.text +
+                                    ';' +
+                                    passwordCon.text +
+                                    '<';
+                                
+                                String serverMsg = '';
                                 socket.listen((List<int> event) async {
                                   //print出server回傳data
                                   print(utf8.decode(event));
-                                  String serverMsg = utf8.decode(event);
-                                  
+                                  serverMsg = utf8.decode(event);
+                                });
+                                
+                                // send hello
+                                socket.add(utf8.encode(msg));
+                                // wait 5 seconds
+                                await Future.delayed(Duration(milliseconds: 500));
+
                                   if (serverMsg == 'fail;') {
                                     socket.close();
                                     //AlertDialog
@@ -433,16 +445,10 @@ class _LoginState extends State<Login> {
                                       );
                                     });
                                   }
-                                });
-                                String msg = accountCon.text +
-                                    ';' +
-                                    passwordCon.text +
-                                    '<';
-                                // send hello
-                                socket.add(utf8.encode(msg));
+                                
+                                
 
-                                // wait 5 seconds
-                                await Future.delayed(Duration(seconds: 2));
+                                
 
                                 // .. and close the socket
                                 socket.close();

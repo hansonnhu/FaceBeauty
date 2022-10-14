@@ -10,17 +10,8 @@ bool imgLoadedFlag = false;
 //資料庫data
 List<String> resultAllMsg = [];//server 回傳的所有data，包含斷語。
 String cropFace_points_string = "";//全臉點圖String
-
-//此頁面要用到之data
 Uint8List basicImgByte = Uint8List(1000000);//全臉點圖
 
-
-
-String resultDetailMsg = '';
-// List<String> temp = [];
-//detail文字架構
-List<String> detail_title = []; //detail_title : 臉型、下巴型、脣型......
-List<String> detail_contentOfTitle = []; //detail_title的內文
 
 class DetailResult extends StatefulWidget {
   const DetailResult({Key? key}) : super(key: key);
@@ -33,6 +24,12 @@ class _DetailResultState extends State<DetailResult>
     with AutomaticKeepAliveClientMixin {
   bool firstGetResult_detail_flag = true;
   String account = '';
+  //此頁面要用到之data
+  
+  String resultDetailMsg = '';
+  //detail文字架構
+  List<String> detail_title = []; //detail_title : 臉型、下巴型、脣型......
+  List<String> detail_contentOfTitle = []; //detail_title的內文
 
   @override
   bool get wantKeepAlive => true;

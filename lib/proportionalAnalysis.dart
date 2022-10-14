@@ -34,8 +34,7 @@ String test = '';
 List<double> radarValues = [0, 0, 0, 0, 0, 0];
 // List<String> temp = [];
 //detail文字架構
-List<String> detail_title = []; //detail_title : 臉型、下巴型、脣型......
-List<String> detail_contentOfTitle = []; //detail_title的內文
+
 
 class PorportionalAnalysis extends StatefulWidget {
   const PorportionalAnalysis({Key? key}) : super(key: key);
@@ -109,11 +108,11 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     //server回傳data的邏輯非常奇怪
     //臉部分比例分析
-    faceComment = resultAllMsg[oriImgIndex].split('&')[4].replaceAll('32:', '') +
+    faceComment = resultAllMsg[oriImgIndex].split('&')[4].replaceAll('32:', '').replaceAll('42:', '') +
         '\n' +
-        resultAllMsg[oriImgIndex].split('&')[9].replaceAll('32:', '') +
+        resultAllMsg[oriImgIndex].split('&')[9].replaceAll('32:', '').replaceAll('42:', '') +
         '\n' +
-        resultAllMsg[oriImgIndex].split('&')[10].replaceAll('32:', '');
+        resultAllMsg[oriImgIndex].split('&')[10].replaceAll('32:', '').replaceAll('42:', '');
 
     //眉毛部分比例分析
     eyebrowComment = resultAllMsg[oriImgIndex].split('&')[5].replaceAll('2:', '');
