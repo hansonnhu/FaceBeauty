@@ -667,12 +667,6 @@ class _ProfileModifyState extends State<ProfileModify> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: () async {
                           log('按下完成按鈕');
-
-                          //更新userInfo至server
-                          _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
-                              phoneCon, emailCon, addressCon, doctorCon);
-                          _loadUserInfo();
-                          //延遲一秒後將AlertDialog pop
                           //AlertDialog
                           BuildContext dialogContext = context;
                           showDialog(
@@ -688,6 +682,13 @@ class _ProfileModifyState extends State<ProfileModify> {
                             Navigator.pop(dialogContext);
                             
                           });
+
+                          //更新userInfo至server
+                          await _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
+                              phoneCon, emailCon, addressCon, doctorCon);
+                          await _loadUserInfo();
+                          //延遲一秒後將AlertDialog pop
+                          
                           // 重新從server下載userInfo
                           // _loadUserInfo();
                           // setState(() {});

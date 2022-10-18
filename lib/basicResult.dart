@@ -17,6 +17,7 @@ String cropFace_points_string = ''; //全臉點圖String
 
 
 
+
 class BasicResult extends StatefulWidget {
   const BasicResult({Key? key}) : super(key: key);
   @override
@@ -159,11 +160,14 @@ class _BasicResultState extends State<BasicResult>
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
-    Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-    // Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
+    Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    // Socket makeImgServerSocket = await Socket.connect('140.117.168.10', 6969);
     print('connected');
-    var randomNum = Random().nextInt(10000);
-    String msg = account + randomNum.toString() + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
+    var randomNum = Random().nextInt(100000);
+    String tempClientNumString = account + randomNum.toString();
+    print(tempClientNumString);
+    String msg = tempClientNumString + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
     // String msg = pointXString + '<' + pointYString + ';';
 
     // listen to the received data event stream
@@ -174,7 +178,7 @@ class _BasicResultState extends State<BasicResult>
     });
 
     // send hello
-      makeImgServerSocket.add(utf8.encode(msg));
+    makeImgServerSocket.add(utf8.encode(msg));
 
     int secondCount = 0;
     int imgNumOffset = 0;
@@ -186,18 +190,21 @@ class _BasicResultState extends State<BasicResult>
       }
       if(returnImgNum == 10){
           print('socket closed');
+          print(tempClientNumString);
+          String msg = tempClientNumString + '<' +'disconnect' + ';';
+          makeImgServerSocket.add(utf8.encode(msg));
           await makeImgServerSocket.close();
           _getAllPic(intListServerMsg);
-          
           return;
       }
-      secondCount+=1;
-      if(secondCount == 150){
-        await makeImgServerSocket.close();
-        // _getAllPic(intListServerMsg);
-        return;
-      }
-      await Future.delayed(Duration(milliseconds: 100));
+      // secondCount+=1;
+      // if(secondCount == 300){
+      //   String msg = tempClientNumString + '<' +'disconnect' + ';';
+      //   makeImgServerSocket.add(utf8.encode(msg));
+      //   await makeImgServerSocket.close();
+      //   return;
+      // }
+      await Future.delayed(Duration(milliseconds: 1000));
     }
   }
 
@@ -207,82 +214,89 @@ class _BasicResultState extends State<BasicResult>
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+    bool test = true;
 
     _loadResultAllMsg();
 
-    return Scaffold(
-        body: (imgLoadedFlag == false)
-            ? Container(
-                color: Colors.black87,
-                height: screenHeight,
-                width: screenWidth,
-                child: Center(
-                  child: Container(
-                      height: screenHeight / 4,
-                      child: Image.asset(
-                        'assets/laodingGIF.imageset/loading6.gif',
-                        fit: BoxFit.fitHeight,
-                      )),
-                )
-
-                // Image.network('https://giphy.com/stickers/color-hybrid-hybridcolor-eWfqPa8CO0khmCNLA5'),
-                )
-            : Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.black87,
-                width: screenWidth,
-                height: screenHeight,
-                child: Column(
-                  children: [
-                    //切割圖
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Image.memory(
-                              (basicImgByte),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
+    return WillPopScope(
+      onWillPop: () async {
+          print('點了返回');
+          return imgLoadedFlag;
+        },
+      child: Scaffold(
+          body: (imgLoadedFlag == false)
+              ? Container(
+                  color: Colors.black87,
+                  height: screenHeight,
+                  width: screenWidth,
+                  child: Center(
+                    child: Container(
+                        height: screenHeight / 4,
+                        child: Image.asset(
+                          'assets/laodingGIF.imageset/loading6.gif',
+                          fit: BoxFit.fitHeight,
                         )),
+                  )
 
-                    //簡要內容
-                    Expanded(
-                        flex: 1,
-                        child: ListView.builder(
-                            padding: new EdgeInsets.only(top: 10, bottom: 10),
-                            itemBuilder: (context, index) => Container(
-                                    child: Column(
-                                  children: [
-                                    Container(
+                  // Image.network('https://giphy.com/stickers/color-hybrid-hybridcolor-eWfqPa8CO0khmCNLA5'),
+                  )
+              : Container(
+                  padding: const EdgeInsets.all(20),
+                  color: Colors.black87,
+                  width: screenWidth,
+                  height: screenHeight,
+                  child: Column(
+                    children: [
+                      //切割圖
+                      Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: Image.memory(
+                                (basicImgByte),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          )),
+
+                      //簡要內容
+                      Expanded(
+                          flex: 1,
+                          child: ListView.builder(
+                              padding: new EdgeInsets.only(top: 10, bottom: 10),
+                              itemBuilder: (context, index) => Container(
+                                      child: Column(
+                                    children: [
+                                      Container(
+                                          width: screenWidth,
+                                          child: Text(
+                                            basic_title[index].trim(),
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                                color: Colors.yellow[300],
+                                                fontSize: 25),
+                                          )),
+                                      Container(
                                         width: screenWidth,
                                         child: Text(
-                                          basic_title[index].trim(),
+                                          basic_contentOfTitle[index].trim(),
                                           textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              color: Colors.yellow[300],
-                                              fontSize: 25),
-                                        )),
-                                    Container(
-                                      width: screenWidth,
-                                      child: Text(
-                                        basic_contentOfTitle[index].trim(),
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 20),
+                                          style: const TextStyle(
+                                              color: Colors.white, fontSize: 20),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 50,
-                                    ),
-                                  ],
-                                )),
-                            itemCount: basic_title.length)),
+                                      const SizedBox(
+                                        height: 50,
+                                      ),
+                                    ],
+                                  )),
+                              itemCount: basic_title.length)),
 
-                    //繼續按鈕
-                  ],
-                )));
+                      //繼續按鈕
+                    ],
+                  ))),
+    );
   }
 }
