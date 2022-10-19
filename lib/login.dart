@@ -49,7 +49,7 @@ class _LoginState extends State<Login> {
       temp = str.replaceAll(RegExp('[A-Z]'), '');
       temp = temp.replaceAll(RegExp('[a-z]'), '');
       temp = temp.replaceAll(RegExp('[0-9]'), '');
-      log(temp.length.toString());
+      // log(temp.length.toString());
 
       if (temp.length == 0) {
         return true;
@@ -368,7 +368,8 @@ class _LoginState extends State<Login> {
                                 // send hello
                                 socket.add(utf8.encode(msg));
                                 // wait 5 seconds
-                                await Future.delayed(Duration(milliseconds: 500));
+                                while(true){
+                                  await Future.delayed(Duration(milliseconds: 500));
 
                                   if (serverMsg == 'fail;') {
                                     socket.close();
@@ -394,6 +395,7 @@ class _LoginState extends State<Login> {
                                         ],
                                       ),
                                     );
+                                    break;
                                   } else if (serverMsg == 'success;') {
                                     //登入成功
                                     //關閉socket
@@ -444,12 +446,9 @@ class _LoginState extends State<Login> {
                                         ),
                                       );
                                     });
+                                    break;
                                   }
-                                
-                                
-
-                                
-
+                                }
                                 // .. and close the socket
                                 socket.close();
                               }
