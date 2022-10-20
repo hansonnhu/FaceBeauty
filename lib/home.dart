@@ -15,6 +15,7 @@ import "package:image_picker/image_picker.dart";
 import 'previewPage.dart';
 import 'intro.dart';
 import 'doctors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //全域變數
 //例項化選擇圖片
@@ -30,12 +31,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var cameraCorrectionFlag = 0;
+  bool flagLoaded = false;
   @override
   Widget build(BuildContext context) {
 
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+    void getCameraCorrectionFlag()async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      cameraCorrectionFlag = prefs.getInt('cameraCorrectionFlag')??1;
+      flagLoaded == true;
+    }
+    if(flagLoaded == false){
+      getCameraCorrectionFlag();
+    }
 
     return Scaffold(
         body: Container(
@@ -116,6 +127,7 @@ class _HomeState extends State<Home> {
                                                 picture: XFile(pickerImages.path),
                                                 type:'gallery',
                                                 cameraNum:1,
+                                                cameraCorrectionFlag:cameraCorrectionFlag
                                               )));
                                     // _userImage = File(pickerImages.path);
                                     // print('你選擇的本地路徑是：${_userImage.toString()}');

@@ -22,14 +22,18 @@ String account = "";
 bool firstModifyFlag = true;
 bool imgUploaded = false;
 var oriImgNum = 0;
+// var cameraCorrectionFlag = 0;
+
 
 
 class PreviewPage extends StatelessWidget {
-  const PreviewPage({Key? key, required this.picture, required this.type, required this.cameraNum}) : super(key: key);
+  const PreviewPage({Key? key, required this.picture, required this.type, required this.cameraNum, required this.cameraCorrectionFlag}) : super(key: key);
 
   final XFile picture;
   final String type;
   final int cameraNum;
+  final int cameraCorrectionFlag;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,7 @@ class PreviewPage extends StatelessWidget {
       print('loading user info');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       account = (prefs.getString('account') ?? '');
+      // cameraCorrectionFlag = prefs.getInt('cameraCorrectionFlag')??1;
       firstModifyFlag = false;
     }
 
@@ -228,6 +233,7 @@ class PreviewPage extends StatelessWidget {
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+
     return Scaffold(
       body: Center(
           child: Container(
@@ -248,6 +254,8 @@ class PreviewPage extends StatelessWidget {
                         child: Image.file(File(picture.path),
                             fit: BoxFit.cover, width: screenWidth - 20),
                       )),
+                  (cameraCorrectionFlag == 0)?
+                  Container():
                   Container(
                       padding: const EdgeInsets.only(top: 10),
                       child: ClipRRect(

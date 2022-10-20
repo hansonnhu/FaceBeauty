@@ -40,6 +40,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+    
 
 
     //判斷帳號密碼是否只有英文或數字
@@ -63,10 +64,14 @@ class _LoginState extends State<Login> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       iniAccount = (prefs.getString('account') ?? '');
       iniPassword = (prefs.getString('password') ?? '');
+      var passwordRememberFlag = prefs.getInt('passwordRememberFlag') ?? 1;
       accountCon..text = iniAccount;
       passwordCon..text = iniPassword;
+      if(passwordRememberFlag == 0){
+        iniAccount = '';
+        iniPassword = '';
+      }
       firstLoginFlag = false;
-
       setState(() {});
     }
 
