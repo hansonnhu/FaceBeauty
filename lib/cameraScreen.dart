@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'dart:async';
 import 'previewPage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key, required this.cameras}) : super(key: key);
@@ -50,6 +51,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     picture: picture,
                     type: 'camera',
                     cameraNum: _isRearCameraSelected ? 0 : 1,
+                    cameraCorrectionFlag: cameraCorrectionFlag,
                   )));
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
@@ -72,11 +74,21 @@ class _CameraScreenState extends State<CameraScreen> {
       debugPrint("camera error $e");
     }
   }
-  
+  var cameraCorrectionFlag = 0;
+  bool flagLoaded = false;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+
+    void getCameraCorrectionFlag()async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      cameraCorrectionFlag = prefs.getInt('cameraCorrectionFlag')??1;
+      flagLoaded == true;
+    }
+    if(flagLoaded == false){
+      getCameraCorrectionFlag();
+    }
     return Scaffold(
         body: SafeArea(
       child: Stack(children: [
@@ -85,6 +97,8 @@ class _CameraScreenState extends State<CameraScreen> {
             : Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator())),
+              (cameraCorrectionFlag == 0)?
+              Container():
               Container(
                     padding: EdgeInsets.only(top: screenHeight/5),
                     child: 
@@ -93,7 +107,6 @@ class _CameraScreenState extends State<CameraScreen> {
                       fit: BoxFit.cover,
                       width: screenWidth -12), 
                     )
-                    
                   ),
         Align(
             alignment: Alignment.bottomCenter,

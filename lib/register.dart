@@ -280,7 +280,32 @@ class _RegisterState extends State<Register> {
                                     );
                                     }
                                   );
-                                } else if (!stringFilter(
+                                }else if(registerAccount.text.length < 5 ||
+                                          registerAccount.text.length > 16 ||
+                                          registerPassword.text.length < 5 ||
+                                          registerPassword.text.length > 16 ){
+                                            showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      dialogContext = context;
+                                       return AlertDialog(
+                                      title: const Text('錯誤'),
+                                      content: const Text('帳號或密碼長度不正確!'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(dialogContext, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(dialogContext, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );}
+                                  );
+                                }else if (!stringFilter(
                                         registerAccount.text) ||
                                     !stringFilter(registerPassword.text)) {
                                   showDialog(

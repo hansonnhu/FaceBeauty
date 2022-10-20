@@ -24,18 +24,18 @@ List<int> allFlag = [
   0,
   0,
   0,
-  0,
-  0,
-  0
+  // 0,
+  // 0,
+  // 0
 ];
 List<String> allFlagString = [
   'welcomeFlag',
   'guideFlag',
   'passwordRememberFlag',
   'cameraCorrectionFlag',
-  'cameraDiractionFlag',
-  'detectImmediatelyFlag',
-  'syncFootprintFlag'
+  // 'cameraDiractionFlag',
+  // 'detectImmediatelyFlag',
+  // 'syncFootprintFlag'
 ];
 
 //所有 flag 的 title
@@ -44,9 +44,9 @@ List<String> allTitle = [
   '新手導覽教學',
   '記住帳號密碼',
   '矯正視窗顯示',
-  '相機鏡頭方向',
-  '載入即時偵測',
-  '自動同步足跡'
+  // '相機鏡頭方向',
+  // '載入即時偵測',
+  // '自動同步足跡'
 ];
 
 class Setting extends StatefulWidget {
@@ -67,7 +67,7 @@ class _SettingState extends State<Setting> {
     _loadData() async {
       print('第一次進 setting !');
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      for(int i = 0;i<7;i++){
+      for(int i = 0;i<allTitle.length;i++){
         allFlag[i] = prefs.getInt(allFlagString[i]) ?? 1;
       }
       isFirstLoad = false;
@@ -116,7 +116,7 @@ class _SettingState extends State<Setting> {
                         ),
                         child: ListView.builder(
                           padding: new EdgeInsets.only(top: 5, bottom: 5),
-                          itemCount: 7,
+                          itemCount: allTitle.length,
                           itemBuilder: (context, index) => Container(
                               child: CheckboxListTile(
                             title: Text(
@@ -162,8 +162,8 @@ class _SettingState extends State<Setting> {
                             log('按下確定按鈕');
                             //將更改後的 flags 寫入資料庫
                             SharedPreferences prefs = await SharedPreferences.getInstance();
-                            for(int i = 0;i<7;i++){
-                              prefs.setInt(allFlagString[i], allFlag[i]);
+                            for(int i = 0;i<allTitle.length;i++){
+                              await prefs.setInt(allFlagString[i], allFlag[i]);
                             } 
 
                             //AlertDialog
