@@ -134,16 +134,19 @@ class _DetailResultState extends State<DetailResult>
                           Container(
                             width: screenWidth,
                             child: Text(
-                              detail_title[index],
+                              detail_title[index].trim(),
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   color: Colors.yellow[300], fontSize: 25),
                             ),
                           ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             width: screenWidth,
                             child: Text(
-                              detail_contentOfTitle[index],
+                              detail_contentOfTitle[index].trim(),
                               textAlign: TextAlign.start,
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 20),
