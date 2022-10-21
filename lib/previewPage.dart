@@ -294,11 +294,11 @@ class PreviewPage extends StatelessWidget {
                                 Stack(children: [
                                   Container(
                                     height: screenHeight,
-                                    width: screenWidth,
+                                    width: screenWidth+50,
                                     child: Image.asset(
                                       // "assets/laodingGIF.imageset/loading6.gif",
                                       "assets/analysisGIF.imageset/analysisGIF.gif",
-                                      height: screenHeight,
+                                      height: screenHeight+100,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
