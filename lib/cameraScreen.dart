@@ -5,6 +5,9 @@ import 'dart:async';
 import 'previewPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:marquee/marquee.dart';
+import 'dart:math';
+
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key, required this.cameras}) : super(key: key);
@@ -99,15 +102,76 @@ class _CameraScreenState extends State<CameraScreen> {
                 child: const Center(child: CircularProgressIndicator())),
               (cameraCorrectionFlag == 0)?
               Container():
-              Container(
+              Stack(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: screenHeight/5),
+                    child: 
+                    
+                      ClipRRect(
+                        child:Image.asset('assets/face_3.imageset/face_3@3x.png',
+                          fit: BoxFit.cover,
+                          width: screenWidth,
+                          color: Color.fromRGBO(255, 255, 255, 0.3),
+                          colorBlendMode: BlendMode.modulate,
+                        ), 
+                      ),
+                    
+                  ),
+                  Container(
                     padding: EdgeInsets.only(top: screenHeight/5),
                     child: 
                     ClipRRect(
-                      child:Image.asset('assets/face_3.imageset/face_3@3x.png',
-                      fit: BoxFit.cover,
-                      width: screenWidth -12), 
+                        child:Image.asset('assets/scanningGIF.imageset/scanning.gif',
+                        fit: BoxFit.cover,
+                        width: screenWidth,
+                        color: Color.fromRGBO(255, 255, 255, 0.5),
+                        colorBlendMode: BlendMode.modulate,
+                      ), 
                     )
                   ),
+                  Container(
+                    // padding: EdgeInsets.only(top: screenHeight*4/5),
+                    height: screenHeight,
+                    width: screenWidth/4,
+                    padding: new EdgeInsets.only(left: 5),
+                    child: 
+                    Marquee(
+                      text:'偵測左眼座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '眼睛－－－已偵測' + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '眼睛－－－已偵測' + '\n'
+                            '偵測右眼座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '眉毛－－－已偵測' + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '偵測左眉毛座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '眉毛－－－已偵測' + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '偵測右眉毛座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '鼻子－－－已偵測' + '\n'
+                            '偵測鼻翼座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '嘴巴－－－已偵測' + '\n'
+                            '偵測嘴唇座標: ' + (Random().nextDouble()*10000).toString() + '\n'
+                            '分析該區域數值: ' + (Random().nextDouble()*10000).toString() + '\n'
+                      ,
+                      style: const TextStyle(fontWeight: FontWeight.normal, color:Colors.white, fontSize: 15, ),
+                      scrollAxis: Axis.vertical,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      velocity: 150.0,
+                      // pauseAfterRound: Duration(milliseconds: 500),
+                      startPadding: 0.0,
+                      // accelerationDuration: Duration(seconds: 1),
+                      // accelerationCurve: Curves.linear,
+                      // decelerationDuration: Duration(milliseconds: 500),
+                      // decelerationCurve: Curves.easeOut,
+                      )
+                  ),
+
+                ],
+              ),
+              
         Align(
             alignment: Alignment.bottomCenter,
             child: Container(

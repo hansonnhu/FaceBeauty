@@ -290,14 +290,29 @@ class PreviewPage extends StatelessWidget {
                             builder: (BuildContext context) {
                               dialogContext = context;
                               return Center(
-                                child: Container(
-                                  // color: Colors.white,
-                                  child: Image.asset(
-                                    // "assets/laodingGIF.imageset/loading6.gif",
-                                    "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                                child: 
+                                Stack(children: [
+                                  Container(
                                     height: screenHeight,
+                                    width: screenWidth,
+                                    child: Image.asset(
+                                      // "assets/laodingGIF.imageset/loading6.gif",
+                                      "assets/analysisGIF.imageset/analysisGIF.gif",
+                                      height: screenHeight,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
+                                  
+                                  Container(
+                                    // color: Colors.white,
+                                    child: Image.asset(
+                                      // "assets/laodingGIF.imageset/loading6.gif",
+                                      "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                                      height: screenHeight,
+                                      
+                                    ),
+                                  ),
+                                ],),
                               );
                             });
 
