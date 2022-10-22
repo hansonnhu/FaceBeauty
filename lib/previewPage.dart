@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
+import 'analysisAnimation.dart';
 // import 'package:image/image.dart';
 
 // String serverMsg = '';
@@ -287,42 +288,52 @@ class PreviewPage extends StatelessWidget {
                       onPressed: () async {
                         print('按下送出按鈕');
                         var oriImg = File(picture.path); //原圖
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AnalysisAnimation(),
+                              maintainState: true,
+                            ),
+                          );
+
+                        
 
                         //AlertDialog
-                        BuildContext dialogContext = context;
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              dialogContext = context;
-                              return 
-                              MediaQuery.removePadding(
-                                removeTop: true,
-                                removeBottom: true,
-                                context: context,
-                                child:
-                                Center(
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                          child: Image.asset(
-                                        "assets/analysisGIF.imageset/analysisGIF.gif",
-                                        fit: BoxFit.cover,
-                                      )),
-                                      Image.asset(
-                                          "assets/laodingGIF.imageset/loading_0_to_100.gif",
-                                          height: screenHeight,
-                                        ),
-                                    ],
-                                  ),
-                                )
-                              );
-                            });
+                        // BuildContext dialogContext = context;
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       dialogContext = context;
+                        //       return 
+                        //       MediaQuery.removePadding(
+                        //         removeTop: true,
+                        //         removeBottom: true,
+                        //         context: context,
+                        //         child:
+                        //         Center(
+                        //           child: Stack(
+                        //             children: [
+                        //               Positioned.fill(
+                        //                   child: Image.asset(
+                        //                 "assets/analysisGIF.imageset/analysisGIF.gif",
+                        //                 fit: BoxFit.cover,
+                        //               )),
+                        //               Image.asset(
+                        //                   "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                        //                   height: screenHeight,
+                        //                 ),
+                        //             ],
+                        //           ),
+                        //         )
+                        //       );
+                        //     });
 
                         //上傳至server
                         await uploadImg(oriImg);
 
                         if (imgUploaded == true) {
-                          Navigator.pop(dialogContext);
+                          // Navigator.pop(dialogContext);
+                          Navigator.pop(context);
                           Navigator.pop(context);
                           Navigator.push(
                             context,
@@ -332,7 +343,8 @@ class PreviewPage extends StatelessWidget {
                             ),
                           );
                         } else {
-                          Navigator.pop(dialogContext);
+                          // Navigator.pop(dialogContext);
+                          Navigator.pop(context);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
