@@ -24,22 +24,24 @@ bool imgUploaded = false;
 var oriImgNum = 0;
 // var cameraCorrectionFlag = 0;
 
-
-
 class PreviewPage extends StatelessWidget {
-  const PreviewPage({Key? key, required this.picture, required this.type, required this.cameraNum, required this.cameraCorrectionFlag}) : super(key: key);
+  const PreviewPage(
+      {Key? key,
+      required this.picture,
+      required this.type,
+      required this.cameraNum,
+      required this.cameraCorrectionFlag})
+      : super(key: key);
 
   final XFile picture;
   final String type;
   final int cameraNum;
   final int cameraCorrectionFlag;
-  
 
   @override
   Widget build(BuildContext context) {
     String bigImgString = '';
     String smallImgString = '';
-    
 
     // 抓取UserInfo
     _loadUserInfo() async {
@@ -53,8 +55,9 @@ class PreviewPage extends StatelessWidget {
     if (firstModifyFlag) {
       _loadUserInfo();
     }
-    processingMsg(List<int> intListServerMsg, String oriImgString)async {
-      String serverMsg = utf8.decode(intListServerMsg); //將 intListServerMsg 解碼為 String
+    processingMsg(List<int> intListServerMsg, String oriImgString) async {
+      String serverMsg =
+          utf8.decode(intListServerMsg); //將 intListServerMsg 解碼為 String
 
       print('server長度');
       print(serverMsg.split('&').length);
@@ -70,28 +73,29 @@ class PreviewPage extends StatelessWidget {
 
       SharedPreferences prefs = await SharedPreferences.getInstance(); //讀取資料庫
       await prefs.setInt('newImgData?', 1);
-      List<String> oriImgStringList = prefs.getStringList(account + 'oriImgStringList') ??
-          []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
+      List<String> oriImgStringList =
+          prefs.getStringList(account + 'oriImgStringList') ??
+              []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
       oriImgNum = oriImgStringList
           .length; //取得當前 oriImg 之 index(由於是拍照或選擇照片上傳，因此為最新的一張 oriImg)
       prefs.setInt('oriImgIndex', oriImgNum); //將oriImg 之 index 存入資料庫
       //將最新拍的 oriImgString insert 到資料庫中 oriImgString List
       oriImgStringList.insert(oriImgStringList.length, oriImgString);
-      await prefs.setStringList(account+'oriImgStringList', oriImgStringList);
+      await prefs.setStringList(account + 'oriImgStringList', oriImgStringList);
 
       // 將最新的 datetime 更新至資料庫中
       List<String> allDateTimeList =
-          prefs.getStringList(account+'allDateTimeList') ?? [];
+          prefs.getStringList(account + 'allDateTimeList') ?? [];
       DateTime dateTime = DateTime.now();
       allDateTimeList.insert(
           allDateTimeList.length, dateTime.toString().substring(0, 19));
-      await prefs.setStringList(account+'allDateTimeList', allDateTimeList);
+      await prefs.setStringList(account + 'allDateTimeList', allDateTimeList);
 
       //將此次resultAllMsg更新至資料庫()
-      List<String> temp = prefs.getStringList(account+'resultAllMsgList') ?? [];
+      List<String> temp =
+          prefs.getStringList(account + 'resultAllMsgList') ?? [];
       temp.insert(temp.length, serverMsg);
-      await prefs.setStringList(account+'resultAllMsgList', temp);
-      
+      await prefs.setStringList(account + 'resultAllMsgList', temp);
     }
 
     //將照片上傳
@@ -116,16 +120,16 @@ class PreviewPage extends StatelessWidget {
       //     // oriImg = await FlutterNativeImage.compressImage(oriImg.path,
       //     // targetHeight: (_decodedImage.width / resizeRate).round(),
       //     // targetWidth: (_decodedImage.height / resizeRate).round());
-          
+
       //   }else{
       //     oriImg = await FlutterNativeImage.compressImage(oriImg.path,
       //     targetWidth: (_decodedImage.width / resizeRate).round(),
       //     targetHeight: (_decodedImage.height / resizeRate).round());
       //   }
-        
+
       //   // _decodedImage = await decodeImageFromList(oriImg.readAsBytesSync());
       // }
-      
+
       /////////////////////////////////////////////////////////////////傳給新server////////////////////////////////////////////////
       ///用於將影像送去舊server分析之前進行前處理
       //獲取原圖及小圖的bytes
@@ -141,7 +145,13 @@ class PreviewPage extends StatelessWidget {
       // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
       int randomNum = Random().nextInt(100000);
       String tempClientNumString = account + randomNum.toString();
-      String msg = (tempClientNumString + '<' +'imgPreprocessing'+ '<' + oriImgString + '<' + ";");
+      String msg = (tempClientNumString +
+          '<' +
+          'imgPreprocessing' +
+          '<' +
+          oriImgString +
+          '<' +
+          ";");
       // listen to the received data event stream
       List<int> intListServerMsg = [];
       socket.listen((List<int> event) async {
@@ -152,20 +162,18 @@ class PreviewPage extends StatelessWidget {
       socket.add(utf8.encode(msg));
 
       int serverCount = 0;
-      while(true){
+      while (true) {
         await Future.delayed(const Duration(milliseconds: 1000));
         String temp = await utf8.decode(intListServerMsg);
-        if(temp.contains(';')){
+        if (temp.contains(';')) {
           print('已收到新server之結束信號 ;');
           // 發送中斷連線之訊息
-          String msg = (tempClientNumString + '<' +'disconnect'+";");
+          String msg = (tempClientNumString + '<' + 'disconnect' + ";");
           socket.add(utf8.encode(msg));
           await socket.close();
           // await processingMsg(intListServerMsg, oriImgString);
           break;
-        }
-        else {
-          
+        } else {
           // serverCount += 1;
           // if(serverCount == 40){
           //   String msg = (tempClientNumString + '<' +'disconnect'+";");
@@ -191,42 +199,39 @@ class PreviewPage extends StatelessWidget {
       msg = (account + "<" + oriImgString + "<" + smallImgString + ";");
       // String msg = (account + "<" + bigImgString + "<" + smallImgString + ";");
 
-      
-
       // listen to the received data event stream
-      
+
       intListServerMsg = [];
       socket.listen((List<int> event) async {
-          intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
+        intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
       });
       // send hello
       socket.add(utf8.encode(msg));
 
       serverCount = 0;
       // int serverMsgOffset = 0;
-      while(true){
+      while (true) {
         // try{
-          await Future.delayed(const Duration(milliseconds: 4000));
-          String temp = await utf8.decode(intListServerMsg);
-          // print(temp);
-          // print(temp.split('&').length.toString());
-          if(temp.contains(';')){
-            print('已收到舊版server結束信號 ;');
-            await socket.close();
-            await processingMsg(intListServerMsg, oriImgString);
-            return;
-          }
-          serverCount += 1;
-          if(serverCount == 15){
-            await socket.close();
-            return;
-          }
-          
-          
+        await Future.delayed(const Duration(milliseconds: 4000));
+        String temp = await utf8.decode(intListServerMsg);
+        // print(temp);
+        // print(temp.split('&').length.toString());
+        if (temp.contains(';')) {
+          print('已收到舊版server結束信號 ;');
+          await socket.close();
+          await processingMsg(intListServerMsg, oriImgString);
+          return;
+        }
+        serverCount += 1;
+        if (serverCount == 15) {
+          await socket.close();
+          return;
+        }
+
         // }catch(e){
         //   print(e);
         // }
-        
+
       }
       /////////////////////////////////////////////////////////////////傳給舊server////////////////////////////////////////////////
     }
@@ -254,16 +259,16 @@ class PreviewPage extends StatelessWidget {
                         child: Image.file(File(picture.path),
                             fit: BoxFit.cover, width: screenWidth - 20),
                       )),
-                  (cameraCorrectionFlag == 0)?
-                  Container():
-                  Container(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: ClipRRect(
-                        child: Image.asset(
-                            'assets/face_3.imageset/face_3@3x.png',
-                            fit: BoxFit.cover,
-                            width: screenWidth - 12),
-                      ))
+                  (cameraCorrectionFlag == 0)
+                      ? Container()
+                      : Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: ClipRRect(
+                            child: Image.asset(
+                                'assets/face_3.imageset/face_3@3x.png',
+                                fit: BoxFit.cover,
+                                width: screenWidth - 12),
+                          ))
                 ],
               )),
           Expanded(
@@ -290,31 +295,31 @@ class PreviewPage extends StatelessWidget {
                             builder: (BuildContext context) {
                               dialogContext = context;
                               return Center(
-                                child: 
-                                Stack(children: [
-                                  Positioned.fill(
-                                    child: Image.asset(
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                        child: Image.asset(
                                       // "assets/laodingGIF.imageset/loading6.gif",
                                       "assets/analysisGIF.imageset/analysisGIF.gif",
-                                      height: screenHeight+100,
+                                      // height: screenHeight+100,
                                       fit: BoxFit.cover,
                                     )),
-                                  // Container(
-                                  //   height: double.infinity,
-                                  //   width: double.infinity,
-                                  //   child: 
-                                  // ),
-                                  
-                                  Container(
-                                    // color: Colors.white,
-                                    child: Image.asset(
-                                      // "assets/laodingGIF.imageset/loading6.gif",
-                                      "assets/laodingGIF.imageset/loading_0_to_100.gif",
-                                      height: screenHeight,
-                                      
+                                    // Container(
+                                    //   height: double.infinity,
+                                    //   width: double.infinity,
+                                    //   child:
+                                    // ),
+
+                                    Container(
+                                      // color: Colors.white,
+                                      child: Image.asset(
+                                        // "assets/laodingGIF.imageset/loading6.gif",
+                                        "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                                        height: screenHeight,
+                                      ),
                                     ),
-                                  ),
-                                ],),
+                                  ],
+                                ),
                               );
                             });
 
