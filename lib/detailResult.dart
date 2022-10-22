@@ -10,7 +10,7 @@ bool imgLoadedFlag = false;
 //資料庫data
 List<String> resultAllMsg = [];//server 回傳的所有data，包含斷語。
 String cropFace_points_string = "";//全臉點圖String
-Uint8List basicImgByte = Uint8List(1000000);//全臉點圖
+Uint8List basicImgByte = Uint8List(10);//全臉點圖
 
 
 class DetailResult extends StatefulWidget {
@@ -153,6 +153,7 @@ class _DetailResultState extends State<DetailResult>
                             ),
                           ),
                           const SizedBox(
+
                             height: 30,
                           ),
                         ],

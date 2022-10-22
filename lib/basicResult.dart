@@ -32,7 +32,7 @@ class _BasicResultState extends State<BasicResult>
   //此頁面要用到之data
   String resultBasicMsg = ''; //簡要斷語String
   String oriImgString = ''; //資料庫內最新的原圖相片
-  Uint8List basicImgByte = Uint8List(1000000); //全臉點圖
+  Uint8List basicImgByte = Uint8List(10); //全臉點圖
   List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
   List<String> basic_contentOfTitle = []; //basic_title的內文
 
@@ -183,6 +183,7 @@ class _BasicResultState extends State<BasicResult>
     int secondCount = 0;
     int imgNumOffset = 0;
     while(true){
+      await Future.delayed(Duration(milliseconds: 1000));
       int returnImgNum = await utf8.decode(intListServerMsg).split(';').length;
       if(imgNumOffset != returnImgNum){
         imgNumOffset = returnImgNum;
@@ -197,14 +198,38 @@ class _BasicResultState extends State<BasicResult>
           _getAllPic(intListServerMsg);
           return;
       }
-      // secondCount+=1;
-      // if(secondCount == 300){
-      //   String msg = tempClientNumString + '<' +'disconnect' + ';';
-      //   makeImgServerSocket.add(utf8.encode(msg));
-      //   await makeImgServerSocket.close();
-      //   return;
-      // }
-      await Future.delayed(Duration(milliseconds: 1000));
+      secondCount+=1;
+      if(secondCount == 15){
+        String msg = tempClientNumString + '<' +'disconnect' + ';';
+        makeImgServerSocket.add(utf8.encode(msg));
+        await makeImgServerSocket.close();
+        // imgLoadedFlag = true;
+        // if (firstGetResult_basic_flag) {
+        //   if (mounted) {
+        //     firstGetResult_basic_flag = false;
+        //     setState(() {});
+        //   } else {
+        //     Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
+        //   }
+        // }
+        // setState(() {
+          //AlertDialog
+          Navigator.pop(context);
+          BuildContext dialogContext = context;
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                dialogContext = context;
+                return const AlertDialog(
+                  title: Text('此相片繪圖時發生問題'),
+                  content: Text('請換其他張圖測試'),
+                );
+              });
+          
+        // });
+        break;
+      }
+      
     }
   }
 
