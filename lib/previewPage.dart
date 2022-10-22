@@ -292,16 +292,18 @@ class PreviewPage extends StatelessWidget {
                               return Center(
                                 child: 
                                 Stack(children: [
-                                  Container(
-                                    height: double.infinity,
-                                    width: double.infinity,
+                                  Positioned.fill(
                                     child: Image.asset(
                                       // "assets/laodingGIF.imageset/loading6.gif",
                                       "assets/analysisGIF.imageset/analysisGIF.gif",
                                       height: screenHeight+100,
                                       fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                    )),
+                                  // Container(
+                                  //   height: double.infinity,
+                                  //   width: double.infinity,
+                                  //   child: 
+                                  // ),
                                   
                                   Container(
                                     // color: Colors.white,
