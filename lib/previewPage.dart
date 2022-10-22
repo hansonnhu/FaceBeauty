@@ -294,32 +294,27 @@ class PreviewPage extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               dialogContext = context;
-                              return Center(
-                                child: Stack(
-                                  children: [
-                                    Positioned.fill(
-                                        child: Image.asset(
-                                      // "assets/laodingGIF.imageset/loading6.gif",
-                                      "assets/analysisGIF.imageset/analysisGIF.gif",
-                                      // height: screenHeight+100,
-                                      fit: BoxFit.cover,
-                                    )),
-                                    // Container(
-                                    //   height: double.infinity,
-                                    //   width: double.infinity,
-                                    //   child:
-                                    // ),
-
-                                    Container(
-                                      // color: Colors.white,
-                                      child: Image.asset(
-                                        // "assets/laodingGIF.imageset/loading6.gif",
-                                        "assets/laodingGIF.imageset/loading_0_to_100.gif",
-                                        height: screenHeight,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              return 
+                              MediaQuery.removePadding(
+                                removeTop: true,
+                                removeBottom: true,
+                                context: context,
+                                child:
+                                Center(
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                          child: Image.asset(
+                                        "assets/analysisGIF.imageset/analysisGIF.gif",
+                                        fit: BoxFit.cover,
+                                      )),
+                                      Image.asset(
+                                          "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                                          height: screenHeight,
+                                        ),
+                                    ],
+                                  ),
+                                )
                               );
                             });
 
