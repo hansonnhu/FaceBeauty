@@ -224,7 +224,7 @@ class PreviewPage extends StatelessWidget {
           return;
         }
         serverCount += 1;
-        if (serverCount == 15) {
+        if (serverCount == 10) {
           await socket.close();
           return;
         }

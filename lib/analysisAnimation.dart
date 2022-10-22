@@ -18,24 +18,26 @@ class _AnalysisAnimationState extends State<AnalysisAnimation> {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-    return MediaQuery.removePadding(
-        removeTop: true,
-        removeBottom: true,
-        context: context,
-        child: Center(
-          child: Stack(
-            children: [
-              Positioned.fill(
-                  child: Image.asset(
-                "assets/analysisGIF.imageset/analysisGIF.gif",
-                fit: BoxFit.cover,
-              )),
-              Image.asset(
-                "assets/laodingGIF.imageset/loading_0_to_100.gif",
-                height: screenHeight,
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: MediaQuery.removePadding(
+            removeTop: true,
+            removeBottom: true,
+            context: context,
+            child: Center(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                      child: Image.asset(
+                    "assets/analysisGIF.imageset/analysisGIF.gif",
+                    fit: BoxFit.cover,
+                  )),
+                  Image.asset(
+                    "assets/laodingGIF.imageset/loading_0_to_100.gif",
+                    height: screenHeight,
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            )));
   }
 }
