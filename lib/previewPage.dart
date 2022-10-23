@@ -20,9 +20,7 @@ import 'analysisAnimation.dart';
 
 // String serverMsg = '';
 String account = "";
-bool firstModifyFlag = true;
-bool imgUploaded = false;
-var oriImgNum = 0;
+
 // var cameraCorrectionFlag = 0;
 
 class PreviewPage extends StatelessWidget {
@@ -43,6 +41,9 @@ class PreviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     String bigImgString = '';
     String smallImgString = '';
+    bool firstModifyFlag = true;
+    bool imgUploaded = false;
+    var oriImgNum = 0;
 
     // 抓取UserInfo
     _loadUserInfo() async {
