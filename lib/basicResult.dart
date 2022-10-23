@@ -39,49 +39,48 @@ class _BasicResultState extends State<BasicResult>
   @override
   bool get wantKeepAlive => true;
 
-  void _getAllPic(List<int> intListServerMsg)async {
+  _getAllPic(List<int> intListServerMsg)async {
     String serverMsg = ''; //serverMsg
     serverMsg = utf8.decode(intListServerMsg);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // 儲存 Drawing server 回傳的所有圖片(臉型、比例圖、眉毛、眼睛...等等)
     //cropBitmap_arrow_string
     String cropBitmap_arrow_string = serverMsg.split(';')[1];
-    prefs.setString('cropBitmap_arrow_string', cropBitmap_arrow_string);
+    await prefs.setString('cropBitmap_arrow_string', cropBitmap_arrow_string);
 
     //cropFace_sketch_string
     String cropFace_sketch_string = serverMsg.split(';')[2];
-    prefs.setString('cropFace_sketch_string', cropFace_sketch_string);
+    await prefs.setString('cropFace_sketch_string', cropFace_sketch_string);
 
     //cropFace_fake_string
     String cropFace_fake_string = serverMsg.split(';')[3];
-    prefs.setString('cropFace_fake_string', cropFace_fake_string);
+    await prefs.setString('cropFace_fake_string', cropFace_fake_string);
 
     //cropFace_points_string
     cropFace_points_string = serverMsg.split(';')[0];
-    prefs.setString('cropFace_points_string', cropFace_points_string);
+    await prefs.setString('cropFace_points_string', cropFace_points_string);
 
     //cropFace_arrow_string
     String cropFace_arrow_string = serverMsg.split(';')[4];
-    prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
+    await prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
 
     //cropEyebrow_arrow_string
     String cropEyebrow_arrow_string = serverMsg.split(';')[5];
-    prefs.setString('cropEyebrow_arrow_string', cropEyebrow_arrow_string);
+    await prefs.setString('cropEyebrow_arrow_string', cropEyebrow_arrow_string);
 
     //cropEye_arrow_string
     String cropEye_arrow_string = serverMsg.split(';')[6];
-    prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
+    await prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
 
     //cropEyesAndNose_arrow_string
     String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
-    prefs.setString(
-        'cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
+    await prefs.setString('cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
 
     //cropMouth_arrow_string
     String cropMouth_arrow_string = serverMsg.split(';')[8];
-    prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
+    await prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
 
-    basicImgByte = base64Decode(cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
+    basicImgByte = await base64Decode(cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
     imgLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
     // firstGetResult_basic_flag = false;
     // setState(() {});
@@ -195,7 +194,7 @@ class _BasicResultState extends State<BasicResult>
           String msg = tempClientNumString + '<' +'disconnect' + ';';
           makeImgServerSocket.add(utf8.encode(msg));
           await makeImgServerSocket.close();
-          _getAllPic(intListServerMsg);
+          await _getAllPic(intListServerMsg);
           return;
       }
       secondCount+=1;
