@@ -42,6 +42,7 @@ dependencies:
   image: ^3.2.0
   exif: ^3.1.2
   marquee: ^2.2.3
+  charset_converter: ^2.1.0
   flutter:
     sdk: flutter
 
@@ -50,6 +51,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   camera_avfoundation: ^0.9.8+4
+  # big5: ^0.0.4
+  # big5: ^0.0.4
+
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.0

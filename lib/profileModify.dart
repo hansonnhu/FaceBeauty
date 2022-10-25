@@ -10,6 +10,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:big5/big5.dart';
 
 
 TextEditingController nameCon = TextEditingController();
@@ -111,8 +112,8 @@ class _ProfileModifyState extends State<ProfileModify> {
     
 
     //更改userInfo
-    _modifyUserInfo(nameCon, genderCon, ageCon, weightCon, phoneCon, emailCon,
-        addressCon, doctorCon) async {
+    _modifyUserInfo(name, gender, age, weight, phone, email,
+        address, doctor) async {
       //與server溝通
       Socket socket = await Socket.connect('140.117.168.12', 54544);
       print('connected');
@@ -123,26 +124,27 @@ class _ProfileModifyState extends State<ProfileModify> {
       });
       String msg = account +
           "<" +
-          nameCon.text +
+          name +
           "<" +
-          genderCon.text +
+          gender +
           "<" +
-          ageCon.text +
+          age +
           "<" +
-          weightCon.text +
+          weight +
           "<" +
-          phoneCon.text +
+          phone +
           "<" +
-          emailCon.text +
+          email +
           "<" +
-          addressCon.text +
+          address +
           "<" +
-          doctorCon.text +
+          doctor +
           ";";
+          print(msg);
       // send hello
       socket.add(utf8.encode(msg));
       // wait 5 seconds
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 2));
       // .. and close the socket
       socket.close();
     }
@@ -684,8 +686,8 @@ class _ProfileModifyState extends State<ProfileModify> {
                           });
 
                           //更新userInfo至server
-                          await _modifyUserInfo(nameCon, genderCon, ageCon, weightCon,
-                              phoneCon, emailCon, addressCon, doctorCon);
+                          await _modifyUserInfo(name, gender, age, weight,
+                              phone, email, address, doctor);
                           await _loadUserInfo();
                           //延遲一秒後將AlertDialog pop
                           
