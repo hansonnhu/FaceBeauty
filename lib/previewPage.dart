@@ -65,7 +65,7 @@ class PreviewPage extends StatelessWidget {
       print(serverMsg.split('&').length);
       // print('data = ' + serverMsg);
       // 若回傳data不正確(有漏)，請使用者重新拍照
-      if (serverMsg.split('&').length != 14) {
+      if (serverMsg.split('&').length != 12) {
         print('失敗');
         imgUploaded = false;
         return;
@@ -211,11 +211,21 @@ class PreviewPage extends StatelessWidget {
       socket.add(utf8.encode(msg));
 
       serverCount = 0;
+      String temp = '';
       // int serverMsgOffset = 0;
       while (true) {
         // try{
-        await Future.delayed(const Duration(milliseconds: 4000));
-        String temp = await utf8.decode(intListServerMsg);
+        await Future.delayed(const Duration(milliseconds: 1000));
+          try{
+          temp = utf8.decode(intListServerMsg);
+          
+          }catch(e){
+            print(e);
+            // print('長度不符: ' + (intListServerMsg.length).toString());
+            // intListServerMsg.add(59);
+          }
+        
+        
         // print(temp);
         // print(temp.split('&').length.toString());
         if (temp.contains(';')) {
@@ -225,7 +235,7 @@ class PreviewPage extends StatelessWidget {
           return;
         }
         serverCount += 1;
-        if (serverCount == 10) {
+        if (serverCount == 30) {
           await socket.close();
           return;
         }
