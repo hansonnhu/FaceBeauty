@@ -222,7 +222,7 @@ class PreviewPage extends StatelessWidget {
           }catch(e){
             print(e);
             // print('長度不符: ' + (intListServerMsg.length).toString());
-            // intListServerMsg.add(59);
+            // intListServerMsg.replaceRange(start, end, replacements)
           }
         
         

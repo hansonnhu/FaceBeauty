@@ -143,7 +143,7 @@ class _BasicResultState extends State<BasicResult>
         //從 allRatio list中抓取ratio(數字部分)
         String ratio = allRatio[i];
         ratio = ratio.split(':')[1];
-        ratio = ratio.replaceAll(' ', '');
+        ratio = ratio.replaceAll(' ', '').replaceAll(';', '');
         // print(ratio);
         String tempName = 'ratio_' + i.toString(); //ratio 序號，raiot_0 ~ ratio_33
         List<String> oneRatioString = await prefs.getStringList(account+tempName) ?? []; // 先抓取資料庫裡的 list string
