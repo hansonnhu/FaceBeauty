@@ -148,10 +148,10 @@ class _BasicResultState extends State<BasicResult>
         String tempName = 'ratio_' + i.toString(); //ratio 序號，raiot_0 ~ ratio_33
         List<String> oneRatioString = await prefs.getStringList(account+tempName) ?? []; // 先抓取資料庫裡的 list string
         oneRatioString.insert(oneRatioString.length, ratio); //將新的ratio insert 到此list
-        prefs.setStringList(account+tempName,oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
+        await prefs.setStringList(account+tempName,oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
         trendTitleList.insert(trendTitleList.length,allRatio[i].split(':')[0]);
       }
-      prefs.setStringList('trendTitleList', trendTitleList);
+      await prefs.setStringList('trendTitleList', trendTitleList);
     }else{
       print('造訪舊的img');
     }

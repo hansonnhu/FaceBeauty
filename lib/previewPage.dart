@@ -80,7 +80,7 @@ class PreviewPage extends StatelessWidget {
               []; //讀取資料庫內過往所有oriImgString List(因為每拍一張就會存在資料庫)
       oriImgNum = oriImgStringList
           .length; //取得當前 oriImg 之 index(由於是拍照或選擇照片上傳，因此為最新的一張 oriImg)
-      prefs.setInt('oriImgIndex', oriImgNum); //將oriImg 之 index 存入資料庫
+      await prefs.setInt('oriImgIndex', oriImgNum); //將oriImg 之 index 存入資料庫
       //將最新拍的 oriImgString insert 到資料庫中 oriImgString List
       oriImgStringList.insert(oriImgStringList.length, oriImgString);
       await prefs.setStringList(account + 'oriImgStringList', oriImgStringList);
