@@ -32,8 +32,6 @@ class Result extends StatefulWidget {
 class _ResultState extends State<Result> {
   @override
   Widget build(BuildContext context) {
-    // double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
-    // double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
     return DefaultTabController(
         length: 3,
@@ -47,28 +45,7 @@ class _ResultState extends State<Result> {
                 Tab(text: '比例分析'),
               ],
             ),
-            actions: const <Widget>[
-              // Container(
-              //   padding: const EdgeInsets.all(
-              //     8
-              //   ),
-              //   child: ElevatedButton(
-              //     child: Text('返回'),
-              //     style: ElevatedButton.styleFrom(
-              //         onSurface: Colors.white60,
-              //         primary: Colors.teal,
-              //         padding: const EdgeInsets.symmetric(
-              //             horizontal: 10, vertical: 5),
-              //         textStyle: const TextStyle(
-              //             fontSize: 20, fontWeight: FontWeight.normal)),
-              //     onPressed: () async {
-              //       log('按下返回按鈕');
-              //       Navigator.pop(context);
-                    
-              //     },
-              //   ),
-              // )
-            ],
+
           ),
           body: const TabBarView(
             children: [

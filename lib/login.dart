@@ -83,8 +83,8 @@ class _LoginState extends State<Login> {
     _modifyUserInfo(TextEditingController accountCon,
         TextEditingController passwordCon) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('account', accountCon.text);
-      prefs.setString('password', passwordCon.text);
+      await prefs.setString('account', accountCon.text);
+      await prefs.setString('password', passwordCon.text);
     }
 
 

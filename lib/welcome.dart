@@ -269,9 +269,9 @@ class _WelcomeState extends State<Welcome> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     if (welcomeIsChecked == false) {
-                      prefs.setInt('welcomeFlag', 1);
+                      await prefs.setInt('welcomeFlag', 1);
                     } else {
-                      prefs.setInt('welcomeFlag', 0);
+                      await prefs.setInt('welcomeFlag', 0);
                     }
                     Navigator.push(
                       context,

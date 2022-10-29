@@ -83,15 +83,15 @@ class _BasicResultState extends State<BasicResult>
     basicImgByte = await base64Decode(cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
     imgLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
     // firstGetResult_basic_flag = false;
-    // setState(() {});
-    if (firstGetResult_basic_flag) {
-      if (mounted) {
-        firstGetResult_basic_flag = false;
-        setState(() {});
-      } else {
-        Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
-      }
-    }
+    setState(() {}); 
+    // if (firstGetResult_basic_flag) {
+    //   if (mounted) {
+    //     firstGetResult_basic_flag = false;
+    //     setState(() {});
+    //   } else {
+    //     Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
+    //   }
+    // }
   }
 
   void _loadResultAllMsg() async {
@@ -166,7 +166,7 @@ class _BasicResultState extends State<BasicResult>
     var randomNum = Random().nextInt(100000);
     String tempClientNumString = account + randomNum.toString();
     print(tempClientNumString);
-    String msg = tempClientNumString + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
+    String msg = 'startCode103040023<'+tempClientNumString + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
     // String msg = pointXString + '<' + pointYString + ';';
 
     // listen to the received data event stream
@@ -202,16 +202,7 @@ class _BasicResultState extends State<BasicResult>
         String msg = tempClientNumString + '<' +'disconnect' + ';';
         makeImgServerSocket.add(utf8.encode(msg));
         await makeImgServerSocket.close();
-        // imgLoadedFlag = true;
-        // if (firstGetResult_basic_flag) {
-        //   if (mounted) {
-        //     firstGetResult_basic_flag = false;
-        //     setState(() {});
-        //   } else {
-        //     Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
-        //   }
-        // }
-        // setState(() {
+
           //AlertDialog
           Navigator.pop(context);
           BuildContext dialogContext = context;
@@ -238,9 +229,9 @@ class _BasicResultState extends State<BasicResult>
 
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
-    bool test = true;
 
-    _loadResultAllMsg();
+    if(imgLoadedFlag == false)
+      _loadResultAllMsg();
 
     return WillPopScope(
       onWillPop: () async {
@@ -318,7 +309,6 @@ class _BasicResultState extends State<BasicResult>
                                   )),
                               itemCount: basic_title.length)),
 
-                      //繼續按鈕
                     ],
                   ))),
     );

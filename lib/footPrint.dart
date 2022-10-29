@@ -109,7 +109,7 @@ class _FootPrintState extends State<FootPrint> {
                                         index.toString());
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
-                                    prefs.setInt('oriImgIndex', index);
+                                    await prefs.setInt('oriImgIndex', index);
 
                                     Navigator.push(
                                       context,

@@ -136,7 +136,7 @@ class _AllTrendState extends State<AllTrend> {
                                         SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
-                                        prefs.setInt('trendIndex', index);
+                                        await prefs.setInt('trendIndex', index);
 
                                         Navigator.push(
                                           context,
