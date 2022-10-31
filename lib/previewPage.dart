@@ -170,7 +170,7 @@ class PreviewPage extends StatelessWidget {
         if (temp.contains(';')) {
           print('已收到新server之結束信號 ;');
           // 發送中斷連線之訊息
-          String msg = (tempClientNumString + '<' + 'disconnect' + ";");
+          String msg = ('startCode103040023<'+tempClientNumString + '<' + 'disconnect' + ";");
           socket.add(utf8.encode(msg));
           await socket.close();
           // await processingMsg(intListServerMsg, oriImgString);

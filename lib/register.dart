@@ -348,7 +348,7 @@ class _RegisterState extends State<Register> {
                                            return AlertDialog(
                                           title: const Text('註冊失敗'),
                                           content:
-                                              const Text('該帳好已存在\n請重新輸入帳號密碼'),
+                                              const Text('該帳號已存在\n請重新輸入帳號密碼'),
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () => Navigator.pop(

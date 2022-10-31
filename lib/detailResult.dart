@@ -114,7 +114,7 @@ class _DetailResultState extends State<DetailResult>
                     child: 
                     Image.memory(
                       (basicImgByte),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.fitWidth,
                     ),
                   ),
                 )

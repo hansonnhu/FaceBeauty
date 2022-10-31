@@ -159,8 +159,8 @@ class _BasicResultState extends State<BasicResult>
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
-    // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-    Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
+    // Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
     // Socket makeImgServerSocket = await Socket.connect('140.117.168.10', 6969);
     print('connected');
     var randomNum = Random().nextInt(100000);
@@ -191,7 +191,7 @@ class _BasicResultState extends State<BasicResult>
       if(returnImgNum == 10){
           print('socket closed');
           print(tempClientNumString);
-          String msg = tempClientNumString + '<' +'disconnect' + ';';
+          String msg = 'startCode103040023<'+tempClientNumString + '<' +'disconnect' + ';';
           makeImgServerSocket.add(utf8.encode(msg));
           await makeImgServerSocket.close();
           await _getAllPic(intListServerMsg);
@@ -271,7 +271,7 @@ class _BasicResultState extends State<BasicResult>
                               borderRadius: BorderRadius.circular(5),
                               child: Image.memory(
                                 (basicImgByte),
-                                fit: BoxFit.fill,
+                                fit: BoxFit.fitWidth,
                               ),
                             ),
                           )),
