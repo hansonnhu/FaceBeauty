@@ -161,7 +161,10 @@ class PreviewPage extends StatelessWidget {
       });
 
       // send hello
-      socket.add(utf8.encode(msg));
+      List<int> msgBytes = [];
+      msgBytes.addAll(utf8.encode(msg));
+      msgBytes.add(0);
+      socket.add(msgBytes);
 
       int serverCount = 0;
       while (true) {
@@ -171,7 +174,10 @@ class PreviewPage extends StatelessWidget {
           print('已收到新server之結束信號 ;');
           // 發送中斷連線之訊息
           String msg = ('startCode103040023<'+tempClientNumString + '<' + 'disconnect' + ";");
-          socket.add(utf8.encode(msg));
+          List<int> msgBytes = [];
+          msgBytes.addAll(utf8.encode(msg));
+          msgBytes.add(0);
+          socket.add(msgBytes);
           await socket.close();
           // await processingMsg(intListServerMsg, oriImgString);
           break;
@@ -215,12 +221,13 @@ class PreviewPage extends StatelessWidget {
       // int serverMsgOffset = 0;
       while (true) {
         // try{
-        await Future.delayed(const Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 1500));
           try{
-          temp = utf8.decode(intListServerMsg);
-          
+            temp = utf8.decode(intListServerMsg);
           }catch(e){
             print(e);
+            continue;
+
             // print('長度不符: ' + (intListServerMsg.length).toString());
             // intListServerMsg.replaceRange(start, end, replacements)
           }

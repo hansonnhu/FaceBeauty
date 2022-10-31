@@ -159,14 +159,28 @@ class _BasicResultState extends State<BasicResult>
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
-    Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-    // Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
+    Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
     // Socket makeImgServerSocket = await Socket.connect('140.117.168.10', 6969);
     print('connected');
     var randomNum = Random().nextInt(100000);
     String tempClientNumString = account + randomNum.toString();
     print(tempClientNumString);
-    String msg = 'startCode103040023<'+tempClientNumString + '<' +'imgDrawing'+ '<' + oriImgString + '<' + pointXString + '<' + pointYString + ';';
+    String msg = 'startCode103040023<' 
+                + tempClientNumString + '<' 
+                +'imgDrawing'+ '<' 
+                + oriImgString + '<' 
+                + pointXString + '<' 
+                + pointYString + '<'
+                + basic_contentOfTitle[0].trim() + '<'
+                + basic_contentOfTitle[1].trim() + '<'
+                + basic_contentOfTitle[2].trim() + '<'
+                + basic_contentOfTitle[3].trim() + '<'
+                + basic_contentOfTitle[4].trim() + '<'
+                + basic_contentOfTitle[5].trim() + '<'
+                + basic_contentOfTitle[6].trim()
+                + ';';
+
     // String msg = pointXString + '<' + pointYString + ';';
 
     // listen to the received data event stream
@@ -177,7 +191,11 @@ class _BasicResultState extends State<BasicResult>
     });
 
     // send hello
-    makeImgServerSocket.add(utf8.encode(msg));
+    List<int> msgBytes = [];
+    msgBytes.addAll(utf8.encode(msg));
+    msgBytes.add(0);
+
+    makeImgServerSocket.add(msgBytes);
 
     int secondCount = 0;
     int imgNumOffset = 0;
@@ -192,7 +210,10 @@ class _BasicResultState extends State<BasicResult>
           print('socket closed');
           print(tempClientNumString);
           String msg = 'startCode103040023<'+tempClientNumString + '<' +'disconnect' + ';';
-          makeImgServerSocket.add(utf8.encode(msg));
+          List<int> msgBytes = [];
+          msgBytes.addAll(utf8.encode(msg));
+          msgBytes.add(0);
+          makeImgServerSocket.add(msgBytes);
           await makeImgServerSocket.close();
           await _getAllPic(intListServerMsg);
           return;
@@ -200,7 +221,10 @@ class _BasicResultState extends State<BasicResult>
       secondCount+=1;
       if(secondCount == 15){
         String msg = tempClientNumString + '<' +'disconnect' + ';';
-        makeImgServerSocket.add(utf8.encode(msg));
+        List<int> msgBytes = [];
+        msgBytes.addAll(utf8.encode(msg));
+        msgBytes.add(0);
+        makeImgServerSocket.add(msgBytes);
         await makeImgServerSocket.close();
 
           //AlertDialog
