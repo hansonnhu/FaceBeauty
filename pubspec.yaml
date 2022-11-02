@@ -51,6 +51,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   camera_avfoundation: ^0.9.8+4
+  permission_handler: ^10.2.0
   # big5: ^0.0.4
   # big5: ^0.0.4
 

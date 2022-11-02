@@ -31,7 +31,7 @@ Future<void> main() async {
   ]);
   runApp(const MaterialApp(
     home: MyApp(),  //這裡切換頁面(預設為MyApp)
-    // home: Home(),  //這裡切換頁面(預設為MyApp)
+    // home: Home(),  //這裡直接跳至home page
   ));
 }
 

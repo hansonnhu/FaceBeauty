@@ -7,13 +7,17 @@ import 'package:flutter/material.dart';
 // import 'dart:developer';
 // import 'guide.dart';
 // import 'register.dart';
-// import 'dart:io';
+import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kg_charts/kg_charts.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:ui';
+
 
 //flag
 
@@ -53,9 +57,45 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   List<Uint8List> swiper_byte_list = [Uint8List(10)];
   List<Uint8List> cropImgByteList = []; //每個crop img 的byte
   String account = '';
+  bool pngSaved = false;
 
   @override
   bool get wantKeepAlive => true;
+
+  // 儲存png
+    savePngFile(png, String account, int index) async {
+        if (await Permission.storage.request().isGranted) {   //判断是否授权,没有授权会发起授权
+          print("获得了授权");
+          Directory documentDirectory = await getApplicationDocumentsDirectory();
+          if(Platform.isIOS)
+            documentDirectory = await getApplicationDocumentsDirectory();
+          else{
+            documentDirectory = Directory('/storage/emulated/0/Download');
+            // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
+            // ignore: avoid_slow_async_io
+            if (!await documentDirectory.exists()) documentDirectory = await getExternalStorageDirectory() ?? documentDirectory;
+          }
+
+          String documentPath = documentDirectory.path;
+
+          // String id = DateTime.now().toString();
+          String id = account + '(' + index.toString() + ')';
+
+          File file = File("$documentPath/$id.png");
+          // ByteData byteData = await (png.toByteData(format: ImageByteFormat.png)) ?? ByteData(0);
+          file.writeAsBytes(png);
+          // setState(() {
+          // pdfFile = file.path;
+          // pdf = pw.Document();
+          // });
+          print('儲存 png 完成');
+          print('路徑: ' + documentPath);
+          pngSaved = true;
+        }else{
+          print("没有获得授权");
+          pngSaved = false;
+        }
+    }
 
   // 取得 雷達圖 的 score
   getScore(var min, var max, var value) {
@@ -240,10 +280,28 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                   return Center(
                       child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.memory(
-                      swiper_byte_list[index],
-                      fit: BoxFit.fitHeight,
-                    ),
+                    child: GestureDetector(
+                      onLongPress:() {
+                        print('已長按');
+                        savePngFile(swiper_byte_list[index], account, index);
+                        if(pngSaved){
+                          // 彈出 儲存完成... 視窗
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                              const AlertDialog(
+                              title: Text('pdf儲存完成，請至 下載 資料夾查看'),
+                              // content: Text('帳號不能為空!'),
+                              // 
+                            ),
+                          );
+                        }
+                      },
+                      child: Image.memory(
+                        swiper_byte_list[index],
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )
                   ));
                 },
                 pagination: const SwiperPagination(
