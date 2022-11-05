@@ -146,7 +146,7 @@ class PreviewPage extends StatelessWidget {
 
       // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
       int randomNum = Random().nextInt(100000);
-      String tempClientNumString = account + randomNum.toString();
+      String tempClientNumString = account + ':' + randomNum.toString();
       String msg = ('startCode103040023<'+tempClientNumString +
           '<' +
           'imgPreprocessing' +

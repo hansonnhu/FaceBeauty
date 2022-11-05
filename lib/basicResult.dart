@@ -164,7 +164,7 @@ class _BasicResultState extends State<BasicResult>
     // Socket makeImgServerSocket = await Socket.connect('140.117.168.10', 6969);
     print('connected');
     var randomNum = Random().nextInt(100000);
-    String tempClientNumString = account + randomNum.toString();
+    String tempClientNumString = account + ':' + randomNum.toString();
     print(tempClientNumString);
     String msg = 'startCode103040023<' 
                 + tempClientNumString + '<' 
@@ -219,7 +219,7 @@ class _BasicResultState extends State<BasicResult>
           return;
       }
       secondCount+=1;
-      if(secondCount == 15){
+      if(secondCount == 20){
         String msg = tempClientNumString + '<' +'disconnect' + ';';
         List<int> msgBytes = [];
         msgBytes.addAll(utf8.encode(msg));
