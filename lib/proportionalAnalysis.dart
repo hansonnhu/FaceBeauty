@@ -18,7 +18,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:ui';
 
-
 //flag
 
 //資料庫data
@@ -38,7 +37,6 @@ String test = '';
 List<double> radarValues = [0, 0, 0, 0, 0, 0];
 // List<String> temp = [];
 //detail文字架構
-
 
 class PorportionalAnalysis extends StatefulWidget {
   const PorportionalAnalysis({Key? key}) : super(key: key);
@@ -63,39 +61,42 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   bool get wantKeepAlive => true;
 
   // 儲存png
-    savePngFile(png, String account, int index) async {
-        if (await Permission.storage.request().isGranted) {   //判断是否授权,没有授权会发起授权
-          print("获得了授权");
-          Directory documentDirectory = await getApplicationDocumentsDirectory();
-          if(Platform.isIOS)
-            documentDirectory = await getApplicationDocumentsDirectory();
-          else{
-            documentDirectory = Directory('/storage/emulated/0/Download');
-            // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
-            // ignore: avoid_slow_async_io
-            if (!await documentDirectory.exists()) documentDirectory = await getExternalStorageDirectory() ?? documentDirectory;
-          }
+  savePngFile(png, String account, int index) async {
+    if (await Permission.storage.request().isGranted) {
+      //判断是否授权,没有授权会发起授权
+      print("获得了授权");
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      if (Platform.isIOS)
+        documentDirectory = await getApplicationDocumentsDirectory();
+      else {
+        documentDirectory = Directory('/storage/emulated/0/Download');
+        // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
+        // ignore: avoid_slow_async_io
+        if (!await documentDirectory.exists())
+          documentDirectory =
+              await getExternalStorageDirectory() ?? documentDirectory;
+      }
 
-          String documentPath = documentDirectory.path;
+      String documentPath = documentDirectory.path;
 
-          // String id = DateTime.now().toString();
-          String id = account + '(' + index.toString() + ')';
+      // String id = DateTime.now().toString();
+      String id = account + '(' + index.toString() + ')';
 
-          File file = File("$documentPath/$id.png");
-          // ByteData byteData = await (png.toByteData(format: ImageByteFormat.png)) ?? ByteData(0);
-          file.writeAsBytes(png);
-          // setState(() {
-          // pdfFile = file.path;
-          // pdf = pw.Document();
-          // });
-          print('儲存 png 完成');
-          print('路徑: ' + documentPath);
-          pngSaved = true;
-        }else{
-          print("没有获得授权");
-          pngSaved = false;
-        }
+      File file = File("$documentPath/$id.png");
+      // ByteData byteData = await (png.toByteData(format: ImageByteFormat.png)) ?? ByteData(0);
+      file.writeAsBytes(png);
+      // setState(() {
+      // pdfFile = file.path;
+      // pdf = pw.Document();
+      // });
+      print('儲存 png 完成');
+      print('路徑: ' + documentPath);
+      pngSaved = true;
+    } else {
+      print("没有获得授权");
+      pngSaved = false;
     }
+  }
 
   // 取得 雷達圖 的 score
   getScore(var min, var max, var value) {
@@ -112,7 +113,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     account = prefs.getString('account') ?? '';
 
     //temp
-    allImgStrings = prefs.getStringList(account+'oriImgStringList') ?? [];
+    allImgStrings = prefs.getStringList(account + 'oriImgStringList') ?? [];
     print('目前已上傳圖片數量');
     print(allImgStrings.length);
 
@@ -120,16 +121,22 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     print(imgLoadedFlag);
 
     //server回傳之字串處理
-    resultAllMsg = (prefs.getStringList(account+'resultAllMsgList') ?? []);
+    resultAllMsg = (prefs.getStringList(account + 'resultAllMsgList') ?? []);
 
     //從資料庫中取得 雷達圖 數據 ratio_2 、 ratio_11 、 ratio_23 、 ratio_28 、 ratio_30 、 ratio_15
     var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0; // 取得當前 oriimg 之 index
-    List<String> ratio_2_string = prefs.getStringList(account+'ratio_2') ?? [];
-    List<String> ratio_11_string = prefs.getStringList(account+'ratio_11') ?? [];
-    List<String> ratio_23_string = prefs.getStringList(account+'ratio_23') ?? [];
-    List<String> ratio_28_string = prefs.getStringList(account+'ratio_28') ?? [];
-    List<String> ratio_30_string = prefs.getStringList(account+'ratio_30') ?? [];
-    List<String> ratio_15_string = prefs.getStringList(account+'ratio_15') ?? [];
+    List<String> ratio_2_string =
+        prefs.getStringList(account + 'ratio_2') ?? [];
+    List<String> ratio_11_string =
+        prefs.getStringList(account + 'ratio_11') ?? [];
+    List<String> ratio_23_string =
+        prefs.getStringList(account + 'ratio_23') ?? [];
+    List<String> ratio_28_string =
+        prefs.getStringList(account + 'ratio_28') ?? [];
+    List<String> ratio_30_string =
+        prefs.getStringList(account + 'ratio_30') ?? [];
+    List<String> ratio_15_string =
+        prefs.getStringList(account + 'ratio_15') ?? [];
 
     radarValues[0] = double.parse(ratio_2_string[oriImgIndex]);
     radarValues[1] = double.parse(ratio_11_string[oriImgIndex]);
@@ -148,14 +155,24 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     //server回傳data的邏輯非常奇怪
     //臉部分比例分析
-    faceComment = resultAllMsg[oriImgIndex].split('&')[4].replaceAll('32:', '').replaceAll('42:', '') +
+    faceComment = resultAllMsg[oriImgIndex]
+            .split('&')[4]
+            .replaceAll('32:', '')
+            .replaceAll('42:', '') +
         '\n' +
-        resultAllMsg[oriImgIndex].split('&')[9].replaceAll('32:', '').replaceAll('42:', '') +
+        resultAllMsg[oriImgIndex]
+            .split('&')[9]
+            .replaceAll('32:', '')
+            .replaceAll('42:', '') +
         '\n' +
-        resultAllMsg[oriImgIndex].split('&')[10].replaceAll('32:', '').replaceAll('42:', '');
+        resultAllMsg[oriImgIndex]
+            .split('&')[10]
+            .replaceAll('32:', '')
+            .replaceAll('42:', '');
 
     //眉毛部分比例分析
-    eyebrowComment = resultAllMsg[oriImgIndex].split('&')[5].replaceAll('2:', '');
+    eyebrowComment =
+        resultAllMsg[oriImgIndex].split('&')[5].replaceAll('2:', '');
 
     //眼睛部分比例分析
     eyesComment = resultAllMsg[oriImgIndex].split('&')[6].replaceAll('1:', '');
@@ -258,154 +275,154 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // print(firstGetResult_proportional_flag);
 
     return Scaffold(
-      body: 
-      (imgLoadedFlag == false)? Container():
-      Container(
-      padding: const EdgeInsets.all(20),
-      color: Colors.black87,
-      width: screenWidth,
-      height: screenHeight,
+        body: (imgLoadedFlag == false)
+            ? Container()
+            : Container(
+                padding: const EdgeInsets.all(20),
+                color: Colors.black87,
+                width: screenWidth,
+                height: screenHeight,
 
-      child: Container(
-          child: SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: [
-          
-           Container(
-              height: screenHeight * 2 / 5,
-              child: Swiper(
-                itemCount: 3,
-                itemBuilder: (BuildContext context, int index) {
-                  return Center(
-                      child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: GestureDetector(
-                      onLongPress:() {
-                        print('已長按');
-                        savePngFile(swiper_byte_list[index], account, index);
-                        if(pngSaved){
-                          // 彈出 儲存完成... 視窗
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                              const AlertDialog(
-                              title: Text('pdf儲存完成，請至 下載 資料夾查看'),
-                              // content: Text('帳號不能為空!'),
-                              // 
-                            ),
-                          );
-                        }
-                      },
-                      child: Image.memory(
-                        swiper_byte_list[index],
-                        fit: BoxFit.fitHeight,
-                      ),
-                    )
-                  ));
-                },
-                pagination: const SwiperPagination(
-                    builder: DotSwiperPaginationBuilder(
-                  color: Colors.black54,
-                  activeColor: Colors.white,
-                )),
-                // control: new SwiperControl(),
-                scrollDirection: Axis.horizontal,
-                autoplay: false,
-                onTap: (index) => print('點選了第$index個'),
-              )),
-            Container(
-              height: 25,
-            ),
-
-            Container(
-              padding: const EdgeInsets.only(
-                top: 20,
-                bottom: 20,
-              ),
-              child: 
-              
-              RadarWidget(
-                radarMap: RadarMapModel(
-                  legend: [
-                    LegendModel('test', Colors.yellow.shade800),
-                  ],
-                  indicator: [
-                    IndicatorModel("臉", 100), //臉長/寬
-                    IndicatorModel("額頭", 100), //額頭高度/臉長
-                    IndicatorModel("眼", 100), //眼寬/眼高
-                    IndicatorModel("人中", 100), //人中長度/臉寬
-                    IndicatorModel("嘴唇", 100), //嘴唇寬度/臉寬
-                    IndicatorModel("眉毛", 100), //眉毛寬度/高度
-                  ],
-                  data: [
-                    MapDataModel(radarValues),
-                  ],
-                  radius: 80,
-                  duration: 0,
-                  shape: Shape.square,
-                  maxWidth: 100,
-                  line: LineModel(5),
-                ),
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                isNeedDrawLegend: false,
-              ),
-            ),
-
-            //詳細內容
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              padding: new EdgeInsets.only(top: 10, bottom: 10),
-              itemCount: resultPorportionalMsgList.length,
-              itemBuilder: (context, index) => Container(
+                child: Container(
+                    child: SingleChildScrollView(
+                  physics: ScrollPhysics(),
                   child: Column(
-                children: [
-                  Row(
                     children: [
-                      Expanded(
-                          flex: 4,
-                          child: Container(
-                                  padding: const EdgeInsets.only(bottom: 20),
+                      Container(
+                          height: screenHeight * 2 / 5,
+                          child: Swiper(
+                            itemCount: 3,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Center(
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.memory(
-                                      (cropImgByteList[index]),
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                )),
-                      const SizedBox(
-                        width: 10,
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: GestureDetector(
+                                        onLongPress: () {
+                                          print('已長按');
+                                          savePngFile(swiper_byte_list[index],
+                                              account, index);
+                                          if (pngSaved) {
+                                            // 彈出 儲存完成... 視窗
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  const AlertDialog(
+                                                title:
+                                                    Text('pdf儲存完成，請至 下載 資料夾查看'),
+                                                // content: Text('帳號不能為空!'),
+                                                //
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Image.memory(
+                                          swiper_byte_list[index],
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      )));
+                            },
+                            pagination: const SwiperPagination(
+                                builder: DotSwiperPaginationBuilder(
+                              color: Colors.black54,
+                              activeColor: Colors.white,
+                            )),
+                            // control: new SwiperControl(),
+                            scrollDirection: Axis.horizontal,
+                            autoplay: false,
+                            onTap: (index) => print('點選了第$index個'),
+                          )),
+                      Container(
+                        height: 25,
                       ),
-                      Expanded(
-                        flex: 5,
-                        child: Container(
-                          width: screenWidth,
-                          child: Text(
-                            resultPorportionalMsgList[index],
-                            textAlign: TextAlign.start,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+
+                      Container(
+                        padding: const EdgeInsets.only(
+                          top: 20,
+                          bottom: 20,
+                        ),
+                        child: RadarWidget(
+                          radarMap: RadarMapModel(
+                            legend: [
+                              LegendModel('test', Colors.yellow.shade800),
+                            ],
+                            indicator: [
+                              IndicatorModel("臉", 100), //臉長/寬
+                              IndicatorModel("額頭", 100), //額頭高度/臉長
+                              IndicatorModel("眼", 100), //眼寬/眼高
+                              IndicatorModel("人中", 100), //人中長度/臉寬
+                              IndicatorModel("嘴唇", 100), //嘴唇寬度/臉寬
+                              IndicatorModel("眉毛", 100), //眉毛寬度/高度
+                            ],
+                            data: [
+                              MapDataModel(radarValues),
+                            ],
+                            radius: 80,
+                            duration: 0,
+                            shape: Shape.square,
+                            maxWidth: 100,
+                            line: LineModel(5),
                           ),
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          isNeedDrawLegend: false,
                         ),
                       ),
+
+                      //詳細內容
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: new EdgeInsets.only(top: 10, bottom: 10),
+                        itemCount: resultPorportionalMsgList.length,
+                        itemBuilder: (context, index) => Container(
+                            child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                    flex: 4,
+                                    child: Container(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.memory(
+                                          (cropImgByteList[index]),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  flex: 5,
+                                  child: Container(
+                                    width: screenWidth,
+                                    child: Text(
+                                      resultPorportionalMsgList[index],
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 50,
+                            ),
+                          ],
+                        )),
+                      )
                     ],
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              )),
-            )
-          ],
-        ),
-      )),
+                )),
 
-      //繼續按鈕
-    ));
+                //繼續按鈕
+              ));
   }
 }
