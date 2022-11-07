@@ -43,6 +43,7 @@ dependencies:
   exif: ^3.1.2
   marquee: ^2.2.3
   charset_converter: ^2.1.0
+  animated_text_kit: ^4.2.2 #文字動化
   flutter:
     sdk: flutter
 
@@ -95,21 +96,18 @@ flutter:
     - assets/guide_src4.imageset/guide_src4@3x.png
     - assets/guide_src5.imageset/guide_src5@3x.png
     - assets/face_3.imageset/face_3@3x.png
+    - assets/face_3.imageset/face.png
     - assets/iconv4.gif
     - assets/iconv3.png
     - assets/laodingGIF.imageset/loading_0_to_100.gif
-    - assets/laodingGIF.imageset/loading1.gif
-    - assets/laodingGIF.imageset/loading2.gif
-    - assets/laodingGIF.imageset/loading3.gif
-    - assets/laodingGIF.imageset/loading4.gif
-    - assets/laodingGIF.imageset/loading5.gif
+
     - assets/laodingGIF.imageset/loading6.gif
-    - assets/laodingGIF.imageset/loading7.gif
-    - assets/laodingGIF.imageset/loading8.gif
     - assets/laodingGIF.imageset/loading9.gif
+
     - assets/ad.imageset/ad@3x.png
     - assets/ad2.imageset/ad2@3x.png
     - assets/scanningGIF.imageset/scanning.gif
+    - assets/scanningGIF.imageset/scan.gif
     - assets/analysisGIF.imageset/analysisGIF.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see

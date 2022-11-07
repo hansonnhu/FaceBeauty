@@ -105,33 +105,41 @@ class _CameraScreenState extends State<CameraScreen> {
               Stack(
                 children: [
                   Container(
-                    padding: EdgeInsets.only(top: screenHeight/5),
+                    // color:Colors.white,
+                    // padding: EdgeInsets.only(top: screenHeight/5),
                     child: 
-                    
-                      ClipRRect(
-                        child:Image.asset('assets/face_3.imageset/face_3@3x.png',
-                          fit: BoxFit.cover,
-                          width: screenWidth,
-                          color: Color.fromRGBO(255, 255, 255, 0.3),
-                          colorBlendMode: BlendMode.modulate,
-                        ), 
+                      Center(
+                        child: ClipRRect(
+                          child:Image.asset(
+                            // 'assets/face_3.imageset/face_3@3x.png',
+                            'assets/face_3.imageset/face.png',
+                            fit: BoxFit.fill,
+                            width: screenWidth,
+                            color: Color.fromRGBO(255, 255, 255, 0.4),
+                            colorBlendMode: BlendMode.modulate,
+                          ), 
+                        ),
                       ),
                     
                   ),
+                  
                   Container(
-                    padding: EdgeInsets.only(top: screenHeight/5),
+                    // padding: EdgeInsets.only(top: screenHeight/5),
                     child: 
-                    ClipRRect(
-                        child:Image.asset('assets/scanningGIF.imageset/scanning.gif',
-                        fit: BoxFit.cover,
-                        width: screenWidth,
-                        color: Color.fromRGBO(255, 255, 255, 0.5),
-                        colorBlendMode: BlendMode.modulate,
-                      ), 
+                    Center(
+                      child: ClipRRect(
+                          child:Image.asset('assets/scanningGIF.imageset/scan.gif',
+                          fit: BoxFit.fill,
+                          width: screenWidth,
+                          color: Color.fromRGBO(255, 255, 255, 0.5),
+                          // colorBlendMode: BlendMode.modulate,
+                        ), 
+                      ),
                     )
                   ),
                   Container(
                     // padding: EdgeInsets.only(top: screenHeight*4/5),
+                    color: Color.fromRGBO(255, 255, 255, 0.2),
                     height: screenHeight,
                     width: screenWidth/4,
                     padding: new EdgeInsets.only(left: 5),
@@ -211,3 +219,4 @@ class _CameraScreenState extends State<CameraScreen> {
     ));
   }
 }
+

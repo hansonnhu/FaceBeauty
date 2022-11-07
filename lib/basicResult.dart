@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
-
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。
@@ -14,9 +14,6 @@ List<String> oriImgStringList = []; //資料庫內所有原圖相片(每次拍�
 List<int> pointX = [];
 List<int> pointY = []; //點x,y座標(server會回傳148個點)
 String cropFace_points_string = ''; //全臉點圖String
-
-
-
 
 class BasicResult extends StatefulWidget {
   const BasicResult({Key? key}) : super(key: key);
@@ -28,18 +25,29 @@ class _BasicResultState extends State<BasicResult>
     with AutomaticKeepAliveClientMixin {
   bool firstGetResult_basic_flag = true;
   bool imgLoadedFlag = false; //是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
+  bool deepFakeImgLoadedFlag = false;
   String account = '';
   //此頁面要用到之data
   String resultBasicMsg = ''; //簡要斷語String
   String oriImgString = ''; //資料庫內最新的原圖相片
   Uint8List basicImgByte = Uint8List(10); //全臉點圖
+  Uint8List deepFakeImgByte = Uint8List(10); //deepFake gif
   List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
   List<String> basic_contentOfTitle = []; //basic_title的內文
 
   @override
   bool get wantKeepAlive => true;
+  //將回傳之gif寫入byte
+  getDeepFakeImg(List<int> intListServerMsg) async{
+    String serverMsg = ''; //serverMsg
+    serverMsg = utf8.decode(intListServerMsg);
+    String gif_string = serverMsg.split(';')[9];
+    deepFakeImgByte = base64Decode(gif_string);
+    deepFakeImgLoadedFlag = true;
+  }
 
-  _getAllPic(List<int> intListServerMsg)async {
+  //將所有切割圖存入 SharedPreferences
+  _getAllPic(List<int> intListServerMsg) async {
     String serverMsg = ''; //serverMsg
     serverMsg = utf8.decode(intListServerMsg);
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -74,16 +82,18 @@ class _BasicResultState extends State<BasicResult>
 
     //cropEyesAndNose_arrow_string
     String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
-    await prefs.setString('cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
+    await prefs.setString(
+        'cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
 
     //cropMouth_arrow_string
     String cropMouth_arrow_string = serverMsg.split(';')[8];
     await prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
 
-    basicImgByte = await base64Decode(cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
+    basicImgByte = await base64Decode(
+        cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
     imgLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
     // firstGetResult_basic_flag = false;
-    setState(() {}); 
+    setState(() {});
     // if (firstGetResult_basic_flag) {
     //   if (mounted) {
     //     firstGetResult_basic_flag = false;
@@ -101,17 +111,20 @@ class _BasicResultState extends State<BasicResult>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     account = prefs.getString('account') ?? '';
 
-    var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0; //此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
+    var oriImgIndex = prefs.getInt('oriImgIndex') ??
+        0; //此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
     print('當前 oriImgIndex 為');
     print(oriImgIndex);
 
-    List<String> tempList = (prefs.getStringList(account+'resultAllMsgList') ?? []);
+    List<String> tempList =
+        (prefs.getStringList(account + 'resultAllMsgList') ?? []);
     resultAllMsg = tempList[oriImgIndex]; //取得該照片之 resultAllMsg
-    oriImgStringList = (prefs.getStringList(account+'oriImgStringList') ?? []);
+    oriImgStringList =
+        (prefs.getStringList(account + 'oriImgStringList') ?? []);
     oriImgString = oriImgStringList[oriImgIndex]; //取得該照片
 
     resultBasicMsg = resultAllMsg.split('&')[0]; //[0]為簡要斷語內文
-        List<String> temp = resultBasicMsg.split('[');
+    List<String> temp = resultBasicMsg.split('[');
 
     //將server回傳的資料進行字串處理，得到basic_title list 與 basic_contentOfTitle list
     int count = 0;
@@ -137,7 +150,7 @@ class _BasicResultState extends State<BasicResult>
     List<String> trendTitleList = [];
 
     int newImgDataFlag = prefs.getInt('newImgData?') ?? 0;
-    if(newImgDataFlag == 1){
+    if (newImgDataFlag == 1) {
       print('新增新的img，設定ratio');
       for (int i = 0; i < 34; i++) {
         //從 allRatio list中抓取ratio(數字部分)
@@ -146,16 +159,19 @@ class _BasicResultState extends State<BasicResult>
         ratio = ratio.replaceAll(' ', '').replaceAll(';', '');
         // print(ratio);
         String tempName = 'ratio_' + i.toString(); //ratio 序號，raiot_0 ~ ratio_33
-        List<String> oneRatioString = await prefs.getStringList(account+tempName) ?? []; // 先抓取資料庫裡的 list string
-        oneRatioString.insert(oneRatioString.length, ratio); //將新的ratio insert 到此list
-        await prefs.setStringList(account+tempName,oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
-        trendTitleList.insert(trendTitleList.length,allRatio[i].split(':')[0]);
+        List<String> oneRatioString =
+            await prefs.getStringList(account + tempName) ??
+                []; // 先抓取資料庫裡的 list string
+        oneRatioString.insert(
+            oneRatioString.length, ratio); //將新的ratio insert 到此list
+        await prefs.setStringList(account + tempName,
+            oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
+        trendTitleList.insert(trendTitleList.length, allRatio[i].split(':')[0]);
       }
       await prefs.setStringList('trendTitleList', trendTitleList);
-    }else{
+    } else {
       print('造訪舊的img');
     }
-    
 
     /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
@@ -166,20 +182,31 @@ class _BasicResultState extends State<BasicResult>
     var randomNum = Random().nextInt(100000);
     String tempClientNumString = account + ':' + randomNum.toString();
     print(tempClientNumString);
-    String msg = 'startCode103040023<' 
-                + tempClientNumString + '<' 
-                +'imgDrawing'+ '<' 
-                + oriImgString + '<' 
-                + pointXString + '<' 
-                + pointYString + '<'
-                + basic_contentOfTitle[0].trim() + '<'
-                + basic_contentOfTitle[1].trim() + '<'
-                + basic_contentOfTitle[2].trim() + '<'
-                + basic_contentOfTitle[3].trim() + '<'
-                + basic_contentOfTitle[4].trim() + '<'
-                + basic_contentOfTitle[5].trim() + '<'
-                + basic_contentOfTitle[6].trim()
-                + ';';
+    String msg = 'startCode103040023<' +
+        tempClientNumString +
+        '<' +
+        'imgDrawing' +
+        '<' +
+        oriImgString +
+        '<' +
+        pointXString +
+        '<' +
+        pointYString +
+        '<' +
+        basic_contentOfTitle[0].trim() +
+        '<' +
+        basic_contentOfTitle[1].trim() +
+        '<' +
+        basic_contentOfTitle[2].trim() +
+        '<' +
+        basic_contentOfTitle[3].trim() +
+        '<' +
+        basic_contentOfTitle[4].trim() +
+        '<' +
+        basic_contentOfTitle[5].trim() +
+        '<' +
+        basic_contentOfTitle[6].trim() +
+        ';';
 
     // String msg = pointXString + '<' + pointYString + ';';
 
@@ -199,82 +226,138 @@ class _BasicResultState extends State<BasicResult>
 
     int secondCount = 0;
     int imgNumOffset = 0;
-    while(true){
+    while (true) {
       await Future.delayed(Duration(milliseconds: 1000));
       int returnImgNum = await utf8.decode(intListServerMsg).split(';').length;
-      if(imgNumOffset != returnImgNum){
+      if (imgNumOffset != returnImgNum) {
         imgNumOffset = returnImgNum;
-        print('已處理至圖片'+imgNumOffset.toString());
+        print('已處理至圖片' + imgNumOffset.toString());
       }
-      if(returnImgNum == 10){
-          print('socket closed');
-          print(tempClientNumString);
-          String msg = 'startCode103040023<'+tempClientNumString + '<' +'disconnect' + ';';
-          List<int> msgBytes = [];
-          msgBytes.addAll(utf8.encode(msg));
-          msgBytes.add(0);
-          makeImgServerSocket.add(msgBytes);
+
+      /////////////////////////////////////擠牙膏版本
+      if (returnImgNum == 10) {
+        print('socket closed');
+        print(tempClientNumString);
+        String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+        List<int> msgBytes = [];
+        msgBytes.addAll(utf8.encode(msg));
+        msgBytes.add(0);
+        makeImgServerSocket.add(msgBytes);
+        if(imgLoadedFlag == false){
           await makeImgServerSocket.close();
           await _getAllPic(intListServerMsg);
-          return;
+          setState(() {});
+        }
+        return;
       }
-      secondCount+=1;
-      if(secondCount == 20){
-        String msg = tempClientNumString + '<' +'disconnect' + ';';
+      /////////////////////////////////////////////////////////////
+
+      ///////////////////////////////正常版本////////////////////
+      // if (returnImgNum == 10) {
+      //   if(imgLoadedFlag == false){
+      //     await _getAllPic(intListServerMsg);
+      //     setState(() {});
+      //   }
+      // }
+
+      // if (returnImgNum == 11) {
+      //   print('socket closed');
+      //   print(tempClientNumString);
+      //   String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+      //   List<int> msgBytes = [];
+      //   msgBytes.addAll(utf8.encode(msg));
+      //   msgBytes.add(0);
+      //   makeImgServerSocket.add(msgBytes);
+      //   if(deepFakeImgLoadedFlag == false){
+      //     await makeImgServerSocket.close();
+      //     await getDeepFakeImg(intListServerMsg);
+      //     setState(() {});
+      //     return;
+      //   }
+      // }
+      //////////////////////////////////////////////////////////
+
+      // 若繪圖失敗，則斷線
+      secondCount += 1;
+      if (secondCount == 20 && returnImgNum < 10) {
+        String msg = tempClientNumString + '<' + 'disconnect' + ';';
         List<int> msgBytes = [];
         msgBytes.addAll(utf8.encode(msg));
         msgBytes.add(0);
         makeImgServerSocket.add(msgBytes);
         await makeImgServerSocket.close();
 
-          //AlertDialog
-          Navigator.pop(context);
-          BuildContext dialogContext = context;
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                dialogContext = context;
-                return const AlertDialog(
-                  title: Text('此相片繪圖時發生問題'),
-                  content: Text('請換其他張圖測試'),
-                );
-              });
-          
-        // });
+        //AlertDialog
+        Navigator.pop(context);
+        BuildContext dialogContext = context;
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              dialogContext = context;
+              return const AlertDialog(
+                title: Text('此相片繪圖時發生問題'),
+                content: Text('請換其他張圖測試'),
+              );
+            });
         break;
       }
-      
     }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-    if(imgLoadedFlag == false)
-      _loadResultAllMsg();
+    if (imgLoadedFlag == false) _loadResultAllMsg();
 
     return WillPopScope(
       onWillPop: () async {
-          print('點了返回');
-          return imgLoadedFlag;
-        },
+        print('點了返回');
+        return imgLoadedFlag;
+      },
       child: Scaffold(
           body: (imgLoadedFlag == false)
               ? Container(
                   color: Colors.black87,
                   height: screenHeight,
                   width: screenWidth,
-                  child: Center(
-                    child: Container(
-                        height: screenHeight / 4,
-                        child: Image.asset(
-                          'assets/laodingGIF.imageset/loading6.gif',
-                          fit: BoxFit.fitHeight,
-                        )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: screenHeight / 8,
+                        child:
+                          Center(
+                            child: DefaultTextStyle(
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                  child: AnimatedTextKit(
+                                    repeatForever: true,
+                                    isRepeatingAnimation: true,
+                                    animatedTexts: [
+                                      FadeAnimatedText(
+                                        '繪製圖形中，請勿離開' ,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          ),
+                      ),
+                            
+                      Container(
+                          height: 50,
+                          child: Image.asset(
+                            'assets/laodingGIF.imageset/loading9.gif',
+                            fit: BoxFit.fitHeight,
+                          )),
+                          
+                    ],
                   )
 
                   // Image.network('https://giphy.com/stickers/color-hybrid-hybridcolor-eWfqPa8CO0khmCNLA5'),
@@ -289,12 +372,36 @@ class _BasicResultState extends State<BasicResult>
                       //切割圖
                       Expanded(
                           flex: 1,
-                          child: Container(
+                          child: 
+                          (deepFakeImgLoadedFlag == false) ? 
+                          Container(
+                            child: 
+                            Center(
+                              child: DefaultTextStyle(
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                  decoration: TextDecoration.none,
+                                ),
+                                child: AnimatedTextKit(
+                                  repeatForever: true,
+                                  isRepeatingAnimation: true,
+                                  animatedTexts: [
+                                    FadeAnimatedText(
+                                      '繪製動動圖中...' ,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ):
+                          Container(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5),
                               child: Image.memory(
-                                (basicImgByte),
+                                (deepFakeImgByte),
                                 fit: BoxFit.fitWidth,
                               ),
                             ),
@@ -323,7 +430,8 @@ class _BasicResultState extends State<BasicResult>
                                           basic_contentOfTitle[index].trim(),
                                           textAlign: TextAlign.start,
                                           style: const TextStyle(
-                                              color: Colors.white, fontSize: 20),
+                                              color: Colors.white,
+                                              fontSize: 20),
                                         ),
                                       ),
                                       const SizedBox(
@@ -332,7 +440,6 @@ class _BasicResultState extends State<BasicResult>
                                     ],
                                   )),
                               itemCount: basic_title.length)),
-
                     ],
                   ))),
     );

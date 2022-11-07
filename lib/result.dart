@@ -14,6 +14,7 @@ import 'detailResult.dart';
 import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'proportionalAnalysis.dart';
+import 'dart:typed_data';
 
 
 //全域變數
@@ -30,6 +31,7 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
+
   @override
   Widget build(BuildContext context) {
 

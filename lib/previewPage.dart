@@ -284,9 +284,14 @@ class PreviewPage extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 10),
                           child: ClipRRect(
                             child: Image.asset(
-                                'assets/face_3.imageset/face_3@3x.png',
+                                // 'assets/face_3.imageset/face_3@3x.png',
+                                'assets/face_3.imageset/face.png',
                                 fit: BoxFit.cover,
-                                width: screenWidth - 12),
+                                width: screenWidth - 12,
+                                color: Color.fromRGBO(255, 255, 255, 0.4),
+                                colorBlendMode: BlendMode.modulate,
+                                
+                                ),
                           ))
                 ],
               )),
