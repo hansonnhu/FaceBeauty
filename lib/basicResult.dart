@@ -109,7 +109,7 @@ class _BasicResultState extends State<BasicResult>
     if (!firstGetResult_basic_flag) return;
     print('loading msg at basic');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    account = prefs.getString('account') ?? '';
+    account = await prefs.getString('account') ?? '';
 
     var oriImgIndex = prefs.getInt('oriImgIndex') ??
         0; //此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
@@ -119,6 +119,8 @@ class _BasicResultState extends State<BasicResult>
     List<String> tempList =
         (prefs.getStringList(account + 'resultAllMsgList') ?? []);
     resultAllMsg = tempList[oriImgIndex]; //取得該照片之 resultAllMsg
+
+
     oriImgStringList =
         (prefs.getStringList(account + 'oriImgStringList') ?? []);
     oriImgString = oriImgStringList[oriImgIndex]; //取得該照片
@@ -177,11 +179,10 @@ class _BasicResultState extends State<BasicResult>
     ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
     // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
     Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
-    // Socket makeImgServerSocket = await Socket.connect('140.117.168.10', 6969);
     print('connected');
     var randomNum = Random().nextInt(100000);
     String tempClientNumString = account + ':' + randomNum.toString();
-    print(tempClientNumString);
+    // print(tempClientNumString);
     String msg = 'startCode103040023<' +
         tempClientNumString +
         '<' +
@@ -235,32 +236,7 @@ class _BasicResultState extends State<BasicResult>
       }
 
       /////////////////////////////////////擠牙膏版本
-      if (returnImgNum == 10) {
-        print('socket closed');
-        print(tempClientNumString);
-        String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
-        List<int> msgBytes = [];
-        msgBytes.addAll(utf8.encode(msg));
-        msgBytes.add(0);
-        makeImgServerSocket.add(msgBytes);
-        if(imgLoadedFlag == false){
-          await makeImgServerSocket.close();
-          await _getAllPic(intListServerMsg);
-          setState(() {});
-        }
-        return;
-      }
-      /////////////////////////////////////////////////////////////
-
-      ///////////////////////////////正常版本////////////////////
       // if (returnImgNum == 10) {
-      //   if(imgLoadedFlag == false){
-      //     await _getAllPic(intListServerMsg);
-      //     setState(() {});
-      //   }
-      // }
-
-      // if (returnImgNum == 11) {
       //   print('socket closed');
       //   print(tempClientNumString);
       //   String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
@@ -268,13 +244,38 @@ class _BasicResultState extends State<BasicResult>
       //   msgBytes.addAll(utf8.encode(msg));
       //   msgBytes.add(0);
       //   makeImgServerSocket.add(msgBytes);
-      //   if(deepFakeImgLoadedFlag == false){
+      //   if(imgLoadedFlag == false){
       //     await makeImgServerSocket.close();
-      //     await getDeepFakeImg(intListServerMsg);
+      //     await _getAllPic(intListServerMsg);
       //     setState(() {});
-      //     return;
       //   }
+      //   return;
       // }
+      /////////////////////////////////////////////////////////////
+
+      ///////////////////////////////正常版本////////////////////
+      if (returnImgNum == 10) {
+        if(imgLoadedFlag == false){
+          await _getAllPic(intListServerMsg);
+          setState(() {});
+        }
+      }
+
+      if (returnImgNum == 11) {
+        print('socket closed');
+        print(tempClientNumString);
+        String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+        List<int> msgBytes = [];
+        msgBytes.addAll(utf8.encode(msg));
+        msgBytes.add(0);
+        makeImgServerSocket.add(msgBytes);
+        if(deepFakeImgLoadedFlag == false){
+          await makeImgServerSocket.close();
+          await getDeepFakeImg(intListServerMsg);
+          setState(() {});
+          return;
+        }
+      }
       //////////////////////////////////////////////////////////
 
       // 若繪圖失敗，則斷線

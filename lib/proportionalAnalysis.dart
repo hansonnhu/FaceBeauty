@@ -106,7 +106,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
   void _loadResultAllMsg() async {
     // 從資料庫中下載 ResultMag 並分割
-    if (!firstGetResult_proportional_flag) return;
+    // if (!firstGetResult_proportional_flag) return;
     print('loading msg at proportional analysis');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -114,14 +114,10 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     //temp
     allImgStrings = prefs.getStringList(account + 'oriImgStringList') ?? [];
-    print('目前已上傳圖片數量');
-    print(allImgStrings.length);
-
-    print('imgLoadedFlag = ');
-    print(imgLoadedFlag);
+    
 
     //server回傳之字串處理
-    resultAllMsg = (prefs.getStringList(account + 'resultAllMsgList') ?? []);
+    resultAllMsg = prefs.getStringList(account + 'resultAllMsgList') ?? [];
 
     //從資料庫中取得 雷達圖 數據 ratio_2 、 ratio_11 、 ratio_23 、 ratio_28 、 ratio_30 、 ratio_15
     var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0; // 取得當前 oriimg 之 index
@@ -235,7 +231,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     // 嘴巴
     tempString = prefs.getString('cropMouth_arrow_string') ?? '';
-    tempByte = await base64Decode(tempString);
+    tempByte = base64Decode(tempString);
     cropImgByteList.insert(cropImgByteList.length, tempByte);
 
     ///temp測試用
@@ -248,15 +244,16 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // proportionalImgByte = await base64Decode(
     //     proportionalImgString); //將proportionalImgString轉成byte，才能渲染於頁面
     imgLoadedFlag = true;
+    setState(() {});
 
-    if (firstGetResult_proportional_flag) {
-      if (mounted) {
-        firstGetResult_proportional_flag = false;
-        setState(() {});
-      } else {
-        Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
-      }
-    }
+    // if (firstGetResult_proportional_flag) {
+    //   if (mounted) {
+    //     firstGetResult_proportional_flag = false;
+    //     setState(() {});
+    //   } else {
+    //     Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
+    //   }
+    // }
   }
 
   @override
@@ -271,7 +268,11 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // if(firstGetResult_proportional_flag){
     //   _loadResultAllMsg();
     // }
-    _loadResultAllMsg();
+    if(imgLoadedFlag == false){
+      _loadResultAllMsg();
+    }
+    
+    
     // print(firstGetResult_proportional_flag);
 
     return Scaffold(
