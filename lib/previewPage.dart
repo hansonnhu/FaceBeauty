@@ -141,7 +141,6 @@ class PreviewPage extends StatelessWidget {
       print('camera img');
       // Socket socket = await Socket.connect('192.168.0.201', 6969);
       Socket socket = await Socket.connect('140.117.168.12', 6969);
-      // Socket socket = await Socket.connect('140.117.168.10', 6969);
       print('新server connected');
 
       // String msg = (oriImgString + '<' + type + '<' + cameraNum.toString() + '<' + "?");
