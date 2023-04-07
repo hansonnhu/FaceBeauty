@@ -39,7 +39,7 @@ class _ResultState extends State<Result> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.black87,
+            backgroundColor: Colors.black,
             title: const TabBar(
               tabs: [
                 Tab(text: '簡要'),

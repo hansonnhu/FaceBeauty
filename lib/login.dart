@@ -3,24 +3,25 @@
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
-import 'dart:ffi';
 
 import 'package:facebeauty/guide.dart';
 import 'package:facebeauty/welcome.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 import 'register.dart';
-import 'intro.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
+import 'dart:math';
+import 'parameter.dart';
+
 
 
 
 String iniAccount = "";
 String iniPassword = "";
+var passwordRememberFlag = 0;
 TextEditingController accountCon = TextEditingController();
 TextEditingController passwordCon = TextEditingController();
 
@@ -36,7 +37,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool firstLoginFlag = true;
+  final FocusNode _usernameFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
+  void dispose() {
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
@@ -64,9 +76,13 @@ class _LoginState extends State<Login> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       iniAccount = (prefs.getString('account') ?? '');
       iniPassword = (prefs.getString('password') ?? '');
-      var passwordRememberFlag = prefs.getInt('passwordRememberFlag') ?? 1;
+      passwordRememberFlag = prefs.getInt('passwordRememberFlag') ?? 1;
       accountCon..text = iniAccount;
       passwordCon..text = iniPassword;
+      _usernameController..text = iniAccount;
+      _passwordController..text = iniPassword;
+      print('passwordRememberFlag 為 ');
+      print(passwordRememberFlag);
       if(passwordRememberFlag == 0){
         iniAccount = '';
         iniPassword = '';
@@ -98,10 +114,11 @@ class _LoginState extends State<Login> {
       firstLoginFlag == true ? Container():
       Container(
           padding: const EdgeInsets.all(30),
-          color: Colors.black87,
+          color: Colors.black,
           width: screenWidth,
           height: screenHeight,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               //傾國
               Container(
@@ -134,6 +151,7 @@ class _LoginState extends State<Login> {
 
               //帳號
               Expanded(
+                flex: 10,
                 child: SingleChildScrollView(
                     child: Column(
                   children: [
@@ -163,28 +181,24 @@ class _LoginState extends State<Login> {
 
                     //帳號輸入欄位
                     Container(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 10,
-                        ),
+                        
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular((20.0)),
+                          borderRadius: BorderRadius.circular((50.0)),
                         ),
                         child: TextField(
-                          controller: TextEditingController.fromValue(TextEditingValue(
-                  // 设置内容
-                  text: iniAccount,
-                  // 保持光标在最后
-                  selection: TextSelection.fromPosition(TextPosition(
-                      affinity: TextAffinity.downstream,
-                      offset: iniAccount.length)))),
+                          // controller: _usernameController..text = iniAccount,
+                          controller: _usernameController,
+                          focusNode: _usernameFocus,
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w500,
                           ),
-                          decoration: const InputDecoration.collapsed(
-                            hintText: '',
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(2),
+                            // labelText: 'Username',
+                            hintText: 'Enter your username',
+                            // hintText: '',
                             filled: true,
                             fillColor: Colors.white70,
                             border: OutlineInputBorder(
@@ -193,11 +207,23 @@ class _LoginState extends State<Login> {
                               color: Colors.white,
                             )),
                           ),
+                          
                           onChanged: (text) {
                             iniAccount = text;
                             accountCon..text = text;
                           },
-                        )),
+                          onTap: () {
+                            if (!_usernameFocus.hasFocus) {
+                              _usernameFocus.requestFocus();
+                            }
+                            final TextEditingValue value = _usernameController.value;
+                            _usernameController.selection = TextSelection(
+                              baseOffset: value.selection.baseOffset,
+                              extentOffset: value.selection.extentOffset);
+                          },
+                          
+                        )
+                      ),
 
                     //密碼
                     Container(
@@ -226,28 +252,25 @@ class _LoginState extends State<Login> {
 
                     //密碼輸入欄位
                     Container(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 10,
-                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular((20.0)),
                         ),
-                        child: TextField(
-                          controller: TextEditingController.fromValue(TextEditingValue(
-                  // 设置内容
-                  text: iniPassword,
-                  // 保持光标在最后
-                  selection: TextSelection.fromPosition(TextPosition(
-                      affinity: TextAffinity.downstream,
-                      offset: iniPassword.length)))),
+                        child: 
+                        TextField(
+                          
+                          // controller: _passwordController..text = iniPassword,
+                          controller: _passwordController,
+                          focusNode: _passwordFocus,
                           keyboardType: TextInputType.text,
                           style: const TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w500,
                           ),
-                          decoration: const InputDecoration.collapsed(
-                            hintText: '',
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(2),
+                            // labelText: 'Username',
+                            // hintText: 'Enter your password',
+                            // hintText: '',
                             filled: true,
                             fillColor: Colors.white70,
                             border: OutlineInputBorder(
@@ -256,11 +279,18 @@ class _LoginState extends State<Login> {
                               color: Colors.white,
                             )),
                           ),
+                          obscureText: true,
                           onChanged: (text) {
                             iniPassword = text;
                             passwordCon..text = text;
                           },
-                        )),
+                          onTap: () {
+                            if (!_passwordFocus.hasFocus) {
+                              _passwordFocus.requestFocus();
+                            }
+                          },
+                        )
+                      ),
 
                     //登入與註冊
                     Container(
@@ -281,7 +311,7 @@ class _LoginState extends State<Login> {
                                     fontSize: 25,
                                     fontWeight: FontWeight.normal)),
                             onPressed: () async {
-                              log('按下登入按鈕');
+                              print('按下登入按鈕');
                               print(accountCon.text);
                               print(passwordCon.text);
 
@@ -353,15 +383,11 @@ class _LoginState extends State<Login> {
                                 //若帳號密碼格式無誤
 
                                 //與server溝通
-                                Socket socket = await Socket.connect(
-                                    '140.117.168.12', 54915);
+                                Socket socket = await Socket.connect(serverIP, serverPort);
                                 print(
                                     'Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
                                 // listen to the received data event stream
-                                String msg = accountCon.text +
-                                    ';' +
-                                    passwordCon.text +
-                                    '<';
+
                                 
                                 String serverMsg = '';
                                 socket.listen((List<int> event) async {
@@ -370,14 +396,28 @@ class _LoginState extends State<Login> {
                                   serverMsg = utf8.decode(event);
                                 });
                                 
-                                // send hello
-                                socket.add(utf8.encode(msg));
-                                // wait 5 seconds
+                                // 傳送訊息給server
+                                var randomNum = Random().nextInt(100000);
+                                String tempClientNumString = accountCon.text + ':' + randomNum.toString();
+                                String msg = 'startCode103040023<' + tempClientNumString + '<' + 'login' + '<' + accountCon.text + '<' + passwordCon.text + ';';
+                                List<int> msgBytes = [];
+                                msgBytes.addAll(utf8.encode(msg));
+                                msgBytes.add(0);
+                                socket.add(msgBytes);
+
+                                // wait 0.5 seconds
                                 while(true){
                                   await Future.delayed(Duration(milliseconds: 500));
 
                                   if (serverMsg == 'fail;') {
+                                    // 要求server斷線
+                                    // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                    // List<int> msgBytes = [];
+                                    // msgBytes.addAll(utf8.encode(msg));
+                                    // msgBytes.add(0);
+                                    // socket.add(msgBytes);
                                     socket.close();
+
                                     //AlertDialog
                                     showDialog(
                                       context: context,
@@ -403,7 +443,12 @@ class _LoginState extends State<Login> {
                                     break;
                                   } else if (serverMsg == 'success;') {
                                     //登入成功
-                                    //關閉socket
+                                    // 要求server斷線
+                                    // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                    // List<int> msgBytes = [];
+                                    // msgBytes.addAll(utf8.encode(msg));
+                                    // msgBytes.add(0);
+                                    // socket.add(msgBytes);
                                     socket.close();
 
                                     //更改UsrInfo
@@ -430,18 +475,7 @@ class _LoginState extends State<Login> {
                                     await Future.delayed(
                                         Duration(milliseconds: 1000), () {
                                       Navigator.pop(dialogContext);
-                                      // push首頁進進去
-                                      
-                                    // if (!(welcomeFlag == 0 && guideFlag == 0)){
-                                    //   Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) => const Home(),
-                                    //       maintainState: false,
-                                    //     ),
-                                    //   );
-                                    // }
-                                      
+                                      // push首頁進進去                                      
 
                                       Navigator.push(
                                         context,
@@ -470,7 +504,7 @@ class _LoginState extends State<Login> {
                                     fontSize: 25,
                                     fontWeight: FontWeight.normal)),
                             onPressed: () {
-                              log('按下註冊按鈕');
+                              print('按下註冊按鈕');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -482,12 +516,49 @@ class _LoginState extends State<Login> {
                               // log('password: ${password.text}');
                             },
                           ),
+                          
                         ],
                       ),
                     ),
+                    
                   ],
                 )),
               ),
+              Expanded(
+                flex:1,
+                  child: 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    
+                    children: [
+                      Text(
+                        '記住密碼',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Checkbox(
+                        value: passwordRememberFlag == 1 ? true : false,
+                        onChanged: (newValue) async{
+                          if (newValue == true) {
+                            passwordRememberFlag = 1;
+                          } else {
+                            passwordRememberFlag = 0;
+                          }
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt('passwordRememberFlag', passwordRememberFlag);
+                          setState(() {});
+                        },
+                      )
+                    ],
+                  ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(),
+              )
             ],
           )),
     ));

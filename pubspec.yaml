@@ -90,11 +90,11 @@ flutter:
     - assets/plus_icon.imageset/plus_icon@3x.png
     - assets/cloudup.imageset/cloudup@3x.png
     - assets/history.imageset/history@3x.png
-    - assets/guide_src1.imageset/guide_src1@1x.png
-    - assets/guide_src2.imageset/guide_src2@3x.png
-    - assets/guide_src3.imageset/guide_src3@3x.png
-    - assets/guide_src4.imageset/guide_src4@3x.png
-    - assets/guide_src5.imageset/guide_src5@3x.png
+    - assets/guide_src1.imageset/guide_img1.png
+    - assets/guide_src2.imageset/guide_img2.png
+    - assets/guide_src3.imageset/guide_img3.png
+    - assets/guide_src4.imageset/guide_img4.png
+    - assets/guide_src5.imageset/guide_img5.png
     - assets/face_3.imageset/face_3@3x.png
     - assets/face_3.imageset/face.png
     - assets/iconv4.gif
@@ -109,6 +109,8 @@ flutter:
     - assets/scanningGIF.imageset/scanning.gif
     - assets/scanningGIF.imageset/scan.gif
     - assets/analysisGIF.imageset/analysisGIF.gif
+
+    - assets/homeImg.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

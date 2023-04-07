@@ -101,7 +101,10 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   // 取得 雷達圖 的 score
   getScore(var min, var max, var value) {
     if (max == min) return 100;
-    return 100 + (-100 / (max - min)) * (value - min).abs();
+    var score = (100 + (-100 / (max - min)) * (value - min).abs()).abs();
+    if(score > 100) score = 100;
+    if(score < 0) score = 0;
+    return score;
   }
 
   void _loadResultAllMsg() async {
@@ -110,36 +113,40 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     print('loading msg at proportional analysis');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    account = prefs.getString('account') ?? '';
+    // account = prefs.getString('account') ?? '';
 
     //temp
-    allImgStrings = prefs.getStringList(account + 'oriImgStringList') ?? [];
+    // allImgStrings = prefs.getStringList(account + 'oriImgStringList') ?? [];
     
 
     //server回傳之字串處理
-    resultAllMsg = prefs.getStringList(account + 'resultAllMsgList') ?? [];
+    // resultAllMsg = prefs.getStringList(account + 'resultAllMsgList') ?? [];
 
     //從資料庫中取得 雷達圖 數據 ratio_2 、 ratio_11 、 ratio_23 、 ratio_28 、 ratio_30 、 ratio_15
     var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0; // 取得當前 oriimg 之 index
-    List<String> ratio_2_string =
-        prefs.getStringList(account + 'ratio_2') ?? [];
-    List<String> ratio_11_string =
-        prefs.getStringList(account + 'ratio_11') ?? [];
-    List<String> ratio_23_string =
-        prefs.getStringList(account + 'ratio_23') ?? [];
-    List<String> ratio_28_string =
-        prefs.getStringList(account + 'ratio_28') ?? [];
-    List<String> ratio_30_string =
-        prefs.getStringList(account + 'ratio_30') ?? [];
-    List<String> ratio_15_string =
-        prefs.getStringList(account + 'ratio_15') ?? [];
+    String ratio_2 = prefs.getString('ratio_2') ?? '';
+    String ratio_11 = prefs.getString('ratio_11') ?? '';
+    String ratio_23 = prefs.getString('ratio_23') ?? '';
+    String ratio_28 = prefs.getString('ratio_28') ?? '';
+    String ratio_30 = prefs.getString('ratio_30') ?? '';
+    String ratio_15 = prefs.getString('ratio_15') ?? '';
+    // List<String> ratio_11_string =
+    //     prefs.getStringList(account + 'ratio_11') ?? [];
+    // List<String> ratio_23_string =
+    //     prefs.getStringList(account + 'ratio_23') ?? [];
+    // List<String> ratio_28_string =
+    //     prefs.getStringList(account + 'ratio_28') ?? [];
+    // List<String> ratio_30_string =
+    //     prefs.getStringList(account + 'ratio_30') ?? [];
+    // List<String> ratio_15_string =
+    //     prefs.getStringList(account + 'ratio_15') ?? [];
 
-    radarValues[0] = double.parse(ratio_2_string[oriImgIndex]);
-    radarValues[1] = double.parse(ratio_11_string[oriImgIndex]);
-    radarValues[2] = double.parse(ratio_23_string[oriImgIndex]);
-    radarValues[3] = double.parse(ratio_28_string[oriImgIndex]);
-    radarValues[4] = double.parse(ratio_30_string[oriImgIndex]);
-    radarValues[5] = double.parse(ratio_15_string[oriImgIndex]);
+    radarValues[0] = double.parse(ratio_2);
+    radarValues[1] = double.parse(ratio_11);
+    radarValues[2] = double.parse(ratio_23);
+    radarValues[3] = double.parse(ratio_28);
+    radarValues[4] = double.parse(ratio_30);
+    radarValues[5] = double.parse(ratio_15);
 
     radarValues[0] = getScore(1.17, 2.0, radarValues[0]).toDouble();
     radarValues[1] = getScore(0.22, 0.5, radarValues[1]).toDouble();
@@ -150,34 +157,28 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     //
 
     //server回傳data的邏輯非常奇怪
-    //臉部分比例分析
-    faceComment = resultAllMsg[oriImgIndex]
-            .split('&')[4]
-            .replaceAll('32:', '')
-            .replaceAll('42:', '') +
-        '\n' +
-        resultAllMsg[oriImgIndex]
-            .split('&')[9]
-            .replaceAll('32:', '')
-            .replaceAll('42:', '') +
-        '\n' +
-        resultAllMsg[oriImgIndex]
-            .split('&')[10]
-            .replaceAll('32:', '')
-            .replaceAll('42:', '');
+    // //臉部分比例分析
+    // faceComment = resultAllMsg[oriImgIndex].split('&')[4].split(':')[1] + '\n' +
+    //     resultAllMsg[oriImgIndex].split('&')[9].split(':')[1] + '\n' +
+    //     resultAllMsg[oriImgIndex].split('&')[10].split(':')[1];
 
-    //眉毛部分比例分析
-    eyebrowComment =
-        resultAllMsg[oriImgIndex].split('&')[5].replaceAll('2:', '');
+    // //眉毛部分比例分析
+    // eyebrowComment = resultAllMsg[oriImgIndex].split('&')[5].split(':')[1];
 
-    //眼睛部分比例分析
-    eyesComment = resultAllMsg[oriImgIndex].split('&')[6].replaceAll('1:', '');
+    // //眼睛部分比例分析
+    // eyesComment = resultAllMsg[oriImgIndex].split('&')[6].split(':')[1];
 
-    //鼻子部分比例分析
-    noseComment = resultAllMsg[oriImgIndex].split('&')[7].replaceAll('3:', '');
+    // //鼻子部分比例分析
+    // noseComment = resultAllMsg[oriImgIndex].split('&')[7].split(':')[1];
 
-    //嘴巴部分比例分析
-    mouthComment = resultAllMsg[oriImgIndex].split('&')[8].replaceAll('3:', '');
+    // //嘴巴部分比例分析
+    // mouthComment = resultAllMsg[oriImgIndex].split('&')[8].split(':')[1];
+    String faceComment = prefs.getString('faceComment')??'';
+    String eyebrowComment = prefs.getString('eyebrowComment')??'';
+    String eyesComment = prefs.getString('eyesComment')??'';
+    String noseComment = prefs.getString('noseComment')??'';
+    String mouthComment = prefs.getString('mouthComment')??'';
+
 
     //將data整合
     resultPorportionalMsgList = [
@@ -280,7 +281,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
             ? Container()
             : Container(
                 padding: const EdgeInsets.all(20),
-                color: Colors.black87,
+                color: Colors.black,
                 width: screenWidth,
                 height: screenHeight,
 
@@ -324,7 +325,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                             },
                             pagination: const SwiperPagination(
                                 builder: DotSwiperPaginationBuilder(
-                              color: Colors.black54,
+                              color: Colors.blueGrey,
                               activeColor: Colors.white,
                             )),
                             // control: new SwiperControl(),

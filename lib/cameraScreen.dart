@@ -18,21 +18,55 @@ class CameraScreen extends StatefulWidget {
   State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
-  late CameraController _cameraController;
-  bool _isRearCameraSelected = true;
+// 橢圓形畫面class
+class MyCustomClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final rect = Rect.fromLTRB(0, 0, size.width, size.height);
+    final center = rect.center;
+    final radiusX = rect.width * 0.7;
+    final radiusY = rect.height * 0.55;
+    path.addOval(Rect.fromCenter(center: center, width: radiusX, height: radiusY));
+    path.addRect(rect);
+    return path..fillType = PathFillType.evenOdd;
+
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class _CameraScreenState extends State<CameraScreen> 
+  with SingleTickerProviderStateMixin{
+    late CameraController _cameraController;
+    bool _isRearCameraSelected = true;
+    late AnimationController _controller;
+    late Animation<Offset> _animation;
   
 
   @override
   void dispose() {
     // _cameraController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    initCamera(widget.cameras![0]);
+    initCamera(widget.cameras![1]);
+
+    // 設置動畫控制器
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    // 設置動畫
+    _animation = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset(0, 1),
+    ).animate(_controller);
   }
 
   Future takePicture() async {
@@ -66,6 +100,8 @@ class _CameraScreenState extends State<CameraScreen> {
     _cameraController =
         CameraController(cameraDescription, ResolutionPreset.high);
     try {
+      // 若是前鏡頭，則取消鏡像
+      // 胡勝清
       await _cameraController.initialize().then((_) async{
         if (!mounted) return;
         await _cameraController.lockCaptureOrientation();
@@ -104,39 +140,67 @@ class _CameraScreenState extends State<CameraScreen> {
               Container():
               Stack(
                 children: [
-                  Container(
-                    // color:Colors.white,
-                    // padding: EdgeInsets.only(top: screenHeight/5),
-                    child: 
-                      Center(
-                        child: ClipRRect(
-                          child:Image.asset(
-                            // 'assets/face_3.imageset/face_3@3x.png',
-                            'assets/face_3.imageset/face.png',
-                            fit: BoxFit.fill,
-                            width: screenWidth,
-                            color: Color.fromRGBO(255, 255, 255, 0.4),
-                            colorBlendMode: BlendMode.modulate,
-                          ), 
-                        ),
-                      ),
+                  // Container(
+                  //   // color:Colors.white,
+                  //   // padding: EdgeInsets.only(top: screenHeight/5),
+                  //   child: 
+                  //     Center(
+                  //       child: ClipRRect(
+                  //         child:Image.asset(
+                  //           // 'assets/face_3.imageset/face_3@3x.png',
+                  //           'assets/face_3.imageset/face.png',
+                  //           fit: BoxFit.fill,
+                  //           width: screenWidth,
+                  //           color: Color.fromRGBO(255, 255, 255, 0.4),
+                  //           colorBlendMode: BlendMode.modulate,
+                  //         ), 
+                  //       ),
+                  //     ),
                     
+                  // ),
+                  ClipPath(
+                    clipper: MyCustomClipper(),
+                    child: Container(
+                      color: Color.fromRGBO(0, 0, 0, 0.6),
+                      width: screenWidth,
+                      height: screenHeight,
+                    ),
                   ),
                   
+                  // Container(
+                  //   // padding: EdgeInsets.only(top: screenHeight/5),
+                  //   child: 
+                  //   Center(
+                  //     child: ClipRRect(
+                  //         child:Image.asset('assets/scanningGIF.imageset/scan.gif',
+                  //         fit: BoxFit.fill,
+                  //         width: screenWidth,
+                  //         color: Color.fromRGBO(255, 255, 255, 0.5),
+                  //         // colorBlendMode: BlendMode.modulate,
+                  //       ), 
+                  //     ),
+                  //   )
+                  // ),
+                  
+                  // 掃描光束
                   Container(
-                    // padding: EdgeInsets.only(top: screenHeight/5),
-                    child: 
-                    Center(
-                      child: ClipRRect(
-                          child:Image.asset('assets/scanningGIF.imageset/scan.gif',
-                          fit: BoxFit.fill,
-                          width: screenWidth,
-                          color: Color.fromRGBO(255, 255, 255, 0.5),
-                          // colorBlendMode: BlendMode.modulate,
-                        ), 
+                    width: double.infinity,
+                    height: screenHeight*0.82,
+                    // color: Color.fromARGB(255, 247, 217, 76),
+                    child: SlideTransition(
+                      position: _animation,
+                      child: Container(
+                        width: double.infinity,
+                        height: 4.0,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Color.fromARGB(255, 247, 217, 76), width: 2.0,)
+                          ),
+                        ),
                       ),
-                    )
+                    ),
                   ),
+
                   Container(
                     // padding: EdgeInsets.only(top: screenHeight*4/5),
                     color: Color.fromRGBO(255, 255, 255, 0.2),
@@ -201,7 +265,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   onPressed: () {
                     setState(
                         () => _isRearCameraSelected = !_isRearCameraSelected);
-                    initCamera(widget.cameras![_isRearCameraSelected ? 0 : 1]);
+                    initCamera(widget.cameras![_isRearCameraSelected ? 1 : 0]);
                   },
                 )),
                 Expanded(

@@ -1,20 +1,10 @@
-import 'package:facebeauty/allTrend.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'splashScreen.dart';
 import 'package:flutter/services.dart';
-import 'footPrint.dart';
-import 'welcome.dart';
 import 'login.dart';
-import 'register.dart';
-import 'intro.dart';
-import 'guide.dart';
 import 'home.dart';
 import 'dart:async';
-import 'profileModify.dart';
-import 'cameraScreen.dart';
-import 'result.dart';
-import 'doctors.dart';
 
 List<CameraDescription> cameras = [];
 Future<void> main() async {
@@ -30,7 +20,8 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
   runApp(const MaterialApp(
-    home: MyApp(),  //這裡切換頁面(預設為MyApp)
+    debugShowCheckedModeBanner: false, // 移除 DEBUG 圖示
+    home: MyApp(),  //這裡切換頁面(預設為MyApp) 
     // home: Home(),  //這裡直接跳至home page
   ));
 }
@@ -56,6 +47,7 @@ class MyApp extends StatelessWidget {
           // Loading
           if (loadingOK == false) {
             return const MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: SplashScreen(),
             );
           } else {
@@ -65,6 +57,7 @@ class MyApp extends StatelessWidget {
                 hideKeyboard(context);
               },
             child: const MaterialApp(
+                debugShowCheckedModeBanner: false,
                 home: Login(),
               ) ,
             );

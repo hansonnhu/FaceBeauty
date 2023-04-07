@@ -28,7 +28,7 @@ class _IntroState extends State<Intro> {
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(30),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
@@ -73,7 +73,7 @@ class _IntroState extends State<Intro> {
                           child: Text(
                             '漂亮容貌主要是在評估臉部五官和輪廓相輔相成之綜和美感。除對稱與自然外，需要再加上協調比例。' +
                                 '每個時代對於美感會略有改變，且抽象之「五官端正」或「漂亮美麗」也無法量化，但令人觀之舒服之五官比例，確實有跡可循' +
-                                '元代畫家王繹於《寫像秘訣》記載畫肖像畫訣竅：「寫真之法，先觀八格，次看三庭。眼橫五配，口約三勻。明其大局，好定寸分\n。 ' +
+                                '元代畫家王繹於《寫像秘訣》記載畫肖像畫訣竅：「寫真之法，先觀八格，次看三庭。眼橫五配，口約三勻。明其大局，好定寸分。\n' +
                                 '以下三類分析方式最廣為人知：\n' +
                                 '「三庭五眼」：全臉比例\n' +
                                 '「四高三低」：全臉比例\n' +
@@ -119,7 +119,7 @@ class _IntroState extends State<Intro> {
                               );
                             }else{
                               Navigator.of(context).popUntil((route) {
-                                  print(route.toString());
+                                  // print(route.toString());
                                   return route.settings.name == "/" ? true : false;
                                 },);
                                 Navigator.push(

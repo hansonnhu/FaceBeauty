@@ -1,13 +1,14 @@
-// import 'dart:math';
-
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-
 import 'package:flutter/material.dart';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home.dart';
+import 'guide.dart';
+import 'welcome.dart';
+import 'parameter.dart';
+
 
 String iniAccount = "";
 String iniPassword = "";
@@ -31,7 +32,7 @@ class _RegisterState extends State<Register> {
       temp = str.replaceAll(RegExp('[A-Z]'), '');
       temp = temp.replaceAll(RegExp('[a-z]'), '');
       temp = temp.replaceAll(RegExp('[0-9]'), '');
-      log(temp.length.toString());
+      print(temp.length.toString());
 
       if (temp.length == 0) {
         return true;
@@ -61,7 +62,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(30),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
@@ -230,7 +231,7 @@ class _RegisterState extends State<Register> {
                                 fontSize: 25, fontWeight: FontWeight.normal)),
                         onPressed: termIsChecked
                             ? () async {
-                                log('按下註冊按鈕');
+                                print('按下註冊按鈕');
                                 BuildContext dialogContext = context;
                                 if (registerAccount.text == '') {
                                   
@@ -329,17 +330,46 @@ class _RegisterState extends State<Register> {
                                       ],
                                     );}
                                   );
-                                } else {//若帳號密碼格式無誤
-                                  Socket socket = await Socket.connect(
-                                      '140.117.168.12', 55688);
+                                } else {
+                                  //若帳號密碼格式無誤
+                                  //與server溝通
+                                  Socket socket = await Socket.connect(serverIP, serverPort);
                                   print(
                                       'Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
                                   // listen to the received data event stream
-                                  socket.listen((List<int> event) {
+
+                                  
+                                  String serverMsg = '';
+                                  socket.listen((List<int> event) async {
+                                    //print出server回傳data
                                     print(utf8.decode(event));
-                                    String severMsg = utf8.decode(event);
-                                    if (severMsg == 'fail;') {
+                                    serverMsg = utf8.decode(event);
+                                  });
+                                  
+                                  // send hello
+                                  // 傳送訊息給server
+                                  var randomNum = Random().nextInt(100000);
+                                  String tempClientNumString = registerAccount.text + ':' + randomNum.toString();
+                                  String msg = 'startCode103040023<' + tempClientNumString + '<' + 'register' + '<' + registerAccount.text + '<' + registerPassword.text + ';';
+                                  List<int> msgBytes = [];
+                                  msgBytes.addAll(utf8.encode(msg));
+                                  msgBytes.add(0);
+                                  socket.add(msgBytes);
+                                  
+
+                                  // listen to the received data event stream
+                                  while(true){
+                                    await Future.delayed(Duration(milliseconds: 500));
+
+                                    if (serverMsg == 'fail;') {
+                                      // 要求server斷線
+                                      // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                      // List<int> msgBytes = [];
+                                      // msgBytes.addAll(utf8.encode(msg));
+                                      // msgBytes.add(0);
+                                      // socket.add(msgBytes);
                                       socket.close();
+
                                       //AlertDialog
                                       showDialog(
                                         context: context,
@@ -350,11 +380,11 @@ class _RegisterState extends State<Register> {
                                           content:
                                               const Text('該帳號已存在\n請重新輸入帳號密碼'),
                                           actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  dialogContext, 'Cancel'),
-                                              child: const Text('Cancel'),
-                                            ),
+                                            // TextButton(
+                                            //   onPressed: () => Navigator.pop(
+                                            //       dialogContext, 'Cancel'),
+                                            //   child: const Text('Cancel'),
+                                            // ),
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(dialogContext, 'OK'),
@@ -363,22 +393,51 @@ class _RegisterState extends State<Register> {
                                           ],
                                         );}
                                       );
-                                    } else if (severMsg == 'success;') {
+                                      break;
+                                    } else if (serverMsg == 'success;') {
+                                      // 要求server斷線
+                                      // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                      // List<int> msgBytes = [];
+                                      // msgBytes.addAll(utf8.encode(msg));
+                                      // msgBytes.add(0);
+                                      // socket.add(msgBytes);
                                       socket.close();
+
+                                      //pop
+                                      Navigator.pop(context);
+
+                                      //查看資料庫，依照flag情形決定要跳轉之畫面(一開始共有welcome, intro, guide 頁面)
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      int welcomeFlag = prefs.getInt('welcomeFlag') ?? 1;//若為0，直接跳過 welcome, intro 頁面
+                                      int guideFlag = prefs.getInt('guideFlag') ?? 1;//若為0，跳過guide
+                                      //設定帳號密碼
+                                      await prefs.setString('account', registerAccount.text);
+                                      await prefs.setString('password', registerPassword.text);
+
+                                      //push
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => (welcomeFlag == 1) ? const Welcome() : (guideFlag == 1) ? const Guide() : Home(),
+                                          maintainState: false,
+                                        ),
+                                      );
+
+
                                       //AlertDialog
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           dialogContext = context;
                                            return AlertDialog(
-                                          title: const Text('註冊成功'),
+                                          title: const Text('註冊成功，已登入'),
                                           content: const Text(''),
                                           actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  dialogContext, 'Cancel'),
-                                              child: const Text('Cancel'),
-                                            ),
+                                            // TextButton(
+                                            //   onPressed: () => Navigator.pop(
+                                            //       dialogContext, 'Cancel'),
+                                            //   child: const Text('Cancel'),
+                                            // ),
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(dialogContext, 'OK'),
@@ -387,16 +446,13 @@ class _RegisterState extends State<Register> {
                                           ],
                                         );}
                                       );
+                                      break;
                                     }
-                                  });
-                                  String msg = ';' +
-                                      registerAccount.text +
-                                      ';' +
-                                      registerPassword.text +
-                                      ';' +
-                                      '<';
-                                  // send hello
-                                  socket.add(utf8.encode(msg));
+                                  }
+
+                                    
+                                  
+                                  
 
                                   // wait 5 seconds
                                   await Future.delayed(Duration(seconds: 5));

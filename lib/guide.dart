@@ -11,12 +11,19 @@ import 'dart:convert';
 import 'dart:async';
 
 //全域變數
+// List<String> picSrc = [
+//   'assets/guide_src1.imageset/guide_src1@1x.png',
+//   'assets/guide_src2.imageset/guide_src2@3x.png',
+//   'assets/guide_src3.imageset/guide_src3@3x.png',
+//   'assets/guide_src4.imageset/guide_src4@3x.png',
+//   'assets/guide_src5.imageset/guide_src5@3x.png',
+// ];
 List<String> picSrc = [
-  'assets/guide_src1.imageset/guide_src1@1x.png',
-  'assets/guide_src2.imageset/guide_src2@3x.png',
-  'assets/guide_src3.imageset/guide_src3@3x.png',
-  'assets/guide_src4.imageset/guide_src4@3x.png',
-  'assets/guide_src5.imageset/guide_src5@3x.png',
+  'assets/guide_src1.imageset/guide_img1.png',
+  'assets/guide_src2.imageset/guide_img2.png',
+  'assets/guide_src3.imageset/guide_img3.png',
+  'assets/guide_src4.imageset/guide_img4.png',
+  'assets/guide_src5.imageset/guide_img5.png',
 ];
 int srcNum = 0;
 
@@ -36,7 +43,7 @@ class _GuideState extends State<Guide> {
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(5),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
@@ -113,7 +120,7 @@ class _GuideState extends State<Guide> {
                                 log('按下跳過按鈕');
                                 // Navigator.of(context).popUntil((route) => route.settings.name == "/" ? true : false);
                                 Navigator.of(context).popUntil((route) {
-                                  print(route.toString());
+                                  // print(route.toString());
                                   return route.settings.name == "/" ? true : false;
                                   
                                 },);
@@ -145,7 +152,7 @@ class _GuideState extends State<Guide> {
                                   log('指引結束');
                                   srcNum = 0;
                                   Navigator.of(context).popUntil((route) {
-                                  print(route.toString());
+                                  // print(route.toString());
                                   return route.settings.name == "/" ? true : false;
                                   
                                 },);
@@ -156,21 +163,8 @@ class _GuideState extends State<Guide> {
                                     maintainState: false,
                                   ),
                                 );
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => const Home(),
-                                  //     maintainState: false,
-                                  //   ),
-                                  // );
+                                  
                                 }
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => const Register(),
-                                //     maintainState: false,
-                                //   ),
-                                // );
                               },
                             ),
                           ]),

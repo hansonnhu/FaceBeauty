@@ -93,7 +93,7 @@ class _AllTrendState extends State<AllTrend> {
             : Container(
                 padding: const EdgeInsets.only(
                     top: 30, bottom: 30, left: 10, right: 10),
-                color: Colors.black87,
+                color: Colors.black,
                 width: screenWidth,
                 height: screenHeight,
                 child: Column(

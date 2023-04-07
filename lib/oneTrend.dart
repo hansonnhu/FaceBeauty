@@ -80,10 +80,10 @@ class _OneTrendState extends State<OneTrend> {
 
     return Scaffold(
         body: 
-        dataLoadedFlag == false ? Container(color: Colors.black87,):
+        dataLoadedFlag == false ? Container(color: Colors.black,):
         Container(
             padding: const EdgeInsets.all(30),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(

@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'parameter.dart';
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。
@@ -23,287 +24,159 @@ class BasicResult extends StatefulWidget {
 
 class _BasicResultState extends State<BasicResult>
     with AutomaticKeepAliveClientMixin {
-  bool firstGetResult_basic_flag = true;
-  bool imgLoadedFlag = false; //是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
-  bool deepFakeImgLoadedFlag = false;
+  bool dataLoadedFlag = false; //是否已經下載圖片(已經下載後才能渲染頁面，不然會出錯)
+  bool deepFakedataLoadedFlag = false;
   String account = '';
   //此頁面要用到之data
   String resultBasicMsg = ''; //簡要斷語String
   String oriImgString = ''; //資料庫內最新的原圖相片
   Uint8List basicImgByte = Uint8List(10); //全臉點圖
   Uint8List deepFakeImgByte = Uint8List(10); //deepFake gif
-  List<String> basic_title = []; //basic_title : 臉型、下巴型、脣型......
-  List<String> basic_contentOfTitle = []; //basic_title的內文
+  List<String> allBasicTitle = []; //allBasicTitle : 臉型、下巴型、脣型......
+  List<String> allBasicTextOfTitle = []; //allBasicTitle的內文
 
   @override
   bool get wantKeepAlive => true;
   //將回傳之gif寫入byte
-  getDeepFakeImg(List<int> intListServerMsg) async{
-    String serverMsg = ''; //serverMsg
-    serverMsg = utf8.decode(intListServerMsg);
-    String gif_string = serverMsg.split(';')[9];
-    deepFakeImgByte = base64Decode(gif_string);
-    deepFakeImgLoadedFlag = true;
-  }
-
-  //將所有切割圖存入 SharedPreferences
-  _getAllPic(List<int> intListServerMsg) async {
-    String serverMsg = ''; //serverMsg
-    serverMsg = utf8.decode(intListServerMsg);
+  getDeepFakeImg() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // 儲存 Drawing server 回傳的所有圖片(臉型、比例圖、眉毛、眼睛...等等)
-    //cropBitmap_arrow_string
-    String cropBitmap_arrow_string = serverMsg.split(';')[1];
-    await prefs.setString('cropBitmap_arrow_string', cropBitmap_arrow_string);
-
-    //cropFace_sketch_string
-    String cropFace_sketch_string = serverMsg.split(';')[2];
-    await prefs.setString('cropFace_sketch_string', cropFace_sketch_string);
-
-    //cropFace_fake_string
-    String cropFace_fake_string = serverMsg.split(';')[3];
-    await prefs.setString('cropFace_fake_string', cropFace_fake_string);
-
-    //cropFace_points_string
-    cropFace_points_string = serverMsg.split(';')[0];
-    await prefs.setString('cropFace_points_string', cropFace_points_string);
-
-    //cropFace_arrow_string
-    String cropFace_arrow_string = serverMsg.split(';')[4];
-    await prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
-
-    //cropEyebrow_arrow_string
-    String cropEyebrow_arrow_string = serverMsg.split(';')[5];
-    await prefs.setString('cropEyebrow_arrow_string', cropEyebrow_arrow_string);
-
-    //cropEye_arrow_string
-    String cropEye_arrow_string = serverMsg.split(';')[6];
-    await prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
-
-    //cropEyesAndNose_arrow_string
-    String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
-    await prefs.setString(
-        'cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
-
-    //cropMouth_arrow_string
-    String cropMouth_arrow_string = serverMsg.split(';')[8];
-    await prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
-
-    basicImgByte = await base64Decode(
-        cropFace_points_string); //將cropFace_points_string轉成byte，才能渲染於頁面
-    imgLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
-    // firstGetResult_basic_flag = false;
-    setState(() {});
-    // if (firstGetResult_basic_flag) {
-    //   if (mounted) {
-    //     firstGetResult_basic_flag = false;
-    //     setState(() {});
-    //   } else {
-    //     Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
-    //   }
-    // }
-  }
-
-  void _loadResultAllMsg() async {
-    //////////////////////////////////////////// 解析所有server回傳之String，並且寫入前端資料庫
-    if (!firstGetResult_basic_flag) return;
-    print('loading msg at basic');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    account = await prefs.getString('account') ?? '';
-
-    var oriImgIndex = prefs.getInt('oriImgIndex') ??
-        0; //此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
-    print('當前 oriImgIndex 為');
-    print(oriImgIndex);
-
-    List<String> tempList =
-        (prefs.getStringList(account + 'resultAllMsgList') ?? []);
-    resultAllMsg = tempList[oriImgIndex]; //取得該照片之 resultAllMsg
-
-
-    oriImgStringList =
-        (prefs.getStringList(account + 'oriImgStringList') ?? []);
-    oriImgString = oriImgStringList[oriImgIndex]; //取得該照片
-
-    resultBasicMsg = resultAllMsg.split('&')[0]; //[0]為簡要斷語內文
-    List<String> temp = resultBasicMsg.split('[');
-
-    //將server回傳的資料進行字串處理，得到basic_title list 與 basic_contentOfTitle list
-    int count = 0;
-    for (String s in temp) {
-      if (count == 0) {
-        basic_title.insert(count, (s.split('\n')[0]).replaceAll('型', ''));
-        basic_contentOfTitle.insert(
-            count, s.split('\n')[1].replaceAll('#', ''));
-        count++;
-      } else {
-        basic_title.insert(count, (s.split(']')[0]).replaceAll('型', ''));
-        basic_contentOfTitle.insert(count, s.split(']')[1].replaceAll('#', ''));
-      }
-    }
-
-    //分割出148個點之座標
-    String pointXString = resultAllMsg.split('&')[2]; //[2]為所有點之x座標
-    String pointYString = resultAllMsg.split('&')[3]; //[3]為所有點之y座標
-
-    //分割出34種比例，並且寫入資料庫
-    String allRatioString = resultAllMsg.split('&')[11];
-    List<String> allRatio = allRatioString.split('+');
-    List<String> trendTitleList = [];
-
-    int newImgDataFlag = prefs.getInt('newImgData?') ?? 0;
-    if (newImgDataFlag == 1) {
-      print('新增新的img，設定ratio');
-      for (int i = 0; i < 34; i++) {
-        //從 allRatio list中抓取ratio(數字部分)
-        String ratio = allRatio[i];
-        ratio = ratio.split(':')[1];
-        ratio = ratio.replaceAll(' ', '').replaceAll(';', '');
-        // print(ratio);
-        String tempName = 'ratio_' + i.toString(); //ratio 序號，raiot_0 ~ ratio_33
-        List<String> oneRatioString =
-            await prefs.getStringList(account + tempName) ??
-                []; // 先抓取資料庫裡的 list string
-        oneRatioString.insert(
-            oneRatioString.length, ratio); //將新的ratio insert 到此list
-        await prefs.setStringList(account + tempName,
-            oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
-        trendTitleList.insert(trendTitleList.length, allRatio[i].split(':')[0]);
-      }
-      await prefs.setStringList('trendTitleList', trendTitleList);
-    } else {
-      print('造訪舊的img');
-    }
-
-    /////////////////////////////////////////////////////////////// Drawing server //////////////////////////////////////////////////
-    ///將原圖片與所有點傳給 Drawing server 畫圖，畫完圖之後再傳回來
-    // Socket makeImgServerSocket = await Socket.connect('192.168.0.201', 6969);
-    Socket makeImgServerSocket = await Socket.connect('140.117.168.12', 6969);
+    account = prefs.getString('account')??''; 
+    
+    Socket socket = await Socket.connect(serverIP, serverPort);
     print('connected');
-    var randomNum = Random().nextInt(100000);
-    String tempClientNumString = account + ':' + randomNum.toString();
-    // print(tempClientNumString);
-    String msg = 'startCode103040023<' +
-        tempClientNumString +
-        '<' +
-        'imgDrawing' +
-        '<' +
-        oriImgString +
-        '<' +
-        pointXString +
-        '<' +
-        pointYString +
-        '<' +
-        basic_contentOfTitle[0].trim() +
-        '<' +
-        basic_contentOfTitle[1].trim() +
-        '<' +
-        basic_contentOfTitle[2].trim() +
-        '<' +
-        basic_contentOfTitle[3].trim() +
-        '<' +
-        basic_contentOfTitle[4].trim() +
-        '<' +
-        basic_contentOfTitle[5].trim() +
-        '<' +
-        basic_contentOfTitle[6].trim() +
-        ';';
-
-    // String msg = pointXString + '<' + pointYString + ';';
+    
 
     // listen to the received data event stream
     List<int> intListServerMsg = [];
     // int returnImgCount = 0;
-    await makeImgServerSocket.listen((List<int> event) async {
+    await socket.listen((List<int> event) async {
       intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
     });
 
     // send hello
+    var randomNum = Random().nextInt(100000);
+    String tempClientNumString = account + ':' + randomNum.toString();
+    String msg = 'startCode103040023<' + tempClientNumString + '<' + 'imgDeepFake' + ';';
     List<int> msgBytes = [];
     msgBytes.addAll(utf8.encode(msg));
     msgBytes.add(0);
 
-    makeImgServerSocket.add(msgBytes);
+    socket.add(msgBytes);
 
-    int secondCount = 0;
-    int imgNumOffset = 0;
+
     while (true) {
-      await Future.delayed(Duration(milliseconds: 1000));
-      int returnImgNum = await utf8.decode(intListServerMsg).split(';').length;
-      if (imgNumOffset != returnImgNum) {
-        imgNumOffset = returnImgNum;
-        print('已處理至圖片' + imgNumOffset.toString());
-      }
+      await Future.delayed(Duration(milliseconds: 500));
+      if(utf8.decode(intListServerMsg).contains(';')){
+        print('收到 deepfake img');
+        String serverMsg = utf8.decode(intListServerMsg);
+        String gif_string = serverMsg.split(';')[0];
+        deepFakeImgByte = base64Decode(gif_string);
 
-      /////////////////////////////////////擠牙膏版本
-      // if (returnImgNum == 10) {
-      //   print('socket closed');
-      //   print(tempClientNumString);
-      //   String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
-      //   List<int> msgBytes = [];
-      //   msgBytes.addAll(utf8.encode(msg));
-      //   msgBytes.add(0);
-      //   makeImgServerSocket.add(msgBytes);
-      //   if(imgLoadedFlag == false){
-      //     await makeImgServerSocket.close();
-      //     await _getAllPic(intListServerMsg);
-      //     setState(() {});
-      //   }
-      //   return;
-      // }
-      /////////////////////////////////////////////////////////////
-
-      ///////////////////////////////正常版本////////////////////
-      if (returnImgNum == 10) {
-        if(imgLoadedFlag == false){
-          await _getAllPic(intListServerMsg);
-          setState(() {});
-        }
-      }
-
-      if (returnImgNum == 11) {
-        print('socket closed');
-        print(tempClientNumString);
-        String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
-        List<int> msgBytes = [];
-        msgBytes.addAll(utf8.encode(msg));
-        msgBytes.add(0);
-        makeImgServerSocket.add(msgBytes);
-        if(deepFakeImgLoadedFlag == false){
-          await makeImgServerSocket.close();
-          await getDeepFakeImg(intListServerMsg);
-          setState(() {});
-          return;
-        }
-      }
-      //////////////////////////////////////////////////////////
-
-      // 若繪圖失敗，則斷線
-      secondCount += 1;
-      if (secondCount == 20 && returnImgNum < 10) {
-        String msg = tempClientNumString + '<' + 'disconnect' + ';';
-        List<int> msgBytes = [];
-        msgBytes.addAll(utf8.encode(msg));
-        msgBytes.add(0);
-        makeImgServerSocket.add(msgBytes);
-        await makeImgServerSocket.close();
-
-        //AlertDialog
-        Navigator.pop(context);
-        BuildContext dialogContext = context;
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              dialogContext = context;
-              return const AlertDialog(
-                title: Text('此相片繪圖時發生問題'),
-                content: Text('請換其他張圖測試'),
-              );
-            });
+        // String msg = 'startCode103040023<'+tempClientNumString + '<' + 'disconnect' + ';';
+        // List<int> msgBytes = [];
+        // msgBytes.addAll(utf8.encode(msg));
+        // msgBytes.add(0);
+        // socket.add(msgBytes);
+        await socket.close();
         break;
       }
     }
+    deepFakedataLoadedFlag = true;
+    setState(() {
+      
+    });
   }
+
+  //將所有切割圖存入 SharedPreferences
+  getAllData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    allBasicTitle = prefs.getStringList('allBasicTitle')??[];
+    allBasicTextOfTitle = prefs.getStringList('allBasicTextOfTitle')??[];
+    
+    dataLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
+    setState(() {});
+  }
+
+  
+
+
+
+  // void _loadResultAllMsg() async {
+  //   //////////////////////////////////////////// 解析所有server回傳之String，並且寫入前端資料庫
+  //   if (!firstGetResult_basic_flag) return;
+  //   print('loading msg at basic');
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   account = await prefs.getString('account') ?? '';
+
+  //   var oriImgIndex = prefs.getInt('oriImgIndex') ??
+  //       0; //此為 oriImgString 的 index ，用於決定要分析資料庫中哪一張照片
+  //   print('當前 oriImgIndex 為');
+  //   print(oriImgIndex);
+
+  //   List<String> tempList =
+  //       (prefs.getStringList(account + 'resultAllMsgList') ?? []);
+  //   resultAllMsg = tempList[oriImgIndex]; //取得該照片之 resultAllMsg
+
+
+  //   oriImgStringList =
+  //       (prefs.getStringList(account + 'oriImgStringList') ?? []);
+  //   oriImgString = oriImgStringList[oriImgIndex]; //取得該照片
+
+  //   resultBasicMsg = resultAllMsg.split('&')[0]; //[0]為簡要斷語內文
+  //   List<String> temp = resultBasicMsg.split('[');
+
+  //   //將server回傳的資料進行字串處理，得到allBasicTitle list 與 allBasicTextOfTitle list
+  //   int count = 0;
+  //   for (String s in temp) {
+  //     if (count == 0) {
+  //       allBasicTitle.insert(count, (s.split('\n')[0]).replaceAll('型', ''));
+  //       allBasicTextOfTitle.insert(
+  //           count, s.split('\n')[1].replaceAll('#', ''));
+  //       count++;
+  //     } else {
+  //       allBasicTitle.insert(count, (s.split(']')[0]).replaceAll('型', ''));
+  //       allBasicTextOfTitle.insert(count, s.split(']')[1].replaceAll('#', ''));
+  //     }
+  //   }
+
+  //   //分割出148個點之座標
+  //   String pointXString = resultAllMsg.split('&')[2]; //[2]為所有點之x座標
+  //   String pointYString = resultAllMsg.split('&')[3]; //[3]為所有點之y座標
+
+  //   //分割出34種比例，並且寫入資料庫
+  //   String allRatioString = resultAllMsg.split('&')[11];
+  //   List<String> allRatio = allRatioString.split('+');
+  //   List<String> trendTitleList = [];
+
+  //   int newImgDataFlag = prefs.getInt('newImgData?') ?? 0;
+  //   if (newImgDataFlag == 1) {
+  //     print('新增新的img，設定ratio');
+  //     for (int i = 0; i < 34; i++) {
+  //       //從 allRatio list中抓取ratio(數字部分)
+  //       String ratio = allRatio[i];
+  //       ratio = ratio.split(':')[1];
+  //       ratio = ratio.replaceAll(' ', '').replaceAll(';', '');
+  //       // print(ratio);
+  //       String tempName = 'ratio_' + i.toString(); //ratio 序號，raiot_0 ~ ratio_33
+  //       List<String> oneRatioString =
+  //           await prefs.getStringList(account + tempName) ??
+  //               []; // 先抓取資料庫裡的 list string
+  //       oneRatioString.insert(
+  //           oneRatioString.length, ratio); //將新的ratio insert 到此list
+  //       await prefs.setStringList(account + tempName,
+  //           oneRatioString); //再將新的 string list 更新至資料庫中(注意：若測試時只使用 result 頁面 debug時，必須註解此行，不然會一直增加前端資料庫)
+  //       trendTitleList.insert(trendTitleList.length, allRatio[i].split(':')[0]);
+  //     }
+  //     await prefs.setStringList('trendTitleList', trendTitleList);
+  //   } else {
+  //     print('造訪舊的img');
+  //   }
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -311,17 +184,24 @@ class _BasicResultState extends State<BasicResult>
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-    if (imgLoadedFlag == false) _loadResultAllMsg();
+    // if (dataLoadedFlag == false) _loadResultAllMsg();
+    if(dataLoadedFlag == false){
+      getAllData();
+    }
+    if(deepFakedataLoadedFlag == false && dataLoadedFlag == true){
+      getDeepFakeImg();
+    }
+
 
     return WillPopScope(
       onWillPop: () async {
         print('點了返回');
-        return imgLoadedFlag;
+        return true;
       },
       child: Scaffold(
-          body: (imgLoadedFlag == false)
+          body: (dataLoadedFlag == false)
               ? Container(
-                  color: Colors.black87,
+                  color: Colors.black,
                   height: screenHeight,
                   width: screenWidth,
                   child: Column(
@@ -343,7 +223,7 @@ class _BasicResultState extends State<BasicResult>
                                     isRepeatingAnimation: true,
                                     animatedTexts: [
                                       FadeAnimatedText(
-                                        '繪製圖形中，請勿離開' ,
+                                        '繪製圖形中' ,
                                       ),
                                     ],
                                   ),
@@ -365,7 +245,7 @@ class _BasicResultState extends State<BasicResult>
                   )
               : Container(
                   padding: const EdgeInsets.all(20),
-                  color: Colors.black87,
+                  color: Colors.black,
                   width: screenWidth,
                   height: screenHeight,
                   child: Column(
@@ -374,7 +254,7 @@ class _BasicResultState extends State<BasicResult>
                       Expanded(
                           flex: 1,
                           child: 
-                          (deepFakeImgLoadedFlag == false) ? 
+                          (deepFakedataLoadedFlag == false) ? 
                           Container(
                             child: 
                             Center(
@@ -390,7 +270,7 @@ class _BasicResultState extends State<BasicResult>
                                   isRepeatingAnimation: true,
                                   animatedTexts: [
                                     FadeAnimatedText(
-                                      '繪製動動圖中...' ,
+                                      '繪製動畫中...' ,
                                     ),
                                   ],
                                 ),
@@ -419,7 +299,7 @@ class _BasicResultState extends State<BasicResult>
                                       Container(
                                           width: screenWidth,
                                           child: Text(
-                                            basic_title[index].trim(),
+                                            allBasicTitle[index].trim(),
                                             textAlign: TextAlign.start,
                                             style: TextStyle(
                                                 color: Colors.yellow[300],
@@ -428,7 +308,7 @@ class _BasicResultState extends State<BasicResult>
                                       Container(
                                         width: screenWidth,
                                         child: Text(
-                                          basic_contentOfTitle[index].trim(),
+                                          allBasicTextOfTitle[index].trim(),
                                           textAlign: TextAlign.start,
                                           style: const TextStyle(
                                               color: Colors.white,
@@ -440,7 +320,7 @@ class _BasicResultState extends State<BasicResult>
                                       ),
                                     ],
                                   )),
-                              itemCount: basic_title.length)),
+                              itemCount: allBasicTitle.length)),
                     ],
                   ))),
     );

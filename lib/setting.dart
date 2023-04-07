@@ -79,7 +79,7 @@ class _SettingState extends State<Setting> {
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(30),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
@@ -165,6 +165,7 @@ class _SettingState extends State<Setting> {
                             for(int i = 0;i<allTitle.length;i++){
                               await prefs.setInt(allFlagString[i], allFlag[i]);
                             } 
+                            Navigator.pop(context);
 
                             //AlertDialog
                             BuildContext dialogContext = context;

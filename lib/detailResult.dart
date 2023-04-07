@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 //flag
-bool imgLoadedFlag = false;
+bool dataLoadedFlag = false;
 
 //資料庫data
 List<String> resultAllMsg = [];//server 回傳的所有data，包含斷語。
@@ -28,52 +28,32 @@ class _DetailResultState extends State<DetailResult>
   
   String resultDetailMsg = '';
   //detail文字架構
-  List<String> detail_title = []; //detail_title : 臉型、下巴型、脣型......
-  List<String> detail_contentOfTitle = []; //detail_title的內文
+  List<String> allDetailTitle = []; //allDetailTitle : 臉型、下巴型、脣型......
+  List<String> allDetailTextOfTitle = []; //allDetailTitle的內文
 
   @override
   bool get wantKeepAlive => true;
 
-  void _loadResultAllMsg() async {
+  void getAllData() async {
     if (!firstGetResult_detail_flag) return;
     print('loading msg at detail');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     account = prefs.getString('account') ?? '';
+    allDetailTitle = prefs.getStringList('allDetailTitle')??[];
+    allDetailTextOfTitle = prefs.getStringList('allDetailTextOfTitle')??[];
 
-
-    //server回傳之字串處理
-    int oriImgIndex = prefs.getInt('oriImgIndex') ?? 0;
-    resultAllMsg = (prefs.getStringList(account+'resultAllMsgList') ?? []);
-    resultDetailMsg = resultAllMsg[oriImgIndex].split('&')[1];//[1]為詳細斷語內文
-    List<String> temp1 = resultDetailMsg.split('[');
-
-    //擷取title
-    int count = 0;
-    for (String s in temp1) {
-      if (s == '') continue;
-      detail_title.insert(count, s.split(']')[0]);
-      count++;
-    }
-
-    //擷取title content
-    count = 0;
-    for (String s in temp1) {
-      if (s == '') continue;
-      detail_contentOfTitle.insert(count, s.split(']')[1].replaceAll('{', '').replaceAll('}', '').replaceAll('#', '\n\n'));
-      count++;
-    }
     //擷取cropFace_points_string
     cropFace_points_string = prefs.getString('cropFace_points_string') ?? '';
-    basicImgByte = await base64Decode(cropFace_points_string);//將cropFace_points_string轉成byte，才能渲染於頁面
-    imgLoadedFlag = true;
+    basicImgByte = base64Decode(cropFace_points_string);//將cropFace_points_string轉成byte，才能渲染於頁面
+    dataLoadedFlag = true;
 
     if (firstGetResult_detail_flag) {
       if (mounted) {
         firstGetResult_detail_flag = false;
         setState(() {});
       } else {
-        Future.delayed(const Duration(milliseconds: 100), _loadResultAllMsg);
+        Future.delayed(const Duration(milliseconds: 100), getAllData);
       }
     }
   }
@@ -88,17 +68,17 @@ class _DetailResultState extends State<DetailResult>
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
     // if(firstGetResult_detail_flag){
-    //   _loadResultAllMsg();
+    //   getAllData();
     // }
-    _loadResultAllMsg();
+    getAllData();
     // print(firstGetResult_detail_flag);
 
     return Scaffold(
         body: 
-        (imgLoadedFlag == false) ? Container():
+        (dataLoadedFlag == false) ? Container():
         Container(
       padding: const EdgeInsets.all(20),
-      color: Colors.black87,
+      color: Colors.black,
       width: screenWidth,
       height: screenHeight,
       child: Column(
@@ -134,7 +114,7 @@ class _DetailResultState extends State<DetailResult>
                           Container(
                             width: screenWidth,
                             child: Text(
-                              detail_title[index].trim(),
+                              allDetailTitle[index].trim(),
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   color: Colors.yellow[300], fontSize: 25),
@@ -146,7 +126,7 @@ class _DetailResultState extends State<DetailResult>
                           Container(
                             width: screenWidth,
                             child: Text(
-                              detail_contentOfTitle[index].trim(),
+                              allDetailTextOfTitle[index].trim(),
                               textAlign: TextAlign.start,
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 20),
@@ -158,7 +138,7 @@ class _DetailResultState extends State<DetailResult>
                           ),
                         ],
                       )),
-                  itemCount: detail_title.length)),
+                  itemCount: allDetailTitle.length)),
 
           //繼續按鈕
         ],

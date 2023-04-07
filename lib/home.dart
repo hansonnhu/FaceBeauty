@@ -3,7 +3,7 @@
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
-import 'package:facebeauty/footPrint.dart';
+import 'package:facebeauty/history.dart';
 import 'package:flutter/material.dart';
 import 'cameraScreen.dart';
 import 'dart:developer';
@@ -35,23 +35,22 @@ class _HomeState extends State<Home> {
   bool flagLoaded = false;
   @override
   Widget build(BuildContext context) {
-
-
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
-    void getCameraCorrectionFlag()async{
+    void getCameraCorrectionFlag() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      cameraCorrectionFlag = prefs.getInt('cameraCorrectionFlag')??1;
+      cameraCorrectionFlag = prefs.getInt('cameraCorrectionFlag') ?? 1;
       flagLoaded == true;
     }
-    if(flagLoaded == false){
+
+    if (flagLoaded == false) {
       getCameraCorrectionFlag();
     }
 
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(5),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
@@ -79,7 +78,7 @@ class _HomeState extends State<Home> {
                               borderRadius: BorderRadius.circular(10),
                               child: Image.asset(
                                 'assets/iconv3.png',
-                                fit: BoxFit.fill,
+                                fit: BoxFit.fitHeight,
                               ),
                             ),
                           ),
@@ -88,57 +87,73 @@ class _HomeState extends State<Home> {
                         //camera button
                         Expanded(
                           flex: 3,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.photo_camera,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            onPressed: () async {
-                              await availableCameras().then((value) =>
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              CameraScreen(cameras: value))));
-                            },
-                          ),
+                          child:Container()
+                          // child: IconButton(
+                          //   icon: const Icon(
+                          //     Icons.photo_camera,
+                          //     color: Colors.white,
+                          //     size: 40,
+                          //   ),
+                          //   onPressed: () async {
+                          //     // 選擇相片模式 為 相機
+                          //     SharedPreferences prefs =
+                          //         await SharedPreferences.getInstance();
+                          //     await prefs.setString(
+                          //         'choosingImgMode', 'camera');
+
+                          //     await availableCameras().then((value) =>
+                          //         Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //                 builder: (_) =>
+                          //                     CameraScreen(cameras: value))));
+                          //   },
+                          // ),
                         ),
 
                         //image button
                         Expanded(
                           flex: 3,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.image,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            onPressed: () async {
-                              //選擇相簿
-                              final pickerImages = await picker.getImage(source: ImageSource.gallery);
-                              if(mounted){
-                                setState(() {
-                                  if(pickerImages != null){
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PreviewPage(
-                                                picture: XFile(pickerImages.path),
-                                                type:'gallery',
-                                                cameraNum:1,
-                                                cameraCorrectionFlag:cameraCorrectionFlag
-                                              )));
-                                    // _userImage = File(pickerImages.path);
-                                    // print('你選擇的本地路徑是：${_userImage.toString()}');
-                                  }else{
-                                    print('沒有照片可以選擇');
-                                  }
-                                });
-                              }
+                          child:Container()
+                          // child: IconButton(
+                          //   icon: const Icon(
+                          //     Icons.image,
+                          //     color: Colors.white,
+                          //     size: 40,
+                          //   ),
+                          //   onPressed: () async {
+                          //     //選擇相簿
 
-                            },
-                          ),
+                          //     // 選擇相片模式 為 相簿
+                          //     SharedPreferences prefs =
+                          //         await SharedPreferences.getInstance();
+                          //     await prefs.setString('choosingImgMode', 'album');
+
+                          //     final pickerImages = await picker.getImage(
+                          //         source: ImageSource.gallery);
+                          //     if (mounted) {
+                          //       setState(() {
+                          //         if (pickerImages != null) {
+                          //           Navigator.push(
+                          //               context,
+                          //               MaterialPageRoute(
+                          //                   builder: (context) => PreviewPage(
+                          //                         picture:
+                          //                             XFile(pickerImages.path),
+                          //                         type: 'gallery',
+                          //                         cameraNum: 1,
+                          //                         cameraCorrectionFlag:
+                          //                             cameraCorrectionFlag,
+                          //                       )));
+                          //           // _userImage = File(pickerImages.path);
+                          //           // print('你選擇的本地路徑是：${_userImage.toString()}');
+                          //         } else {
+                          //           print('沒有照片可以選擇');
+                          //         }
+                          //       });
+                          //     }
+                          //   },
+                          // ),
                         ),
 
                         //space
@@ -155,47 +170,49 @@ class _HomeState extends State<Home> {
                         //history button
                         Expanded(
                           flex: 3,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.history,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            onPressed: () {
-                              print('按下足跡按鈕');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FootPrint(),
-                                  maintainState: false,
-                                ),
-                              );
-                            },
-                          ),
+                          child:Container()
+                          // child: IconButton(
+                          //   icon: const Icon(
+                          //     Icons.history,
+                          //     color: Colors.white,
+                          //     size: 40,
+                          //   ),
+                          //   onPressed: () {
+                          //     print('按下歷史紀錄按鈕');
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => History(),
+                          //         maintainState: false,
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                         ),
 
                         //info button
                         Expanded(
                           flex: 3,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.info,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Intro(),
-                                  maintainState: false,
-                                ),
-                              );
-                            },
-                          ),
+                          child:Container()
+                          // child: IconButton(
+                          //   icon: const Icon(
+                          //     Icons.info,
+                          //     color: Colors.white,
+                          //     size: 40,
+                          //   ),
+                          //   onPressed: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => const Intro(),
+                          //         maintainState: false,
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                         ),
 
-                        //
+                        // 隱藏功能按鍵
                         Expanded(
                           flex: 3,
                           child: PopupMenuButton(
@@ -283,13 +300,161 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                //Home pic
+                // sized box
                 Expanded(
-                  flex: 8,
+                  flex:4,
+                  child: Center(
+                    child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                'assets/homeImg.gif',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                  ),
+                ),
+
+                // 4種功能按鍵
+                Expanded(
+                  flex: 4,
                   child: Container(
                     padding: const EdgeInsets.only(
                       top: 10,
                       bottom: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //history button
+                            SizedBox(
+                              height: screenWidth / 3,
+                              width: screenWidth / 3,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: const Icon(
+                                  Icons.history,
+                                  color: Colors.white,
+                                  size: 80,
+                                ),
+                                onPressed: () {
+                                  print('按下歷史紀錄按鈕');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => History(),
+                                      maintainState: false,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+
+                            //info button
+                            SizedBox(
+                              height: screenWidth / 3,
+                              width: screenWidth / 3,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                splashRadius: 24.0,
+                                icon: const Icon(
+                                  Icons.info,
+                                  color: Colors.white,
+                                  size: 80,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Intro(),
+                                      maintainState: false,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //camera button
+                            SizedBox(
+                              height: screenWidth / 3,
+                              width: screenWidth / 3,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.photo_camera,
+                                  color: Colors.white,
+                                  size: 80,
+                                ),
+                                onPressed: () async {
+                                  // 選擇相片模式 為 相機
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString(
+                                      'choosingImgMode', 'camera');
+
+                                  await availableCameras().then((value) =>
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => CameraScreen(
+                                                  cameras: value))));
+                                },
+                              ),
+                            ),
+
+                            //image button
+                            SizedBox(
+                              height: screenWidth / 3,
+                              width: screenWidth / 3,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.image,
+                                  color: Colors.white,
+                                  size: 80,
+                                ),
+                                onPressed: () async {
+                                  //選擇相簿
+
+                                  // 選擇相片模式 為 相簿
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setString(
+                                      'choosingImgMode', 'album');
+
+                                  final pickerImages = await picker.getImage(
+                                      source: ImageSource.gallery);
+                                  if (mounted) {
+                                    setState(() {
+                                      if (pickerImages != null) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PreviewPage(
+                                                      picture: XFile(
+                                                          pickerImages.path),
+                                                      type: 'gallery',
+                                                      cameraNum: 1,
+                                                      cameraCorrectionFlag:
+                                                          cameraCorrectionFlag,
+                                                    )));
+                                        // _userImage = File(pickerImages.path);
+                                        // print('你選擇的本地路徑是：${_userImage.toString()}');
+                                      } else {
+                                        print('沒有照片可以選擇');
+                                      }
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),

@@ -29,7 +29,7 @@ class _DoctorsState extends State<Doctors> {
     return Scaffold(
         body: Container(
             padding: const EdgeInsets.all(15),
-            color: Colors.black87,
+            color: Colors.black,
             width: screenWidth,
             height: screenHeight,
             child: Column(
