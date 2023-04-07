@@ -25,106 +25,106 @@ class _UploadingState extends State<Uploading> {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
-  //將所有切割圖、allResult 存入 SharedPreferences
-  getAllData(List<int> intListServerMsg) async {
-    String serverMsg = ''; //serverMsg
-    serverMsg = utf8.decode(intListServerMsg);
-    
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //////////////////////////////////////////////  繪圖部分之圖片
-    // 儲存 回傳的所有圖片(臉型、比例圖、眉毛、眼睛...等等)
+    //將所有切割圖、allResult 存入 SharedPreferences
+    getAllData(List<int> intListServerMsg) async {
+      String serverMsg = ''; //serverMsg
+      serverMsg = utf8.decode(intListServerMsg);
 
-    //cropFace_points_string
-    String cropFace_points_string = serverMsg.split(';')[0];
-    await prefs.setString('cropFace_points_string', cropFace_points_string);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      //////////////////////////////////////////////  繪圖部分之圖片
+      // 儲存 回傳的所有圖片(臉型、比例圖、眉毛、眼睛...等等)
 
-    //cropBitmap_arrow_string
-    String cropBitmap_arrow_string = serverMsg.split(';')[1];
-    await prefs.setString('cropBitmap_arrow_string', cropBitmap_arrow_string);
+      //cropFace_points_string
+      String cropFace_points_string = serverMsg.split(';')[0];
+      await prefs.setString('cropFace_points_string', cropFace_points_string);
 
-    //cropFace_sketch_string
-    String cropFace_sketch_string = serverMsg.split(';')[2];
-    await prefs.setString('cropFace_sketch_string', cropFace_sketch_string);
+      //cropBitmap_arrow_string
+      String cropBitmap_arrow_string = serverMsg.split(';')[1];
+      await prefs.setString('cropBitmap_arrow_string', cropBitmap_arrow_string);
 
-    //cropFace_fake_string
-    String cropFace_fake_string = serverMsg.split(';')[3];
-    await prefs.setString('cropFace_fake_string', cropFace_fake_string);
+      //cropFace_sketch_string
+      String cropFace_sketch_string = serverMsg.split(';')[2];
+      await prefs.setString('cropFace_sketch_string', cropFace_sketch_string);
 
-    //cropFace_arrow_string
-    String cropFace_arrow_string = serverMsg.split(';')[4];
-    await prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
+      //cropFace_fake_string
+      String cropFace_fake_string = serverMsg.split(';')[3];
+      await prefs.setString('cropFace_fake_string', cropFace_fake_string);
 
-    //cropEyebrow_arrow_string
-    String cropEyebrow_arrow_string = serverMsg.split(';')[5];
-    await prefs.setString('cropEyebrow_arrow_string', cropEyebrow_arrow_string);
+      //cropFace_arrow_string
+      String cropFace_arrow_string = serverMsg.split(';')[4];
+      await prefs.setString('cropFace_arrow_string', cropFace_arrow_string);
 
-    //cropEye_arrow_string
-    String cropEye_arrow_string = serverMsg.split(';')[6];
-    await prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
+      //cropEyebrow_arrow_string
+      String cropEyebrow_arrow_string = serverMsg.split(';')[5];
+      await prefs.setString(
+          'cropEyebrow_arrow_string', cropEyebrow_arrow_string);
 
-    //cropEyesAndNose_arrow_string
-    String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
-    await prefs.setString(
-        'cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
+      //cropEye_arrow_string
+      String cropEye_arrow_string = serverMsg.split(';')[6];
+      await prefs.setString('cropEye_arrow_string', cropEye_arrow_string);
 
-    //cropMouth_arrow_string
-    String cropMouth_arrow_string = serverMsg.split(';')[8];
-    await prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
+      //cropEyesAndNose_arrow_string
+      String cropEyesAndNose_arrow_string = serverMsg.split(';')[7];
+      await prefs.setString(
+          'cropEyesAndNose_arrow_string', cropEyesAndNose_arrow_string);
 
-    //////////////////////////////////////////////  allResult部分(斷語)
-    String allResult = serverMsg.split(';')[9];
+      //cropMouth_arrow_string
+      String cropMouth_arrow_string = serverMsg.split(';')[8];
+      await prefs.setString('cropMouth_arrow_string', cropMouth_arrow_string);
 
-    // 簡要斷語部分(titles 和 texts)
-    String allBasicString = allResult.split('&')[0];
-    List<String> allBasicTitle = [];
-    List<String> allBasicTextOfTitle = [];
+      //////////////////////////////////////////////  allResult部分(斷語)
+      String allResult = serverMsg.split(';')[9];
 
-    // 簡要斷語title
-    List<String> temp = allBasicString.split('#[');
-    for(int i=0; i<temp.length; i++){
-      if(temp[i] == '') continue;
-      allBasicTitle.add(temp[i].split(']')[0]);
-    }
-    // 簡要斷語texts
-    for(int i=0; i<temp.length; i++){
-      if(temp[i] == '') continue;
-      allBasicTextOfTitle.add(temp[i].split(']')[1]);
-    }
+      // 簡要斷語部分(titles 和 texts)
+      String allBasicString = allResult.split('&')[0];
+      List<String> allBasicTitle = [];
+      List<String> allBasicTextOfTitle = [];
 
-    // 詳細斷語部分(titles 和 texts)
-    String allDetailString = allResult.split('&')[1];
-    List<String> allDetailTitle = [];
-    List<String> allDetailTextOfTitle = [];
-    allDetailString = allDetailString.replaceAll('#','');
+      // 簡要斷語title
+      List<String> temp = allBasicString.split('#[');
+      for (int i = 0; i < temp.length; i++) {
+        if (temp[i] == '') continue;
+        allBasicTitle.add(temp[i].split(']')[0]);
+      }
+      // 簡要斷語texts
+      for (int i = 0; i < temp.length; i++) {
+        if (temp[i] == '') continue;
+        allBasicTextOfTitle.add(temp[i].split(']')[1]);
+      }
 
-    // 詳細斷語title
-    temp = allDetailString.split('[');
-    for(int i=0; i<temp.length; i++){
-      if(temp[i] == '') continue;
-      allDetailTitle.add(temp[i].split(']')[0]);
-    }
-    // 詳細斷語texts
-    for(int i=0; i<temp.length; i++){
-      if(temp[i] == '') continue;
-      String s = temp[i];
-      s = s.replaceAll('{', '\n\n');
-      s = s.replaceAll('}', '\n');
-      allDetailTextOfTitle.add(s.split(']')[1]);
-    }
-    
-    await prefs.setStringList('allBasicTitle', allBasicTitle);
-    await prefs.setStringList('allBasicTextOfTitle', allBasicTextOfTitle);
-    await prefs.setStringList('allDetailTitle', allDetailTitle);
-    await prefs.setStringList('allDetailTextOfTitle', allDetailTextOfTitle);
+      // 詳細斷語部分(titles 和 texts)
+      String allDetailString = allResult.split('&')[1];
+      List<String> allDetailTitle = [];
+      List<String> allDetailTextOfTitle = [];
+      allDetailString = allDetailString.replaceAll('#', '');
 
+      // 詳細斷語title
+      temp = allDetailString.split('[');
+      for (int i = 0; i < temp.length; i++) {
+        if (temp[i] == '') continue;
+        allDetailTitle.add(temp[i].split(']')[0]);
+      }
+      // 詳細斷語texts
+      for (int i = 0; i < temp.length; i++) {
+        if (temp[i] == '') continue;
+        String s = temp[i];
+        s = s.replaceAll('{', '\n\n');
+        s = s.replaceAll('}', '\n');
+        allDetailTextOfTitle.add(s.split(']')[1]);
+      }
 
-    //////////////////////////////////////////////  各種比例部分
-    //分割出34種比例
-    String allRatioString = allResult.split('&')[11];
-    List<String> allRatio = allRatioString.split('+');
-    // List<String> trendTitleList = [];
+      await prefs.setStringList('allBasicTitle', allBasicTitle);
+      await prefs.setStringList('allBasicTextOfTitle', allBasicTextOfTitle);
+      await prefs.setStringList('allDetailTitle', allDetailTitle);
+      await prefs.setStringList('allDetailTextOfTitle', allDetailTextOfTitle);
 
-    for (int i = 0; i < 34; i++) {
+      //////////////////////////////////////////////  各種比例部分
+      //分割出34種比例
+      String allRatioString = allResult.split('&')[11];
+      List<String> allRatio = allRatioString.split('+');
+      // List<String> trendTitleList = [];
+
+      for (int i = 0; i < 34; i++) {
         //從 allRatio list中抓取ratio(數字部分)
         String ratio = allRatio[i];
         ratio = ratio.split(':')[1];
@@ -143,11 +143,12 @@ class _UploadingState extends State<Uploading> {
       }
       // await prefs.setStringList('trendTitleList', trendTitleList);
 
-
       //////////////////////////////////////////////  5種部位之比例分析
       //臉部分比例分析
-      String faceComment = allResult.split('&')[4].split(':')[1] + '\n' +
-          allResult.split('&')[9].split(':')[1] + '\n' +
+      String faceComment = allResult.split('&')[4].split(':')[1] +
+          '\n' +
+          allResult.split('&')[9].split(':')[1] +
+          '\n' +
           allResult.split('&')[10].split(':')[1];
 
       //眉毛部分比例分析
@@ -167,24 +168,21 @@ class _UploadingState extends State<Uploading> {
       await prefs.setString('eyesComment', eyesComment);
       await prefs.setString('noseComment', noseComment);
       await prefs.setString('mouthComment', mouthComment);
-  }
-
-
+    }
 
     //於資料庫抓取 tempImgString並且上傳
     uploadImg() async {
       print('第一次進 Uploading !');
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      tempImgString = prefs.getString('tempImgString')??'';
-      account = prefs.getString('account')??'';
-      String imgIsFromHistory = prefs.getString('imgFromHistory')??'false';
+      tempImgString = prefs.getString('tempImgString') ?? '';
+      account = prefs.getString('account') ?? '';
+      String imgIsFromHistory = prefs.getString('imgFromHistory') ?? 'false';
 
       ////////////////////////////////////////////// 將tempImg原圖上傳，若分析成功，則將tempImg寫入資料庫
       Socket socket = await Socket.connect(serverIP, serverPort);
       // Socket socket = await Socket.connect('140.117.168.12', serverPort);
       print('connected');
-      
-      
+
       List<int> intListServerMsg = [];
       socket.listen((List<int> event) async {
         intListServerMsg.addAll(event); //server訊息不會一次傳完，須將每次存下來
@@ -194,24 +192,41 @@ class _UploadingState extends State<Uploading> {
       var randomNum = Random().nextInt(100000);
       String tempClientNumString = account + ':' + randomNum.toString();
       String msg = '';
-      if(imgIsFromHistory == 'false'){// 新圖片傳給server
-        msg = 'startCode103040023<' + tempClientNumString + '<' + 'imgAnalysis' + '<' + tempImgString + '<' + 'newImg' + ';';
-      }else if(imgIsFromHistory == 'true'){// 歷史紀錄之圖片傳給server
-        msg = 'startCode103040023<' + tempClientNumString + '<' + 'imgAnalysis' + '<' + tempImgString + '<' + 'historyImg' + ';';
+      if (imgIsFromHistory == 'false') {
+        // 新圖片傳給server
+        msg = 'startCode103040023<' +
+            tempClientNumString +
+            '<' +
+            'imgAnalysis' +
+            '<' +
+            tempImgString +
+            '<' +
+            'newImg' +
+            ';';
+      } else if (imgIsFromHistory == 'true') {
+        // 歷史紀錄之圖片傳給server
+        msg = 'startCode103040023<' +
+            tempClientNumString +
+            '<' +
+            'imgAnalysis' +
+            '<' +
+            tempImgString +
+            '<' +
+            'historyImg' +
+            ';';
       }
-      
+
       List<int> msgBytes = [];
       msgBytes.addAll(utf8.encode(msg));
       msgBytes.add(0);
       socket.add(msgBytes);
-
 
       int secondCount = 0;
       int imgNumOffset = 0;
       while (true) {
         await Future.delayed(Duration(milliseconds: 500));
         int returnDataNum = utf8.decode(intListServerMsg).split(';').length;
-        if (utf8.decode(intListServerMsg).contains('error')){
+        if (utf8.decode(intListServerMsg).contains('error')) {
           print('未偵測到人臉');
 
           // 要求server斷線
@@ -225,10 +240,8 @@ class _UploadingState extends State<Uploading> {
           //AlertDialog
           try {
             Navigator.pop(context);
-          } catch (e) {
+          } catch (e) {}
 
-          }
-          
           BuildContext dialogContext = context;
           showDialog(
               context: context,
@@ -248,7 +261,7 @@ class _UploadingState extends State<Uploading> {
 
         if (returnDataNum == 12) {
           await getAllData(intListServerMsg);
-          
+
           // 要求斷線
           // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
           // List<int> msgBytes = [];
@@ -262,7 +275,8 @@ class _UploadingState extends State<Uploading> {
 
           try {
             Navigator.pop(context);
-            if(imgIsFromHistory=='false'){// 再多pop 一次
+            if (imgIsFromHistory == 'false') {
+              // 再多pop 一次
               Navigator.pop(context);
             }
             Navigator.push(
@@ -271,14 +285,11 @@ class _UploadingState extends State<Uploading> {
                 builder: (context) => const Result(),
                 maintainState: false,
               ),
-          );
-          } catch (e) {
-
-          }
+            );
+            break;
+          } catch (e) {}
           // setState(() {});
         }
-
-        
 
         // 若繪圖失敗，則斷線
         // secondCount += 1;
@@ -305,39 +316,35 @@ class _UploadingState extends State<Uploading> {
         //   break;
         // }
       }
-
     }
-    if(dataUploadFlag == false){
+
+    if (dataUploadFlag == false) {
       print('上傳影像分析中');
       uploadImg();
     }
-    
-      
 
     return Scaffold(
         body: Container(
-          color: Colors.black,
-          child:
-            Center(
-              child: DefaultTextStyle(
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      decoration: TextDecoration.none,
-                    ),
-                    child: AnimatedTextKit(
-                      repeatForever: true,
-                      isRepeatingAnimation: true,
-                      animatedTexts: [
-                        FadeAnimatedText(
-                          '分析中' ,
-                        ),
-                      ],
-                    ),
-                  ),
-            ),
-      )
-    );
+      color: Colors.black,
+      child: Center(
+        child: DefaultTextStyle(
+          style: const TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            decoration: TextDecoration.none,
+          ),
+          child: AnimatedTextKit(
+            repeatForever: true,
+            isRepeatingAnimation: true,
+            animatedTexts: [
+              FadeAnimatedText(
+                '分析中',
+              ),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 }

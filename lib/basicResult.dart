@@ -38,13 +38,12 @@ class _BasicResultState extends State<BasicResult>
   @override
   bool get wantKeepAlive => true;
   //將回傳之gif寫入byte
-  getDeepFakeImg() async{
+  getDeepFakeImg() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    account = prefs.getString('account')??''; 
-    
+    account = prefs.getString('account') ?? '';
+
     Socket socket = await Socket.connect(serverIP, serverPort);
     print('connected');
-    
 
     // listen to the received data event stream
     List<int> intListServerMsg = [];
@@ -56,17 +55,17 @@ class _BasicResultState extends State<BasicResult>
     // send hello
     var randomNum = Random().nextInt(100000);
     String tempClientNumString = account + ':' + randomNum.toString();
-    String msg = 'startCode103040023<' + tempClientNumString + '<' + 'imgDeepFake' + ';';
+    String msg =
+        'startCode103040023<' + tempClientNumString + '<' + 'imgDeepFake' + ';';
     List<int> msgBytes = [];
     msgBytes.addAll(utf8.encode(msg));
     msgBytes.add(0);
 
     socket.add(msgBytes);
 
-
     while (true) {
       await Future.delayed(Duration(milliseconds: 500));
-      if(utf8.decode(intListServerMsg).contains(';')){
+      if (utf8.decode(intListServerMsg).contains(';')) {
         print('收到 deepfake img');
         String serverMsg = utf8.decode(intListServerMsg);
         String gif_string = serverMsg.split(';')[0];
@@ -82,24 +81,20 @@ class _BasicResultState extends State<BasicResult>
       }
     }
     deepFakedataLoadedFlag = true;
-    setState(() {
-      
-    });
+    try {
+      setState(() {});
+    } catch (e) {}
   }
 
   //將所有切割圖存入 SharedPreferences
   getAllData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    allBasicTitle = prefs.getStringList('allBasicTitle')??[];
-    allBasicTextOfTitle = prefs.getStringList('allBasicTextOfTitle')??[];
-    
+    allBasicTitle = prefs.getStringList('allBasicTitle') ?? [];
+    allBasicTextOfTitle = prefs.getStringList('allBasicTextOfTitle') ?? [];
+
     dataLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
     setState(() {});
   }
-
-  
-
-
 
   // void _loadResultAllMsg() async {
   //   //////////////////////////////////////////// 解析所有server回傳之String，並且寫入前端資料庫
@@ -116,7 +111,6 @@ class _BasicResultState extends State<BasicResult>
   //   List<String> tempList =
   //       (prefs.getStringList(account + 'resultAllMsgList') ?? []);
   //   resultAllMsg = tempList[oriImgIndex]; //取得該照片之 resultAllMsg
-
 
   //   oriImgStringList =
   //       (prefs.getStringList(account + 'oriImgStringList') ?? []);
@@ -172,12 +166,6 @@ class _BasicResultState extends State<BasicResult>
   //     print('造訪舊的img');
   //   }
 
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -185,13 +173,12 @@ class _BasicResultState extends State<BasicResult>
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
 
     // if (dataLoadedFlag == false) _loadResultAllMsg();
-    if(dataLoadedFlag == false){
+    if (dataLoadedFlag == false) {
       getAllData();
     }
-    if(deepFakedataLoadedFlag == false && dataLoadedFlag == true){
+    if (deepFakedataLoadedFlag == false && dataLoadedFlag == true) {
       getDeepFakeImg();
     }
-
 
     return WillPopScope(
       onWillPop: () async {
@@ -209,35 +196,32 @@ class _BasicResultState extends State<BasicResult>
                     children: [
                       Container(
                         height: screenHeight / 8,
-                        child:
-                          Center(
-                            child: DefaultTextStyle(
-                                  style: const TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                  child: AnimatedTextKit(
-                                    repeatForever: true,
-                                    isRepeatingAnimation: true,
-                                    animatedTexts: [
-                                      FadeAnimatedText(
-                                        '繪製圖形中' ,
-                                      ),
-                                    ],
-                                  ),
+                        child: Center(
+                          child: DefaultTextStyle(
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                              decoration: TextDecoration.none,
+                            ),
+                            child: AnimatedTextKit(
+                              repeatForever: true,
+                              isRepeatingAnimation: true,
+                              animatedTexts: [
+                                FadeAnimatedText(
+                                  '繪製圖形中',
                                 ),
+                              ],
+                            ),
                           ),
+                        ),
                       ),
-                            
                       Container(
                           height: 50,
                           child: Image.asset(
                             'assets/laodingGIF.imageset/loading9.gif',
                             fit: BoxFit.fitHeight,
                           )),
-                          
                     ],
                   )
 
@@ -253,40 +237,38 @@ class _BasicResultState extends State<BasicResult>
                       //切割圖
                       Expanded(
                           flex: 1,
-                          child: 
-                          (deepFakedataLoadedFlag == false) ? 
-                          Container(
-                            child: 
-                            Center(
-                              child: DefaultTextStyle(
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                  decoration: TextDecoration.none,
-                                ),
-                                child: AnimatedTextKit(
-                                  repeatForever: true,
-                                  isRepeatingAnimation: true,
-                                  animatedTexts: [
-                                    FadeAnimatedText(
-                                      '繪製動畫中...' ,
+                          child: (deepFakedataLoadedFlag == false)
+                              ? Container(
+                                  child: Center(
+                                    child: DefaultTextStyle(
+                                      style: const TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                        decoration: TextDecoration.none,
+                                      ),
+                                      child: AnimatedTextKit(
+                                        repeatForever: true,
+                                        isRepeatingAnimation: true,
+                                        animatedTexts: [
+                                          FadeAnimatedText(
+                                            '繪製動畫中...',
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ):
-                          Container(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: Image.memory(
-                                (deepFakeImgByte),
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                          )),
+                                  ),
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Image.memory(
+                                      (deepFakeImgByte),
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                                )),
 
                       //簡要內容
                       Expanded(
