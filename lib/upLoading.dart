@@ -167,9 +167,6 @@ class _UploadingState extends State<Uploading> {
       await prefs.setString('eyesComment', eyesComment);
       await prefs.setString('noseComment', noseComment);
       await prefs.setString('mouthComment', mouthComment);
-
-
-
   }
 
 
@@ -226,7 +223,12 @@ class _UploadingState extends State<Uploading> {
           socket.close();
 
           //AlertDialog
-          Navigator.pop(context);
+          try {
+            Navigator.pop(context);
+          } catch (e) {
+
+          }
+          
           BuildContext dialogContext = context;
           showDialog(
               context: context,
@@ -257,18 +259,22 @@ class _UploadingState extends State<Uploading> {
 
           dataUploadFlag = true;
           print('分析完成');
-          Navigator.pop(context);
-          if(imgIsFromHistory=='false'){// 再多pop 一次
+
+          try {
             Navigator.pop(context);
-          }
-          
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const Result(),
-              maintainState: false,
-            ),
+            if(imgIsFromHistory=='false'){// 再多pop 一次
+              Navigator.pop(context);
+            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const Result(),
+                maintainState: false,
+              ),
           );
+          } catch (e) {
+
+          }
           // setState(() {});
         }
 
