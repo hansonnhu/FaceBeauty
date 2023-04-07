@@ -53,7 +53,17 @@ class _LoginState extends State<Login> {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
     
-
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.red;
+    }
 
     //判斷帳號密碼是否只有英文或數字
     bool stringFilter(String str) {
@@ -79,14 +89,14 @@ class _LoginState extends State<Login> {
       passwordRememberFlag = prefs.getInt('passwordRememberFlag') ?? 1;
       accountCon..text = iniAccount;
       passwordCon..text = iniPassword;
-      _usernameController..text = iniAccount;
-      _passwordController..text = iniPassword;
       print('passwordRememberFlag 為 ');
       print(passwordRememberFlag);
       if(passwordRememberFlag == 0){
         iniAccount = '';
         iniPassword = '';
       }
+      _usernameController..text = iniAccount;
+      _passwordController..text = iniPassword;
       firstLoginFlag = false;
       setState(() {});
     }
@@ -197,7 +207,7 @@ class _LoginState extends State<Login> {
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.all(2),
                             // labelText: 'Username',
-                            hintText: 'Enter your username',
+                            // hintText: 'Enter your username',
                             // hintText: '',
                             filled: true,
                             fillColor: Colors.white70,
@@ -473,9 +483,10 @@ class _LoginState extends State<Login> {
                                     int guideFlag = prefs.getInt('guideFlag') ?? 1;//若為0，跳過guide
 
                                     await Future.delayed(
-                                        Duration(milliseconds: 1000), () {
+                                        Duration(milliseconds: 1000), () async{
                                       Navigator.pop(dialogContext);
-                                      // push首頁進進去                                      
+                                      // push首頁進進去  
+       
 
                                       Navigator.push(
                                         context,
@@ -497,7 +508,7 @@ class _LoginState extends State<Login> {
                           ElevatedButton(
                             child: Text('註冊'),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.yellow[600],
+                                primary: Colors.yellow[900],
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 10),
                                 textStyle: const TextStyle(
@@ -540,14 +551,20 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       Checkbox(
+                        fillColor:
+                              MaterialStateProperty.resolveWith(getColor),
                         value: passwordRememberFlag == 1 ? true : false,
                         onChanged: (newValue) async{
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
                           if (newValue == true) {
+                            print('true');
                             passwordRememberFlag = 1;
                           } else {
+                            print('false');
                             passwordRememberFlag = 0;
+                            await prefs.setString('password', '');
+                            await prefs.setString('account', '');
                           }
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
                           await prefs.setInt('passwordRememberFlag', passwordRememberFlag);
                           setState(() {});
                         },

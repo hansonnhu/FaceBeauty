@@ -4,8 +4,6 @@ import 'dart:developer';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 String iniAccount = "";
 String iniPassword = "";
 
@@ -67,14 +65,14 @@ class _SettingState extends State<Setting> {
     _loadData() async {
       print('第一次進 setting !');
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      for(int i = 0;i<allTitle.length;i++){
+      for (int i = 0; i < allTitle.length; i++) {
         allFlag[i] = prefs.getInt(allFlagString[i]) ?? 1;
       }
       isFirstLoad = false;
       setState(() {});
     }
-    if(isFirstLoad)
-      _loadData();
+
+    if (isFirstLoad) _loadData();
 
     return Scaffold(
         body: Container(
@@ -107,37 +105,43 @@ class _SettingState extends State<Setting> {
 
                 //intor text
                 Expanded(
-                    child: 
-                    !isFirstLoad ?
-                    Container(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 40,
-                        ),
-                        child: ListView.builder(
-                          padding: new EdgeInsets.only(top: 5, bottom: 5),
-                          itemCount: allTitle.length,
-                          itemBuilder: (context, index) => Container(
-                              child: CheckboxListTile(
-                            title: Text(
-                              allTitle[index],
-                              style: const TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ), //    <-- label
-                            value: allFlag[index] == 1 ? true : false,
-                            onChanged: (newValue) {
-                              if (newValue == true) {
-                                allFlag[index] = 1;
-                              } else {
-                                allFlag[index] = 0;
-                              }
-                              setState(() {});
-                            },
-                          )),
-                        )) : Container()),
+                    child: !isFirstLoad
+                        ? Container(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              bottom: 40,
+                            ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.only(top: 5, bottom: 5),
+                              itemCount: allTitle.length,
+                              itemBuilder: (context, index) => Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.red,
+                                      ),
+                                      child: CheckboxListTile(
+                                        checkColor: Colors.white,
+                                        activeColor: Colors.red,
+                                        title: Text(
+                                          allTitle[index],
+                                          style: const TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white,
+                                          ),
+                                        ), //    <-- label
+                                        value:
+                                            allFlag[index] == 1 ? true : false,
+                                        onChanged: (newValue) {
+                                          if (newValue == true) {
+                                            allFlag[index] = 1;
+                                          } else {
+                                            allFlag[index] = 0;
+                                          }
+                                          setState(() {});
+                                        },
+                                      ))),
+                            )
+                        : Container()),
 
                 //按鈕
                 Container(
@@ -161,10 +165,11 @@ class _SettingState extends State<Setting> {
                           onPressed: () async {
                             log('按下確定按鈕');
                             //將更改後的 flags 寫入資料庫
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
-                            for(int i = 0;i<allTitle.length;i++){
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            for (int i = 0; i < allTitle.length; i++) {
                               await prefs.setInt(allFlagString[i], allFlag[i]);
-                            } 
+                            }
                             Navigator.pop(context);
 
                             //AlertDialog
@@ -198,7 +203,7 @@ class _SettingState extends State<Setting> {
                                   fontSize: 25, fontWeight: FontWeight.normal)),
                           onPressed: () async {
                             log('按下取消按鈕');
-                            
+
                             Navigator.pop(context);
                           },
                         ),

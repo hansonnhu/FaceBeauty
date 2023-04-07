@@ -21,8 +21,9 @@ Future<void> main() async {
   ]);
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false, // 移除 DEBUG 圖示
-    home: MyApp(),  //這裡切換頁面(預設為MyApp) 
+    // home: MyApp(),  //這裡切換頁面(預設為MyApp) 
     // home: Home(),  //這裡直接跳至home page
+    home: Login(),
   ));
 }
 
