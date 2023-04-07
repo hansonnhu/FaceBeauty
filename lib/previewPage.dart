@@ -152,7 +152,7 @@ class PreviewPage extends StatelessWidget {
                     ElevatedButton(
                       child: Text('重拍'),
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.teal,
+                          primary: Colors.red,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           textStyle: const TextStyle(
@@ -168,7 +168,7 @@ class PreviewPage extends StatelessWidget {
                         }
                         else{
                           print('album模式 按下重拍按鈕');
-                          // Navigator.pop(context);
+                          Navigator.pop(context);
                           final ImagePicker picker = new ImagePicker();
                           final pickerImages = await picker.getImage(source: ImageSource.gallery);
                           if(pickerImages != null){
