@@ -31,7 +31,6 @@ class _HistoryState extends State<History> {
   List<String> allOriImgString = [];  //所有的 oriImg
   List<bool> allOriImgChoose = [];  //所有的 紀錄 是否"已選擇"
   bool allChooseFlag = false; //是否選取所有紀錄
-  ScrollController _scrollController = ScrollController();
 
 
   @override
@@ -94,9 +93,10 @@ class _HistoryState extends State<History> {
       }
       dataLoadedFlag = true;
       try{
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   _scrollController.jumpTo(0);
+        // });
+
         setState(() {});
       }
       catch(e){
@@ -186,15 +186,14 @@ class _HistoryState extends State<History> {
                         ),
                         child: ListView.builder(
                             padding: new EdgeInsets.only(top: 0, bottom: 0),
-                            controller: _scrollController, // 設置 ScrollController
                             itemCount: oriImgCount,
-                            reverse: true,
+                            reverse: false,
                             itemBuilder: (context, index) => InkWell(
                                   onTap: () async {
                                     print('選擇 oriImgIndex 為 : ' +
-                                        index.toString());
+                                        ((oriImgCount - 1) - index).toString());
                                     SharedPreferences prefs = await SharedPreferences.getInstance();
-                                    await prefs.setString('tempImgString', allOriImgString[index]);
+                                    await prefs.setString('tempImgString', allOriImgString[(oriImgCount - 1) - index]);
                                     await prefs.setString('imgFromHistory', 'true');
 
                                     Navigator.push(
@@ -225,10 +224,10 @@ class _HistoryState extends State<History> {
                                             checkColor: Colors.black,
                                             activeColor: Colors.grey,
                                             side: const BorderSide(color: Colors.white),
-                                            value: allOriImgChoose[index],
+                                            value: allOriImgChoose[(oriImgCount - 1) - index],
                                             onChanged: (bool? value) {
                                               setState(() {
-                                                allOriImgChoose[index] = value!;
+                                                allOriImgChoose[(oriImgCount - 1) - index] = value!;
                                               });
                                             },
                                           )
@@ -243,7 +242,7 @@ class _HistoryState extends State<History> {
                                                 BorderRadius.circular(5),
                                             child: Image.memory(
                                               (base64Decode(
-                                                  allOriImgString[index])),
+                                                  allOriImgString[(oriImgCount - 1) - index])),
                                               fit: BoxFit.fitHeight,
                                             ),
                                           ),
@@ -270,7 +269,7 @@ class _HistoryState extends State<History> {
                                               padding: const EdgeInsets.only(
                                                   left: 10),
                                               child: Text(
-                                                allDateTimeList[index],
+                                                allDateTimeList[(oriImgCount - 1) - index],
                                                 style: const TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500,
