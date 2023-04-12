@@ -168,7 +168,8 @@ class PreviewPage extends StatelessWidget {
                         }
                         else{
                           print('album模式 按下重拍按鈕');
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          
                           final ImagePicker picker = new ImagePicker();
                           final pickerImages = await picker.getImage(source: ImageSource.gallery);
                           if(pickerImages != null){

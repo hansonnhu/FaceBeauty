@@ -31,12 +31,15 @@ class _HistoryState extends State<History> {
   List<String> allOriImgString = [];  //所有的 oriImg
   List<bool> allOriImgChoose = [];  //所有的 紀錄 是否"已選擇"
   bool allChooseFlag = false; //是否選取所有紀錄
-  
-  @override
+  ScrollController _scrollController = ScrollController();
 
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+    
+
 
     //於資料庫抓取data
     loadData() async {
@@ -90,7 +93,15 @@ class _HistoryState extends State<History> {
         }
       }
       dataLoadedFlag = true;
-      setState(() {});
+      try{
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        });
+        setState(() {});
+      }
+      catch(e){
+        print(e);
+      }
     }
 
     if (dataLoadedFlag == false) loadData();
@@ -175,7 +186,9 @@ class _HistoryState extends State<History> {
                         ),
                         child: ListView.builder(
                             padding: new EdgeInsets.only(top: 0, bottom: 0),
+                            controller: _scrollController, // 設置 ScrollController
                             itemCount: oriImgCount,
+                            reverse: true,
                             itemBuilder: (context, index) => InkWell(
                                   onTap: () async {
                                     print('選擇 oriImgIndex 為 : ' +
