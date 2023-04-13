@@ -65,35 +65,36 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     if (await Permission.storage.request().isGranted) {
       //判断是否授权,没有授权会发起授权
       print("获得了授权");
+      
       Directory documentDirectory = await getApplicationDocumentsDirectory();
-      if (Platform.isIOS)
+      if (Platform.isIOS){
+        print('此手機為 ios');
         documentDirectory = await getApplicationDocumentsDirectory();
-      else {
+        String id = account + '(' + index.toString() + ')';
+        File file = File("${documentDirectory.path}/$id.png");
+        file.writeAsBytes(png);
+        print('儲存 png 完成');
+        print('路徑: ' + documentDirectory.path);
+      } 
+      else if (Platform.isAndroid){
+        print('此手機為 android');
         documentDirectory = Directory('/storage/emulated/0/Download');
-        // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
-        // ignore: avoid_slow_async_io
         if (!await documentDirectory.exists())
-          documentDirectory =
-              await getExternalStorageDirectory() ?? documentDirectory;
+          documentDirectory = await getExternalStorageDirectory() ?? documentDirectory;
+          String documentPath = documentDirectory.path;
+          String id = account + '(' + index.toString() + ')';
+          File file = File("$documentPath/$id.png");
+          file.writeAsBytes(png);
+          print('儲存 png 完成');
+          print('路徑: ' + documentPath);
+          pngSaved = true;
       }
 
-      String documentPath = documentDirectory.path;
+      
 
-      // String id = DateTime.now().toString();
-      String id = account + '(' + index.toString() + ')';
-
-      File file = File("$documentPath/$id.png");
-      // ByteData byteData = await (png.toByteData(format: ImageByteFormat.png)) ?? ByteData(0);
-      file.writeAsBytes(png);
-      // setState(() {
-      // pdfFile = file.path;
-      // pdf = pw.Document();
-      // });
-      print('儲存 png 完成');
-      print('路徑: ' + documentPath);
-      pngSaved = true;
+      
     } else {
-      print("没有获得授权");
+      print("沒有獲得授權，或非 ios/android 系統");
       pngSaved = false;
     }
   }
@@ -299,23 +300,33 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
                                       child: GestureDetector(
-                                        onLongPress: () {
+                                        onLongPress: () async{
                                           print('已長按');
-                                          savePngFile(swiper_byte_list[index],
-                                              account, index);
-                                          if (pngSaved) {
-                                            // 彈出 儲存完成... 視窗
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  const AlertDialog(
-                                                title:
-                                                    Text('pdf儲存完成，請至 下載 資料夾查看'),
-                                                // content: Text('帳號不能為空!'),
-                                                //
-                                              ),
-                                            );
-                                          }
+                                          await savePngFile(swiper_byte_list[index], account, index);
+                                          setState(() {
+                                              if (pngSaved) {
+                                              // 彈出 儲存完成... 視窗
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) =>
+                                                    const AlertDialog(
+                                                  title:
+                                                      Text('png 儲存完成，請至 下載 資料夾查看'),
+                                                ),
+                                              );
+                                            }
+                                            else{
+                                              // 彈出 儲存完成... 視窗
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) =>
+                                                    const AlertDialog(
+                                                  title:
+                                                      Text('尚未獲得授權'),
+                                                ),
+                                              );
+                                            }
+                                          });
                                         },
                                         child: Image.memory(
                                           swiper_byte_list[index],

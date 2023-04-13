@@ -77,7 +77,7 @@ class _IntroState extends State<Intro> {
                                 '以下三類分析方式最廣為人知：\n' +
                                 '「三庭五眼」：全臉比例\n' +
                                 '「四高三低」：全臉比例\n' +
-                                '「TVR」:局部線條之立體與和諧',
+                                '「TVR」：局部線條之立體與和諧',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
