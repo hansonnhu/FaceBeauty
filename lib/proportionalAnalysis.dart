@@ -65,9 +65,9 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     if (await Permission.storage.request().isGranted) {
       //判断是否授权,没有授权会发起授权
       print("获得了授权");
-      
+
       Directory documentDirectory = await getApplicationDocumentsDirectory();
-      if (Platform.isIOS){
+      if (Platform.isIOS) {
         print('此手機為 ios');
         documentDirectory = await getApplicationDocumentsDirectory();
         String id = account + '(' + index.toString() + ')';
@@ -75,24 +75,21 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
         file.writeAsBytes(png);
         print('儲存 png 完成');
         print('路徑: ' + documentDirectory.path);
-      } 
-      else if (Platform.isAndroid){
+        pngSaved = true;
+      } else if (Platform.isAndroid) {
         print('此手機為 android');
         documentDirectory = Directory('/storage/emulated/0/Download');
         if (!await documentDirectory.exists())
-          documentDirectory = await getExternalStorageDirectory() ?? documentDirectory;
-          String documentPath = documentDirectory.path;
-          String id = account + '(' + index.toString() + ')';
-          File file = File("$documentPath/$id.png");
-          file.writeAsBytes(png);
-          print('儲存 png 完成');
-          print('路徑: ' + documentPath);
-          pngSaved = true;
+          documentDirectory =
+              await getExternalStorageDirectory() ?? documentDirectory;
+        String documentPath = documentDirectory.path;
+        String id = account + '(' + index.toString() + ')';
+        File file = File("$documentPath/$id.png");
+        file.writeAsBytes(png);
+        print('儲存 png 完成');
+        print('路徑: ' + documentPath);
+        pngSaved = true;
       }
-
-      
-
-      
     } else {
       print("沒有獲得授權，或非 ios/android 系統");
       pngSaved = false;
@@ -103,8 +100,8 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   getScore(var min, var max, var value) {
     if (max == min) return 100;
     var score = (100 + (-100 / (max - min)) * (value - min).abs()).abs();
-    if(score > 100) score = 100;
-    if(score < 0) score = 0;
+    if (score > 100) score = 100;
+    if (score < 0) score = 0;
     return score;
   }
 
@@ -118,7 +115,6 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     //temp
     // allImgStrings = prefs.getStringList(account + 'oriImgStringList') ?? [];
-    
 
     //server回傳之字串處理
     // resultAllMsg = prefs.getStringList(account + 'resultAllMsgList') ?? [];
@@ -174,12 +170,11 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
     // //嘴巴部分比例分析
     // mouthComment = resultAllMsg[oriImgIndex].split('&')[8].split(':')[1];
-    String faceComment = prefs.getString('faceComment')??'';
-    String eyebrowComment = prefs.getString('eyebrowComment')??'';
-    String eyesComment = prefs.getString('eyesComment')??'';
-    String noseComment = prefs.getString('noseComment')??'';
-    String mouthComment = prefs.getString('mouthComment')??'';
-
+    String faceComment = prefs.getString('faceComment') ?? '';
+    String eyebrowComment = prefs.getString('eyebrowComment') ?? '';
+    String eyesComment = prefs.getString('eyesComment') ?? '';
+    String noseComment = prefs.getString('noseComment') ?? '';
+    String mouthComment = prefs.getString('mouthComment') ?? '';
 
     //將data整合
     resultPorportionalMsgList = [
@@ -270,11 +265,10 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // if(firstGetResult_proportional_flag){
     //   _loadResultAllMsg();
     // }
-    if(imgLoadedFlag == false){
+    if (imgLoadedFlag == false) {
       _loadResultAllMsg();
     }
-    
-    
+
     // print(firstGetResult_proportional_flag);
 
     return Scaffold(
@@ -300,29 +294,32 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
                                       child: GestureDetector(
-                                        onLongPress: () async{
+                                        onLongPress: () async {
                                           print('已長按');
-                                          await savePngFile(swiper_byte_list[index], account, index);
+                                          await savePngFile(
+                                              swiper_byte_list[index],
+                                              account,
+                                              index);
                                           setState(() {
-                                              if (pngSaved) {
+                                            if (pngSaved) {
                                               // 彈出 儲存完成... 視窗
                                               showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) =>
-                                                    const AlertDialog(
-                                                  title:
-                                                      Text('png 儲存完成，請至 下載 資料夾查看'),
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const AlertDialog(
+                                                  title: Text(
+                                                      'png 儲存完成，請至 下載 資料夾查看'),
                                                 ),
                                               );
-                                            }
-                                            else{
+                                            } else {
                                               // 彈出 儲存完成... 視窗
                                               showDialog(
                                                 context: context,
-                                                builder: (BuildContext context) =>
-                                                    const AlertDialog(
-                                                  title:
-                                                      Text('尚未獲得授權'),
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const AlertDialog(
+                                                  title: Text('尚未獲得授權'),
                                                 ),
                                               );
                                             }
