@@ -140,24 +140,6 @@ class _CameraScreenState extends State<CameraScreen>
               Container():
               Stack(
                 children: [
-                  // Container(
-                  //   // color:Colors.white,
-                  //   // padding: EdgeInsets.only(top: screenHeight/5),
-                  //   child: 
-                  //     Center(
-                  //       child: ClipRRect(
-                  //         child:Image.asset(
-                  //           // 'assets/face_3.imageset/face_3@3x.png',
-                  //           'assets/face_3.imageset/face.png',
-                  //           fit: BoxFit.fill,
-                  //           width: screenWidth,
-                  //           color: Color.fromRGBO(255, 255, 255, 0.4),
-                  //           colorBlendMode: BlendMode.modulate,
-                  //         ), 
-                  //       ),
-                  //     ),
-                    
-                  // ),
                   ClipPath(
                     clipper: MyCustomClipper(),
                     child: Container(
@@ -166,21 +148,6 @@ class _CameraScreenState extends State<CameraScreen>
                       height: screenHeight,
                     ),
                   ),
-                  
-                  // Container(
-                  //   // padding: EdgeInsets.only(top: screenHeight/5),
-                  //   child: 
-                  //   Center(
-                  //     child: ClipRRect(
-                  //         child:Image.asset('assets/scanningGIF.imageset/scan.gif',
-                  //         fit: BoxFit.fill,
-                  //         width: screenWidth,
-                  //         color: Color.fromRGBO(255, 255, 255, 0.5),
-                  //         // colorBlendMode: BlendMode.modulate,
-                  //       ), 
-                  //     ),
-                  //   )
-                  // ),
                   
                   // 掃描光束
                   Container(
@@ -232,12 +199,7 @@ class _CameraScreenState extends State<CameraScreen>
                       scrollAxis: Axis.vertical,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       velocity: 150.0,
-                      // pauseAfterRound: Duration(milliseconds: 500),
                       startPadding: 0.0,
-                      // accelerationDuration: Duration(seconds: 1),
-                      // accelerationCurve: Curves.linear,
-                      // decelerationDuration: Duration(milliseconds: 500),
-                      // decelerationCurve: Curves.easeOut,
                       )
                   ),
 
