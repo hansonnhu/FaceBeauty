@@ -8,7 +8,6 @@ import 'dart:async';
 
 List<CameraDescription> cameras = [];
 Future<void> main() async {
-  
   try {
     WidgetsFlutterBinding.ensureInitialized();
     cameras = await availableCameras();
@@ -21,9 +20,9 @@ Future<void> main() async {
   ]);
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false, // 移除 DEBUG 圖示
-    // home: MyApp(),  //這裡切換頁面(預設為MyApp) 
+    home: MyApp(), //這裡切換頁面(預設為MyApp)
     // home: Home(),  //這裡直接跳至home page
-    home: Login(),
+    // home: Login(),
   ));
 }
 
@@ -32,18 +31,17 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  
   Widget build(BuildContext context) {
-      bool loadingOK = false;
-      // _counting(){
-      //   print('counting');
-      //   Future.delayed(Duration(seconds: 5),);
-      //   loadingOK = true;
-      // }
-    return 
-    
-    FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 4),(){loadingOK = true;}),
+    bool loadingOK = false;
+    // _counting(){
+    //   print('counting');
+    //   Future.delayed(Duration(seconds: 5),);
+    //   loadingOK = true;
+    // }
+    return FutureBuilder(
+        future: Future.delayed(const Duration(seconds: 4), () {
+          loadingOK = true;
+        }),
         builder: (context, AsyncSnapshot snapshot) {
           // Loading
           if (loadingOK == false) {
@@ -52,21 +50,19 @@ class MyApp extends StatelessWidget {
               home: SplashScreen(),
             );
           } else {
-            return 
-            GestureDetector(
-              onTap:(){
+            return GestureDetector(
+              onTap: () {
                 hideKeyboard(context);
               },
-            child: const MaterialApp(
+              child: const MaterialApp(
                 debugShowCheckedModeBanner: false,
                 home: Login(),
-              ) ,
+              ),
             );
           }
         });
-    
-
   }
+
   void hideKeyboard(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
     if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
@@ -74,8 +70,6 @@ class MyApp extends StatelessWidget {
     }
   }
 }
-
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -96,9 +90,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int _counter = 0;
-
 
   void _incrementCounter() {
     setState(() {
