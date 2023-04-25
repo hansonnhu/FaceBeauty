@@ -85,76 +85,72 @@ class _HomeState extends State<Home> {
                         ),
 
                         //camera button
-                        Expanded(
-                          flex: 3,
-                          child:Container()
-                          // child: IconButton(
-                          //   icon: const Icon(
-                          //     Icons.photo_camera,
-                          //     color: Colors.white,
-                          //     size: 40,
-                          //   ),
-                          //   onPressed: () async {
-                          //     // 選擇相片模式 為 相機
-                          //     SharedPreferences prefs =
-                          //         await SharedPreferences.getInstance();
-                          //     await prefs.setString(
-                          //         'choosingImgMode', 'camera');
+                        Expanded(flex: 3, child: Container()
+                            // child: IconButton(
+                            //   icon: const Icon(
+                            //     Icons.photo_camera,
+                            //     color: Colors.white,
+                            //     size: 40,
+                            //   ),
+                            //   onPressed: () async {
+                            //     // 選擇相片模式 為 相機
+                            //     SharedPreferences prefs =
+                            //         await SharedPreferences.getInstance();
+                            //     await prefs.setString(
+                            //         'choosingImgMode', 'camera');
 
-                          //     await availableCameras().then((value) =>
-                          //         Navigator.push(
-                          //             context,
-                          //             MaterialPageRoute(
-                          //                 builder: (_) =>
-                          //                     CameraScreen(cameras: value))));
-                          //   },
-                          // ),
-                        ),
+                            //     await availableCameras().then((value) =>
+                            //         Navigator.push(
+                            //             context,
+                            //             MaterialPageRoute(
+                            //                 builder: (_) =>
+                            //                     CameraScreen(cameras: value))));
+                            //   },
+                            // ),
+                            ),
 
                         //image button
-                        Expanded(
-                          flex: 3,
-                          child:Container()
-                          // child: IconButton(
-                          //   icon: const Icon(
-                          //     Icons.image,
-                          //     color: Colors.white,
-                          //     size: 40,
-                          //   ),
-                          //   onPressed: () async {
-                          //     //選擇相簿
+                        Expanded(flex: 3, child: Container()
+                            // child: IconButton(
+                            //   icon: const Icon(
+                            //     Icons.image,
+                            //     color: Colors.white,
+                            //     size: 40,
+                            //   ),
+                            //   onPressed: () async {
+                            //     //選擇相簿
 
-                          //     // 選擇相片模式 為 相簿
-                          //     SharedPreferences prefs =
-                          //         await SharedPreferences.getInstance();
-                          //     await prefs.setString('choosingImgMode', 'album');
+                            //     // 選擇相片模式 為 相簿
+                            //     SharedPreferences prefs =
+                            //         await SharedPreferences.getInstance();
+                            //     await prefs.setString('choosingImgMode', 'album');
 
-                          //     final pickerImages = await picker.getImage(
-                          //         source: ImageSource.gallery);
-                          //     if (mounted) {
-                          //       setState(() {
-                          //         if (pickerImages != null) {
-                          //           Navigator.push(
-                          //               context,
-                          //               MaterialPageRoute(
-                          //                   builder: (context) => PreviewPage(
-                          //                         picture:
-                          //                             XFile(pickerImages.path),
-                          //                         type: 'gallery',
-                          //                         cameraNum: 1,
-                          //                         cameraCorrectionFlag:
-                          //                             cameraCorrectionFlag,
-                          //                       )));
-                          //           // _userImage = File(pickerImages.path);
-                          //           // print('你選擇的本地路徑是：${_userImage.toString()}');
-                          //         } else {
-                          //           print('沒有照片可以選擇');
-                          //         }
-                          //       });
-                          //     }
-                          //   },
-                          // ),
-                        ),
+                            //     final pickerImages = await picker.getImage(
+                            //         source: ImageSource.gallery);
+                            //     if (mounted) {
+                            //       setState(() {
+                            //         if (pickerImages != null) {
+                            //           Navigator.push(
+                            //               context,
+                            //               MaterialPageRoute(
+                            //                   builder: (context) => PreviewPage(
+                            //                         picture:
+                            //                             XFile(pickerImages.path),
+                            //                         type: 'gallery',
+                            //                         cameraNum: 1,
+                            //                         cameraCorrectionFlag:
+                            //                             cameraCorrectionFlag,
+                            //                       )));
+                            //           // _userImage = File(pickerImages.path);
+                            //           // print('你選擇的本地路徑是：${_userImage.toString()}');
+                            //         } else {
+                            //           print('沒有照片可以選擇');
+                            //         }
+                            //       });
+                            //     }
+                            //   },
+                            // ),
+                            ),
 
                         //space
                         Expanded(
@@ -168,49 +164,45 @@ class _HomeState extends State<Home> {
                         ),
 
                         //history button
-                        Expanded(
-                          flex: 3,
-                          child:Container()
-                          // child: IconButton(
-                          //   icon: const Icon(
-                          //     Icons.history,
-                          //     color: Colors.white,
-                          //     size: 40,
-                          //   ),
-                          //   onPressed: () {
-                          //     print('按下歷史紀錄按鈕');
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => History(),
-                          //         maintainState: false,
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                        ),
+                        Expanded(flex: 3, child: Container()
+                            // child: IconButton(
+                            //   icon: const Icon(
+                            //     Icons.history,
+                            //     color: Colors.white,
+                            //     size: 40,
+                            //   ),
+                            //   onPressed: () {
+                            //     print('按下歷史紀錄按鈕');
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => History(),
+                            //         maintainState: false,
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
+                            ),
 
                         //info button
-                        Expanded(
-                          flex: 3,
-                          child:Container()
-                          // child: IconButton(
-                          //   icon: const Icon(
-                          //     Icons.info,
-                          //     color: Colors.white,
-                          //     size: 40,
-                          //   ),
-                          //   onPressed: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => const Intro(),
-                          //         maintainState: false,
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                        ),
+                        Expanded(flex: 3, child: Container()
+                            // child: IconButton(
+                            //   icon: const Icon(
+                            //     Icons.info,
+                            //     color: Colors.white,
+                            //     size: 40,
+                            //   ),
+                            //   onPressed: () {
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) => const Intro(),
+                            //         maintainState: false,
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
+                            ),
 
                         // 隱藏功能按鍵
                         Expanded(
@@ -302,15 +294,15 @@ class _HomeState extends State<Home> {
 
                 // sized box
                 Expanded(
-                  flex:4,
+                  flex: 4,
                   child: Center(
                     child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                'assets/homeImg.gif',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        'assets/homeImg.gif',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
                 ),
 
@@ -425,29 +417,33 @@ class _HomeState extends State<Home> {
                                   await prefs.setString(
                                       'choosingImgMode', 'album');
 
-                                  final pickerImages = await picker.getImage(
-                                      source: ImageSource.gallery);
-                                  if (mounted) {
-                                    setState(() {
-                                      if (pickerImages != null) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PreviewPage(
-                                                      picture: XFile(
-                                                          pickerImages.path),
-                                                      type: 'gallery',
-                                                      cameraNum: 1,
-                                                      cameraCorrectionFlag:
-                                                          cameraCorrectionFlag,
-                                                    )));
-                                        // _userImage = File(pickerImages.path);
-                                        // print('你選擇的本地路徑是：${_userImage.toString()}');
-                                      } else {
-                                        print('沒有照片可以選擇');
-                                      }
-                                    });
+                                  try {
+                                    final pickerImages = await picker.getImage(
+                                        source: ImageSource.gallery);
+                                    if (mounted) {
+                                      setState(() {
+                                        if (pickerImages != null) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PreviewPage(
+                                                        picture: XFile(
+                                                            pickerImages.path),
+                                                        type: 'gallery',
+                                                        cameraNum: 1,
+                                                        cameraCorrectionFlag:
+                                                            cameraCorrectionFlag,
+                                                      )));
+                                          // _userImage = File(pickerImages.path);
+                                          // print('你選擇的本地路徑是：${_userImage.toString()}');
+                                        } else {
+                                          print('沒有照片可以選擇');
+                                        }
+                                      });
+                                    }
+                                  } catch (e) {
+                                    print(e);
                                   }
                                 },
                               ),
