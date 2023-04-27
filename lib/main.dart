@@ -22,7 +22,7 @@ Future<void> main() async {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false, // 移除 DEBUG 圖示
     home: SplashScreen(),  // 先跳轉至 SplashScreen page，再跳轉至 Login page
-    // home: MyApp(), //這裡切換頁面(預設為MyApp)
+    // home: MyApp(), 
     // home: Login(),
   ));
 }
