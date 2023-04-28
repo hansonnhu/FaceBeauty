@@ -18,6 +18,7 @@ import 'dart:math';
 import 'analysisAnimation.dart';
 import 'upLoading.dart';
 import "package:image_picker/image_picker.dart";
+import 'login.dart';
 // import 'package:image/image.dart';
 
 // String serverMsg = '';
@@ -168,12 +169,13 @@ class PreviewPage extends StatelessWidget {
                         }
                         else{
                           print('album模式 按下重拍按鈕');
-                          // Navigator.pop(context);
+                          
                           
                           final ImagePicker picker = new ImagePicker();
                           final pickerImages = await picker.getImage(source: ImageSource.gallery);
                           if(pickerImages != null){
                             Navigator.pop(context);
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(

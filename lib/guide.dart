@@ -9,6 +9,7 @@ import 'home.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'login.dart';
 
 //全域變數
 // List<String> picSrc = [
@@ -131,10 +132,17 @@ class _GuideState extends State<Guide> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const Home(),
+                                    builder: (context) => const Login(),
                                     maintainState: false,
                                   ),
                                   (route) => false,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Home(),
+                                    maintainState: false,
+                                  ),
                                 );
                               },
                             ),
@@ -156,13 +164,28 @@ class _GuideState extends State<Guide> {
                                 } else {
                                   log('指引結束');
                                   srcNum = 0;
-                                  Navigator.of(context).popUntil(
-                                    (route) {
-                                      // print(route.toString());
-                                      return route.settings.name == "/"
-                                          ? true
-                                          : false;
-                                    },
+                                  // Navigator.of(context).popUntil(
+                                  //   (route) {
+                                  //     // print(route.toString());
+                                  //     return route.settings.name == "/"
+                                  //         ? true
+                                  //         : false;
+                                  //   },
+                                  // );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const Home(),
+                                  //     maintainState: false,
+                                  //   ),
+                                  // );
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Login(),
+                                      maintainState: false,
+                                    ),
+                                    (route) => false,
                                   );
                                   Navigator.push(
                                     context,

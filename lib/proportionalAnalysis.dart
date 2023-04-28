@@ -18,6 +18,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:ui';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 //flag
 
@@ -65,7 +66,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   savePngFile(png, String account, int index) async {
     if (await Permission.storage.request().isGranted) {
       //判断是否授权,没有授权会发起授权
-      print("获得了授权");
+      print("獲得了授權");
 
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       if (Platform.isIOS) {
@@ -81,16 +82,29 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
             });
       } else if (Platform.isAndroid) {
         print('此手機為 android');
-        documentDirectory = Directory('/storage/emulated/0/Download');
-        if (!await documentDirectory.exists())
-          documentDirectory =
-              await getExternalStorageDirectory() ?? documentDirectory;
-        String documentPath = documentDirectory.path;
-        String id = account + '(' + index.toString() + ')';
-        File file = File("$documentPath/$id.png");
-        file.writeAsBytes(png);
+        // documentDirectory = Directory('/storage/emulated/0/Download');
+        // if (!await documentDirectory.exists())
+        //   documentDirectory =
+        //       await getExternalStorageDirectory() ?? documentDirectory;
+        // String documentPath = documentDirectory.path;
+        // String id = account + '(' + index.toString() + ')';
+        // File file = File("$documentPath/$id.png");
+        // file.writeAsBytes(png);
+
+        final result = await ImageGallerySaver.saveImage(png);
+
+        // documentDirectory = await getApplicationDocumentsDirectory();
+        // String id = account + '(' + index.toString() + ')';
+        // File file = File("${documentDirectory.path}/$id.png");
+        // file.writeAsBytes(png).then((value) => {
+        //       print('儲存 png 完成'),
+        //       print('路徑: ' + documentDirectory.path),
+        //       GallerySaver.saveImage(file.path),
+        //       pngSaved = true
+        // });
+
         print('儲存 png 完成');
-        print('路徑: ' + documentPath);
+        // print('路徑: ' + documentPath);
         pngSaved = true;
       }
     } else {
@@ -288,8 +302,17 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                   physics: ScrollPhysics(),
                   child: Column(
                     children: [
+                      const Text(
+                          '長按照片以儲存至手機相簿',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
                       Container(
-                          height: screenHeight * 2 / 5,
+                        // color: Colors.white,
+                          height: screenHeight * 2 / 7,
                           child: Swiper(
                             itemCount: 3,
                             itemBuilder: (BuildContext context, int index) {
@@ -299,10 +322,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                       child: GestureDetector(
                                         onLongPress: () async {
                                           print('已長按');
-                                          await savePngFile(
-                                              swiper_byte_list[index],
-                                              account,
-                                              index);
+                                          await savePngFile(swiper_byte_list[index], account, index);
                                           setState(() {
                                             if (pngSaved) {
                                               // 彈出 儲存完成... 視窗
@@ -312,7 +332,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                                     (BuildContext context) =>
                                                         const AlertDialog(
                                                   title: Text(
-                                                      'png 儲存完成，請至 下載 資料夾查看'),
+                                                      '相片儲存完成，請至相簿查看'),
                                                 ),
                                               );
                                             } else {

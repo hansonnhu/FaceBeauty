@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'guide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login.dart';
 
 String iniAccount = "";
 String iniPassword = "";
@@ -118,17 +119,21 @@ class _IntroState extends State<Intro> {
                                 ),
                               );
                             }else{
-                              Navigator.of(context).popUntil((route) {
-                                  // print(route.toString());
-                                  return route.settings.name == "/" ? true : false;
-                                },);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Home(),
-                                    maintainState: false,
-                                  ),
-                                );
+                              Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Login(),
+                                      maintainState: false,
+                                    ),
+                                    (route) => false,
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Home(),
+                                      maintainState: false,
+                                    ),
+                                  );
                             }
                             
                           },
