@@ -17,6 +17,7 @@ import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:ui';
+import 'package:gallery_saver/gallery_saver.dart';
 
 //flag
 
@@ -72,10 +73,12 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
         documentDirectory = await getApplicationDocumentsDirectory();
         String id = account + '(' + index.toString() + ')';
         File file = File("${documentDirectory.path}/$id.png");
-        file.writeAsBytes(png);
-        print('儲存 png 完成');
-        print('路徑: ' + documentDirectory.path);
-        pngSaved = true;
+        file.writeAsBytes(png).then((value) => {
+              print('儲存 png 完成'),
+              print('路徑: ' + documentDirectory.path),
+              GallerySaver.saveImage(file.path),
+              pngSaved = true
+            });
       } else if (Platform.isAndroid) {
         print('此手機為 android');
         documentDirectory = Directory('/storage/emulated/0/Download');

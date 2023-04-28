@@ -55,6 +55,7 @@ dependencies:
   permission_handler: ^10.2.0
   # big5: ^0.0.4
   # big5: ^0.0.4
+  gallery_saver: ^2.3.2
 
 
 dev_dependencies:

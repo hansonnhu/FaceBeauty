@@ -119,17 +119,22 @@ class _GuideState extends State<Guide> {
                               onPressed: () {
                                 log('按下跳過按鈕');
                                 // Navigator.of(context).popUntil((route) => route.settings.name == "/" ? true : false);
-                                Navigator.of(context).popUntil((route) {
-                                  // print(route.toString());
-                                  return route.settings.name == "/" ? true : false;
-                                  
-                                },);
-                                Navigator.push(
+                                // try {
+                                //   Navigator.of(context).popUntil(
+                                //     (route) {
+                                //       // print(route.toString());
+                                //       return Navigator.of(context);
+                                //     },
+                                //   );
+                                // } catch (e) {}
+
+                                Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const Home(),
                                     maintainState: false,
                                   ),
+                                  (route) => false,
                                 );
                               },
                             ),
@@ -151,19 +156,21 @@ class _GuideState extends State<Guide> {
                                 } else {
                                   log('指引結束');
                                   srcNum = 0;
-                                  Navigator.of(context).popUntil((route) {
-                                  // print(route.toString());
-                                  return route.settings.name == "/" ? true : false;
-                                  
-                                },);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Home(),
-                                    maintainState: false,
-                                  ),
-                                );
-                                  
+                                  Navigator.of(context).popUntil(
+                                    (route) {
+                                      // print(route.toString());
+                                      return route.settings.name == "/"
+                                          ? true
+                                          : false;
+                                    },
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Home(),
+                                      maintainState: false,
+                                    ),
+                                  );
                                 }
                               },
                             ),
