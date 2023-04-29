@@ -13,8 +13,7 @@ import 'parameter.dart';
 
 
 
-String iniAccount = "";
-String iniPassword = "";
+
 var passwordRememberFlag = 0;
 TextEditingController accountCon = TextEditingController();
 TextEditingController passwordCon = TextEditingController();
@@ -35,6 +34,8 @@ class _LoginState extends State<Login> {
   final FocusNode _passwordFocus = FocusNode();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String iniAccount = "";
+  String iniPassword = "";
   @override
   void dispose() {
     _usernameFocus.dispose();
@@ -103,8 +104,8 @@ class _LoginState extends State<Login> {
     _modifyUserInfo(TextEditingController accountCon,
         TextEditingController passwordCon) async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('account', accountCon.text);
-      await prefs.setString('password', passwordCon.text);
+      await prefs.setString('account', iniAccount);
+      await prefs.setString('password', iniPassword);
     }
 
 
@@ -316,10 +317,10 @@ class _LoginState extends State<Login> {
                                     fontWeight: FontWeight.normal)),
                             onPressed: () async {
                               print('按下登入按鈕');
-                              print(accountCon.text);
-                              print(passwordCon.text);
+                              print(iniAccount);
+                              print(iniPassword);
 
-                              if (accountCon.text == '') {
+                              if (iniAccount == '') {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
@@ -340,7 +341,7 @@ class _LoginState extends State<Login> {
                                     ],
                                   ),
                                 );
-                              } else if (passwordCon.text == '') {
+                              } else if (iniPassword == '') {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
@@ -361,8 +362,8 @@ class _LoginState extends State<Login> {
                                     ],
                                   ),
                                 );
-                              } else if (!stringFilter(accountCon.text) ||
-                                  !stringFilter(passwordCon.text)) {
+                              } else if (!stringFilter(iniAccount) ||
+                                  !stringFilter(iniPassword)) {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) =>
@@ -402,8 +403,8 @@ class _LoginState extends State<Login> {
                                 
                                 // 傳送訊息給server
                                 var randomNum = Random().nextInt(100000);
-                                String tempClientNumString = accountCon.text + ':' + randomNum.toString();
-                                String msg = 'startCode103040023<' + tempClientNumString + '<' + 'login' + '<' + accountCon.text + '<' + passwordCon.text + ';';
+                                String tempClientNumString = iniAccount + ':' + randomNum.toString();
+                                String msg = 'startCode103040023<' + tempClientNumString + '<' + 'login' + '<' + iniAccount + '<' + iniPassword + ';';
                                 List<int> msgBytes = [];
                                 msgBytes.addAll(utf8.encode(msg));
                                 msgBytes.add(0);
