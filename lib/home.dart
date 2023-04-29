@@ -55,6 +55,7 @@ class _HomeState extends State<Home> {
             height: screenHeight,
             child: Column(
               children: [
+                Container(height: 10,),
                 //傾國
                 Expanded(
                   flex: 1,
@@ -85,72 +86,10 @@ class _HomeState extends State<Home> {
                         ),
 
                         //camera button
-                        Expanded(flex: 3, child: Container()
-                            // child: IconButton(
-                            //   icon: const Icon(
-                            //     Icons.photo_camera,
-                            //     color: Colors.white,
-                            //     size: 40,
-                            //   ),
-                            //   onPressed: () async {
-                            //     // 選擇相片模式 為 相機
-                            //     SharedPreferences prefs =
-                            //         await SharedPreferences.getInstance();
-                            //     await prefs.setString(
-                            //         'choosingImgMode', 'camera');
-
-                            //     await availableCameras().then((value) =>
-                            //         Navigator.push(
-                            //             context,
-                            //             MaterialPageRoute(
-                            //                 builder: (_) =>
-                            //                     CameraScreen(cameras: value))));
-                            //   },
-                            // ),
-                            ),
+                        Expanded(flex: 3, child: Container()),
 
                         //image button
-                        Expanded(flex: 3, child: Container()
-                            // child: IconButton(
-                            //   icon: const Icon(
-                            //     Icons.image,
-                            //     color: Colors.white,
-                            //     size: 40,
-                            //   ),
-                            //   onPressed: () async {
-                            //     //選擇相簿
-
-                            //     // 選擇相片模式 為 相簿
-                            //     SharedPreferences prefs =
-                            //         await SharedPreferences.getInstance();
-                            //     await prefs.setString('choosingImgMode', 'album');
-
-                            //     final pickerImages = await picker.getImage(
-                            //         source: ImageSource.gallery);
-                            //     if (mounted) {
-                            //       setState(() {
-                            //         if (pickerImages != null) {
-                            //           Navigator.push(
-                            //               context,
-                            //               MaterialPageRoute(
-                            //                   builder: (context) => PreviewPage(
-                            //                         picture:
-                            //                             XFile(pickerImages.path),
-                            //                         type: 'gallery',
-                            //                         cameraNum: 1,
-                            //                         cameraCorrectionFlag:
-                            //                             cameraCorrectionFlag,
-                            //                       )));
-                            //           // _userImage = File(pickerImages.path);
-                            //           // print('你選擇的本地路徑是：${_userImage.toString()}');
-                            //         } else {
-                            //           print('沒有照片可以選擇');
-                            //         }
-                            //       });
-                            //     }
-                            //   },
-                            // ),
-                            ),
+                        Expanded(flex: 3, child: Container()),
 
                         //space
                         Expanded(

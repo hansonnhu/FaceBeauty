@@ -31,12 +31,13 @@ class _HistoryState extends State<History> {
   List<String> allOriImgString = [];  //所有的 oriImg
   List<bool> allOriImgChoose = [];  //所有的 紀錄 是否"已選擇"
   bool allChooseFlag = false; //是否選取所有紀錄
-
+  bool historyEmpty = true; // 歷史紀錄為空，預設為 true
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //抓取螢幕寬度
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
+    
     
 
 
@@ -78,6 +79,7 @@ class _HistoryState extends State<History> {
         }
         
         if (serverMsg.contains(';')){
+          historyEmpty = false;
           List <String> temp = serverMsg.split('<');
           temp.removeLast();
           for(int i=0; i<temp.length; i++){
@@ -184,7 +186,15 @@ class _HistoryState extends State<History> {
                           top: 10,
                           bottom: 40,
                         ),
-                        child: ListView.builder(
+                        child: 
+                          (oriImgCount == 0) ? const Text(
+                            '目前沒有紀錄',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.teal,
+                            ),
+                          ): ListView.builder(
                             padding: new EdgeInsets.only(top: 0, bottom: 0),
                             itemCount: oriImgCount,
                             reverse: false,
