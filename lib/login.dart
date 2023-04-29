@@ -1,9 +1,3 @@
-// import 'dart:math';
-
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
-
-
 import 'package:facebeauty/guide.dart';
 import 'package:facebeauty/welcome.dart';
 import 'package:flutter/material.dart';
@@ -305,7 +299,7 @@ class _LoginState extends State<Login> {
                     //登入與註冊
                     Container(
                       padding: const EdgeInsets.only(
-                        top: 10,
+                        top: 30,
                         bottom: 10,
                       ),
                       child: Row(
