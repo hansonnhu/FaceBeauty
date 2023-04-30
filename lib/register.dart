@@ -9,7 +9,6 @@ import 'guide.dart';
 import 'welcome.dart';
 import 'parameter.dart';
 
-
 void hideKeyboard() {
   // 按空白處影藏鍵盤
   FocusManager.instance.primaryFocus?.unfocus();
@@ -39,6 +38,7 @@ class _RegisterState extends State<Register> {
     _passwordController.dispose();
     super.dispose();
   }
+
   Widget build(BuildContext context) {
     //判斷帳號密碼是否只有盈文或數字
     bool stringFilter(String str) {
@@ -73,7 +73,6 @@ class _RegisterState extends State<Register> {
     double screenHeight = MediaQuery.of(context).size.height; //抓取螢幕高度
     // final TextEditingController registerAccount = TextEditingController();
     // final TextEditingController registerPassword = TextEditingController();
-    
 
     return Listener(
         onPointerDown: (_) => hideKeyboard(),
@@ -83,7 +82,7 @@ class _RegisterState extends State<Register> {
           color: Colors.black,
           width: screenWidth,
           height: screenHeight,
-          child: Expanded(
+          child: Container(
             child: Column(
               children: [
                 //帳號 - 5~16英數
@@ -332,8 +331,7 @@ class _RegisterState extends State<Register> {
                                           ],
                                         );
                                       });
-                                } else if (!stringFilter(
-                                        registerAccount) ||
+                                } else if (!stringFilter(registerAccount) ||
                                     !stringFilter(registerPassword)) {
                                   showDialog(
                                       context: context,
@@ -375,10 +373,9 @@ class _RegisterState extends State<Register> {
                                   // send hello
                                   // 傳送訊息給server
                                   var randomNum = Random().nextInt(100000);
-                                  String tempClientNumString =
-                                      registerAccount +
-                                          ':' +
-                                          randomNum.toString();
+                                  String tempClientNumString = registerAccount +
+                                      ':' +
+                                      randomNum.toString();
                                   String msg = 'startCode103040023<' +
                                       tempClientNumString +
                                       '<' +
@@ -554,7 +551,7 @@ class _RegisterState extends State<Register> {
                               // color: Colors.green,
                               child: const SingleChildScrollView(
                                   child: Text(
-                                '一、【傾國】由國立中山大學影像處理實驗室規劃製作，並受中華民國著作權法及商標法所保護。' +
+                            '一、【傾國】由國立中山大學影像處理實驗室規劃製作，並受中華民國著作權法及商標法所保護。' +
                                 '\n\n二、【傾國】所使用之內容，包括著作、圖片、檔案、資訊、資料、內容，均由國立中山大學影像處理實驗室依法擁有其智慧財產，' +
                                 '非經軟體書面授權同意，不得以任何形式轉載、傳輸、再製、散布、顯示、出版、傳播、進行還原工程、解編或反向組譯。' +
                                 '若違反將依法提起告訴，並請求賠償。' +
