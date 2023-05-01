@@ -37,6 +37,7 @@ String noseComment = '';
 String mouthComment = '';
 String test = '';
 List<double> radarValues = [0, 0, 0, 0, 0, 0];
+bool pngSaved = false;
 // List<String> temp = [];
 //detail文字架構
 
@@ -57,7 +58,6 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   List<Uint8List> swiper_byte_list = [Uint8List(10)];
   List<Uint8List> cropImgByteList = []; //每個crop img 的byte
   String account = '';
-  bool pngSaved = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -67,7 +67,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     if (await Permission.storage.request().isGranted) {
       //判断是否授权,没有授权会发起授权
       print("獲得了授權");
-
+      pngSaved = true;
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       if (Platform.isIOS) {
         print('此手機為 ios');
@@ -78,7 +78,6 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
               print('儲存 png 完成'),
               print('路徑: ' + documentDirectory.path),
               GallerySaver.saveImage(file.path),
-              pngSaved = true
             });
       } else if (Platform.isAndroid) {
         print('此手機為 android');
@@ -105,7 +104,6 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
 
         print('儲存 png 完成');
         // print('路徑: ' + documentPath);
-        pngSaved = true;
       }
     } else {
       print("沒有獲得授權，或非 ios/android 系統");
@@ -303,15 +301,15 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                   child: Column(
                     children: [
                       const Text(
-                          '長按照片以儲存至手機相簿',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
+                        '長按照片以儲存至手機相簿',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
+                      ),
                       Container(
-                        // color: Colors.white,
+                          // color: Colors.white,
                           height: screenHeight * 2 / 7,
                           child: Swiper(
                             itemCount: 3,
@@ -322,7 +320,10 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                       child: GestureDetector(
                                         onLongPress: () async {
                                           print('已長按');
-                                          await savePngFile(swiper_byte_list[index], account, index);
+                                          await savePngFile(
+                                              swiper_byte_list[index],
+                                              account,
+                                              index);
                                           setState(() {
                                             if (pngSaved) {
                                               // 彈出 儲存完成... 視窗
@@ -331,8 +332,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                                 builder:
                                                     (BuildContext context) =>
                                                         const AlertDialog(
-                                                  title: Text(
-                                                      '相片儲存完成，請至相簿查看'),
+                                                  title: Text('相片儲存完成，請至相簿查看'),
                                                 ),
                                               );
                                             } else {
