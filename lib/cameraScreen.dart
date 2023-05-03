@@ -25,7 +25,7 @@ class MyCustomClipper extends CustomClipper<Path> {
     final path = Path();
     final rect = Rect.fromLTRB(0, 0, size.width, size.height);
     final center = rect.center;
-    final radiusX = rect.width * 0.7;
+    final radiusX = rect.width * 0.8;
     final radiusY = rect.height * 0.55;
     path.addOval(Rect.fromCenter(center: center, width: radiusX, height: radiusY));
     path.addRect(rect);
@@ -129,8 +129,8 @@ class _CameraScreenState extends State<CameraScreen>
       getCameraCorrectionFlag();
     }
     return Scaffold(
-        body: SafeArea(
-      child: Stack(children: [
+        body: Container(
+        child: Stack(children: [
         (_cameraController.value.isInitialized)
             ? CameraPreview(_cameraController)
             : Container(
@@ -152,7 +152,7 @@ class _CameraScreenState extends State<CameraScreen>
                   // 掃描光束
                   Container(
                     width: double.infinity,
-                    height: screenHeight*0.82,
+                    height: screenHeight*0.92,
                     // color: Color.fromARGB(255, 247, 217, 76),
                     child: SlideTransition(
                       position: _animation,

@@ -196,7 +196,11 @@ class PreviewPage extends StatelessWidget {
 
                       },
                     ),
-                  ]))
+                  ])),
+                  // Expanded(
+                  //   flex: 1,
+                  //   child: Container()),
+                  const SizedBox(height: 25),
         ]),
       )),
     );
