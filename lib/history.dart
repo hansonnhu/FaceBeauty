@@ -331,13 +331,23 @@ class _HistoryState extends State<History> {
                                     child:  Text('確定'),
                                     onPressed: () async{
                                         Navigator.pop(context, '確定');
+                                        //AlertDialog
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const AlertDialog(
+                                                title: Text('刪除中'),
+                                                content: Text('刪除中......'),
+                                              );
+                                            });
 
                                         //與server溝通
                                         Socket socket = await Socket.connect(serverIP, serverPort);
                                         print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
                                         // listen to the received data event stream
+                                        List<int> intListServerMsg = [];
                                         socket.listen((List<int> event) async {
-
+                                          intListServerMsg.addAll(event);
                                         });
                                         
 
@@ -372,8 +382,26 @@ class _HistoryState extends State<History> {
                                         allDateTimeList = [];
                                         allOriImgString = [];
                                         allOriImgChoose = [];
+                                        String serverMsg = '';
+
+                                        while(true){
+                                          await Future.delayed(Duration(milliseconds: 100));
+                                          try{
+                                            serverMsg = utf8.decode(intListServerMsg);
+                                          }
+                                          catch(e){
+                                            // print(e);
+                                            continue;
+                                          }
+                                          if (serverMsg.contains('delete success')){
+                                            print('delete success');
+                                            Navigator.pop(context);
+                                            await loadData();
+                                            socket.close();
+                                            break;
+                                          }
+                                        }
                                         
-                                        await loadData();
                                     }
                                   )
                                 ],
