@@ -79,7 +79,7 @@ class _UploadingState extends State<Uploading> {
       String allBasicString = allResult.split('&')[0];
       List<String> allBasicTitle = [];
       List<String> allBasicTextOfTitle = [];
-
+      print(allBasicString);
       // 簡要斷語title
       List<String> temp = allBasicString.split('#[');
       for (int i = 0; i < temp.length; i++) {
@@ -101,11 +101,14 @@ class _UploadingState extends State<Uploading> {
       // 詳細斷語title
       temp = allDetailString.split('[');
       for (int i = 0; i < temp.length; i++) {
+        if (i == 6) continue; // 暫時跳過耳朵
         if (temp[i] == '') continue;
         allDetailTitle.add(temp[i].split(']')[0]);
       }
+      print(allDetailTitle);
       // 詳細斷語texts
       for (int i = 0; i < temp.length; i++) {
+        if (i == 6) continue; // 暫時跳過耳朵
         if (temp[i] == '') continue;
         String s = temp[i];
         s = s.replaceAll('{', '\n\n');
