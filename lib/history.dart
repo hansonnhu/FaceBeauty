@@ -331,15 +331,6 @@ class _HistoryState extends State<History> {
                                     child:  Text('確定'),
                                     onPressed: () async{
                                         Navigator.pop(context, '確定');
-                                        //AlertDialog
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const AlertDialog(
-                                                title: Text('刪除中'),
-                                                content: Text('刪除中......'),
-                                              );
-                                            });
 
                                         //與server溝通
                                         Socket socket = await Socket.connect(serverIP, serverPort);
@@ -385,7 +376,7 @@ class _HistoryState extends State<History> {
                                         String serverMsg = '';
 
                                         while(true){
-                                          await Future.delayed(Duration(milliseconds: 100));
+                                          await Future.delayed(Duration(milliseconds: 1000));
                                           try{
                                             serverMsg = utf8.decode(intListServerMsg);
                                           }
@@ -395,7 +386,6 @@ class _HistoryState extends State<History> {
                                           }
                                           if (serverMsg.contains('delete success')){
                                             print('delete success');
-                                            Navigator.pop(context);
                                             await loadData();
                                             socket.close();
                                             break;
