@@ -130,6 +130,7 @@ class _CameraScreenState extends State<CameraScreen>
     }
     return Scaffold(
         body: Container(
+          height: screenHeight,
         child: Stack(children: [
         (_cameraController.value.isInitialized)
             ? CameraPreview(_cameraController)

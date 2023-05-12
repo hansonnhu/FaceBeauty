@@ -23,7 +23,8 @@ import 'login.dart';
 
 // String serverMsg = '';
 String account = "";
-
+// double screenWidth = 0;
+// double screenHeight = 0;
 // var cameraCorrectionFlag = 0;
 
 // 橢圓形畫面class
@@ -32,8 +33,9 @@ class MyCustomClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
     final rect = Rect.fromLTRB(0, 0, size.width, size.height);
-    final center = rect.center;
-    final radiusX = rect.width * 0.7;
+    // final center = rect.center;
+    final center = Offset(rect.width/2, rect.height*0.58);
+    final radiusX = rect.width * 0.8;
     final radiusY = rect.height * 0.55;
     path.addOval(Rect.fromCenter(center: center, width: radiusX, height: radiusY));
     path.addRect(rect);
@@ -93,16 +95,16 @@ class PreviewPage extends StatelessWidget {
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Expanded(
-              flex: 10,
+              flex: 30,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   Container(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(7),
                         child: Image.file(File(picture.path),
-                            fit: BoxFit.cover, width: screenWidth - 20),
+                            fit: BoxFit.cover, width: screenWidth * 0.95),
                       )),
                   (cameraCorrectionFlag == 0)
                       ? Container()
@@ -117,90 +119,92 @@ class PreviewPage extends StatelessWidget {
                     ),
                 ],
               )),
-          Expanded(
-              flex: 1,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      child: Text('送出'),
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.teal,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          textStyle: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.normal)),
-                      onPressed: () async {
-                        print('按下送出按鈕');
-                        var oriImg = File(picture.path); //原圖
-                        Uint8List oriImgBytes = await oriImg.readAsBytes();
-                        String tempImgString = base64Encode(oriImgBytes);
-
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('tempImgString', tempImgString); // tempImgString 為每次進入分析與畫圖之影像String
-                        await prefs.setString('imgFromHistory', 'false');
-                        // Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Uploading(),
-                              maintainState: true,
-                            ),
-                          );
-
-                      },
-                    ),
-                    ElevatedButton(
-                      child: Text('重拍'),
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          textStyle: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.normal)),
-                      onPressed: () async{
-                        // 確認該相片是從 相簿 或 相機
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        String choosingImgMode = prefs.getString('choosingImgMode')??'camera';
-
-                        if (choosingImgMode == 'camera'){
-                          print('camera模式 按下重拍按鈕');
-                          Navigator.pop(context);
-                        }
-                        else{
-                          print('album模式 按下重拍按鈕');
-                          
-                          
-                          final ImagePicker picker = new ImagePicker();
-                          final pickerImages = await picker.getImage(source: ImageSource.gallery);
-                          if(pickerImages != null){
-                            Navigator.pop(context);
-                            
-                            Navigator.push(
+          
+            Expanded(
+                flex: 2,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        child: Text('送出'),
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.teal,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.normal)),
+                        onPressed: () async {
+                          print('按下送出按鈕');
+                          var oriImg = File(picture.path); //原圖
+                          Uint8List oriImgBytes = await oriImg.readAsBytes();
+                          String tempImgString = base64Encode(oriImgBytes);
+          
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('tempImgString', tempImgString); // tempImgString 為每次進入分析與畫圖之影像String
+                          await prefs.setString('imgFromHistory', 'false');
+                          // Navigator.pop(context);
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PreviewPage(
-                                        picture: XFile(pickerImages.path),
-                                        type:'gallery',
-                                        cameraNum:1,
-                                        cameraCorrectionFlag:cameraCorrectionFlag
-                                      )));
-                            // _userImage = File(pickerImages.path);
-                            // print('你選擇的本地路徑是：${_userImage.toString()}');
-                          }else{
-                            print('沒有照片可以選擇');
+                                builder: (context) => Uploading(),
+                                maintainState: true,
+                              ),
+                            );
+          
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text('重拍'),
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.normal)),
+                        onPressed: () async{
+                          // 確認該相片是從 相簿 或 相機
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          String choosingImgMode = prefs.getString('choosingImgMode')??'camera';
+          
+                          if (choosingImgMode == 'camera'){
+                            print('camera模式 按下重拍按鈕');
+                            Navigator.pop(context);
                           }
+                          else{
+                            print('album模式 按下重拍按鈕');
+                            
+                            
+                            final ImagePicker picker = new ImagePicker();
+                            final pickerImages = await picker.getImage(source: ImageSource.gallery);
+                            if(pickerImages != null){
+                              Navigator.pop(context);
                               
-                        }
-                        
-
-                      },
-                    ),
-                  ])),
-                  // Expanded(
-                  //   flex: 1,
-                  //   child: Container()),
-                  const SizedBox(height: 25),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PreviewPage(
+                                          picture: XFile(pickerImages.path),
+                                          type:'gallery',
+                                          cameraNum:1,
+                                          cameraCorrectionFlag:cameraCorrectionFlag
+                                        )));
+                              // _userImage = File(pickerImages.path);
+                              // print('你選擇的本地路徑是：${_userImage.toString()}');
+                            }else{
+                              print('沒有照片可以選擇');
+                            }
+                                
+                          }
+                          
+          
+                        },
+                      ),
+                    ])),
+          
+                  Expanded(
+                    flex: 1,
+                    child: Container()),
+                  // const SizedBox(height: 25),
         ]),
       )),
     );
