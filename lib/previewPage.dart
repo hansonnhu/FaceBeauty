@@ -34,7 +34,7 @@ class MyCustomClipper extends CustomClipper<Path> {
     final path = Path();
     final rect = Rect.fromLTRB(0, 0, size.width, size.height);
     // final center = rect.center;
-    final center = Offset(rect.width/2, rect.height*0.58);
+    final center = Offset(rect.width/2, rect.height*0.56);
     final radiusX = rect.width * 0.8;
     final radiusY = rect.height * 0.55;
     path.addOval(Rect.fromCenter(center: center, width: radiusX, height: radiusY));
