@@ -112,11 +112,16 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   }
 
   // 取得 雷達圖 的 score
+  // 計算"接近黃金比例之程度"，並轉換成分數
   getScore(var min, var max, var value) {
-    if (max == min) return 100;
-    var score = (100 + (-100 / (max - min)) * (value - min).abs()).abs();
+    // if (max == min) return 100;
+    // var score = (100 + (-100 / (max - min)) * (value - min).abs()).abs();
+    // if (score > 100) score = 100;
+    // if (score < 0) score = 0;
+    var score = (min - value).abs() / (1.5*min) * 100;
     if (score > 100) score = 100;
     if (score < 0) score = 0;
+    score = 100 - score;
     return score;
   }
 
@@ -135,6 +140,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // resultAllMsg = prefs.getStringList(account + 'resultAllMsgList') ?? [];
 
     //從資料庫中取得 雷達圖 數據 ratio_2 、 ratio_11 、 ratio_23 、 ratio_28 、 ratio_30 、 ratio_15
+    // 分別為 臉(臉長寬比)、額頭(額頭高度比臉長)、眼(眼寬除以眼高)、人中(人中長度比臉寬)、嘴唇(嘴唇寬度比眼寬)、眉毛(眉毛寬度除以高度)
     var oriImgIndex = prefs.getInt('oriImgIndex') ?? 0; // 取得當前 oriimg 之 index
     String ratio_2 = prefs.getString('ratio_2') ?? '';
     String ratio_11 = prefs.getString('ratio_11') ?? '';
@@ -160,12 +166,20 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     radarValues[4] = double.parse(ratio_30);
     radarValues[5] = double.parse(ratio_15);
 
-    radarValues[0] = getScore(1.17, 2.0, radarValues[0]).toDouble();
-    radarValues[1] = getScore(0.22, 0.5, radarValues[1]).toDouble();
-    radarValues[2] = getScore(2.88, 4.5, radarValues[2]).toDouble();
-    radarValues[3] = getScore(0.12, 0.5, radarValues[3]).toDouble();
-    radarValues[4] = getScore(2.0, 10.0, radarValues[4]).toDouble();
-    radarValues[5] = getScore(4.33, 10.0, radarValues[5]).toDouble();
+    //計算距離 "黃金比例" 之分數
+    // radarValues[0] = getScore(1.17, 2.0, radarValues[0]).toDouble();//臉
+    // radarValues[1] = getScore(0.22, 0.5, radarValues[1]).toDouble();//額頭
+    // radarValues[2] = getScore(2.88, 4.5, radarValues[2]).toDouble();//眼睛
+    // radarValues[3] = getScore(0.12, 0.4, radarValues[3]).toDouble();//人中
+    // radarValues[4] = getScore(3.0, 10.0, radarValues[4]).toDouble();//嘴唇
+    // radarValues[5] = getScore(4.33, 10.0, radarValues[5]).toDouble();//眉毛
+
+    radarValues[0] = getScore(1.17, 2.0, radarValues[0]).toDouble();//臉
+    radarValues[1] = getScore(0.22, 0.5, radarValues[1]).toDouble();//額頭
+    radarValues[2] = getScore(2.88, 4.5, radarValues[2]).toDouble();//眼睛
+    radarValues[3] = getScore(0.12, 0.4, radarValues[3]).toDouble();//人中
+    radarValues[4] = getScore(3.0, 10.0, radarValues[4]).toDouble();//嘴唇
+    radarValues[5] = getScore(4.33, 8.0, radarValues[5]).toDouble();//眉毛
     //
 
     //server回傳data的邏輯非常奇怪

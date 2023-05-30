@@ -8,6 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'parameter.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。
@@ -15,6 +20,7 @@ List<String> oriImgStringList = []; //資料庫內所有原圖相片(每次拍�
 List<int> pointX = [];
 List<int> pointY = []; //點x,y座標(server會回傳148個點)
 String cropFace_points_string = ''; //全臉點圖String
+bool gifSaved = false;
 
 class BasicResult extends StatefulWidget {
   const BasicResult({Key? key}) : super(key: key);
@@ -37,6 +43,49 @@ class _BasicResultState extends State<BasicResult>
 
   @override
   bool get wantKeepAlive => true;
+
+  saveGifFile(gif, String account, int index) async {
+    if (await Permission.storage.request().isGranted) {
+      // 检查是否已授权，若未授权则发起授权请求
+      print("已获取授权");
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      if (Platform.isIOS) {
+        print('此设备为iOS');
+        documentDirectory = await getApplicationDocumentsDirectory();
+        String id = account + '(' + index.toString() + ')';
+        File file = File("${documentDirectory.path}/$id.gif");
+        await file.writeAsBytes(gif);
+
+        // 將 gif 轉成 mp4
+        await File("${documentDirectory.path}/$id.gif").rename("${documentDirectory.path}/$id.mp4");
+        String filePath = File("${documentDirectory.path}/$id.mp4").path;
+
+        await ImageGallerySaver.saveFile(filePath);
+        gifSaved = true;
+        print('保存GIF完成');
+        print('路径: $filePath');
+      } else if (Platform.isAndroid) {
+        print('此设备为Android');
+        Directory tempDir = await getTemporaryDirectory();
+        String id = account + '(' + index.toString() + ')';
+        String filePath = "${tempDir.path}/$id.gif";
+        File file = File(filePath);
+        await file.writeAsBytes(gif);
+        await File(filePath).rename("${tempDir.path}/$id.mp4");
+
+        // 將 gif 轉成 mp4
+        filePath = "${tempDir.path}/$id.mp4";
+        final result = await ImageGallerySaver.saveFile(filePath);
+
+        gifSaved = true;
+        print('保存GIF完成');
+        print('路径: ${result['filePath']}');
+      }
+    } else {
+      print("未获取授权，或非iOS/Android系统");
+    }
+  }
+
   //將回傳之gif寫入byte
   getDeepFakeImg() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -261,14 +310,41 @@ class _BasicResultState extends State<BasicResult>
                                 )
                               : Container(
                                   padding: const EdgeInsets.only(bottom: 20),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.memory(
-                                      (deepFakeImgByte),
-                                      fit: BoxFit.fitWidth,
+                                  child: GestureDetector(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: Image.memory(
+                                        (deepFakeImgByte),
+                                        fit: BoxFit.fitWidth,
+                                      ),
                                     ),
-                                  ),
-                                )),
+                                    onLongPress: () async {
+                                      print('已長按');
+                                      await saveGifFile(
+                                          deepFakeImgByte, account, 0);
+                                      setState(() {
+                                        if (gifSaved) {
+                                          // 彈出 儲存完成... 視窗
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                const AlertDialog(
+                                              title: Text('相片儲存完成，請至相簿查看'),
+                                            ),
+                                          );
+                                        } else {
+                                          // 彈出 儲存完成... 視窗
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                const AlertDialog(
+                                              title: Text('尚未獲得授權'),
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    },
+                                  ))),
 
                       //簡要內容
                       Expanded(
@@ -298,7 +374,7 @@ class _BasicResultState extends State<BasicResult>
                                         ),
                                       ),
                                       const SizedBox(
-                                        height: 50,
+                                        height: 20,
                                       ),
                                     ],
                                   )),

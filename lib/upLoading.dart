@@ -106,13 +106,14 @@ class _UploadingState extends State<Uploading> {
         allDetailTitle.add(temp[i].split(']')[0]);
       }
       print(allDetailTitle);
+      print(temp[3]);
       // 詳細斷語texts
       for (int i = 0; i < temp.length; i++) {
         if (i == 6) continue; // 暫時跳過耳朵
         if (temp[i] == '') continue;
         String s = temp[i];
-        s = s.replaceAll('{', '\n\n');
-        s = s.replaceAll('}', '\n');
+        s = s.replaceAll('{', '\n');
+        s = s.replaceAll('}', '：\n');
         allDetailTextOfTitle.add(s.split(']')[1]);
       }
 

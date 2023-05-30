@@ -85,12 +85,12 @@ class _DetailResultState extends State<DetailResult>
         children: [
           //切割圖
           Expanded(
-            flex: 1, 
+            flex: 3, 
             child: 
               Container(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 0),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(0),
                     child: 
                     Image.memory(
                       (basicImgByte),
@@ -105,7 +105,7 @@ class _DetailResultState extends State<DetailResult>
 
           //詳細內容
           Expanded(
-              flex: 1,
+              flex: 5,
               child: ListView.builder(
                   padding: new EdgeInsets.only(top: 10, bottom: 10),
                   itemBuilder: (context, index) => Container(
@@ -121,7 +121,7 @@ class _DetailResultState extends State<DetailResult>
                             ),
                           ),
                           const SizedBox(
-                            height: 10,
+                            height: 0,
                           ),
                           Container(
                             width: screenWidth,
@@ -134,7 +134,7 @@ class _DetailResultState extends State<DetailResult>
                           ),
                           const SizedBox(
 
-                            height: 30,
+                            height: 15,
                           ),
                         ],
                       )),
