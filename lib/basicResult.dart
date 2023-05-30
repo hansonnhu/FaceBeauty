@@ -8,11 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'parameter.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+// import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 
 //資料庫部分(基本上在這頁就會把所有資訊寫入資料庫，之後於其他頁面只要從資料庫讀去就好，不用再去連線server要資料)
 String resultAllMsg = ''; //server 回傳的所有data，包含斷語。
@@ -57,7 +57,8 @@ class _BasicResultState extends State<BasicResult>
         await file.writeAsBytes(gif);
 
         // 將 gif 轉成 mp4
-        await File("${documentDirectory.path}/$id.gif").rename("${documentDirectory.path}/$id.mp4");
+        await File("${documentDirectory.path}/$id.gif")
+            .rename("${documentDirectory.path}/$id.mp4");
         String filePath = File("${documentDirectory.path}/$id.mp4").path;
 
         await ImageGallerySaver.saveFile(filePath);
