@@ -59,12 +59,14 @@ class _BasicResultState extends State<BasicResult>
         // 將 gif 轉成 mp4
         await File("${documentDirectory.path}/$id.gif")
             .rename("${documentDirectory.path}/$id.mp4");
-        String filePath = File("${documentDirectory.path}/$id.mp4").path;
+        print('finish gif to mp4');
+        file = File("${documentDirectory.path}/$id.mp4");
 
-        await ImageGallerySaver.saveFile(filePath);
+        await ImageGallerySaver.saveFile(file.path);
+
         gifSaved = true;
         print('保存GIF完成');
-        print('路径: $filePath');
+        print('路径: ' + file.path);
       } else if (Platform.isAndroid) {
         print('此设备为Android');
         Directory tempDir = await getTemporaryDirectory();
@@ -72,10 +74,12 @@ class _BasicResultState extends State<BasicResult>
         String filePath = "${tempDir.path}/$id.gif";
         File file = File(filePath);
         await file.writeAsBytes(gif);
-        await File(filePath).rename("${tempDir.path}/$id.mp4");
 
         // 將 gif 轉成 mp4
+        await File(filePath).rename("${tempDir.path}/$id.mp4");
         filePath = "${tempDir.path}/$id.mp4";
+        print('finish gif to mp4');
+
         final result = await ImageGallerySaver.saveFile(filePath);
 
         gifSaved = true;
