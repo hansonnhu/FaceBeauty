@@ -37,7 +37,8 @@ class _BasicResultState extends State<BasicResult>
   String resultBasicMsg = ''; //簡要斷語String
   String oriImgString = ''; //資料庫內最新的原圖相片
   Uint8List basicImgByte = Uint8List(10); //全臉點圖
-  Uint8List deepFakeImgByte = Uint8List(10); //deepFake gif
+  Uint8List deepFakeImgByte_gif = Uint8List(10); //deepFake gif
+  Uint8List deepFakeImgByte_mp4 = Uint8List(10); //deepFake mp4
   List<String> allBasicTitle = []; //allBasicTitle : 臉型、下巴型、脣型......
   List<String> allBasicTextOfTitle = []; //allBasicTitle的內文
 
@@ -122,14 +123,17 @@ class _BasicResultState extends State<BasicResult>
       if (utf8.decode(intListServerMsg).contains(';')) {
         print('收到 deepfake img');
         String serverMsg = utf8.decode(intListServerMsg);
-        String gif_string = serverMsg.split(';')[0];
-        deepFakeImgByte = base64Decode(gif_string);
+        String gif_string = serverMsg.split('>')[0];
+        String mp4_string = serverMsg.split('>')[1].split(';')[0];
+        deepFakeImgByte_gif = base64Decode(gif_string);
+        deepFakeImgByte_mp4 = base64Decode(mp4_string);
 
         // String msg = 'startCode103040023<'+tempClientNumString + '<' + 'disconnect' + ';';
         // List<int> msgBytes = [];
         // msgBytes.addAll(utf8.encode(msg));
         // msgBytes.add(0);
         // socket.add(msgBytes);
+        
         await socket.close();
         break;
       }
@@ -319,14 +323,14 @@ class _BasicResultState extends State<BasicResult>
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(5),
                                       child: Image.memory(
-                                        (deepFakeImgByte),
+                                        (deepFakeImgByte_gif),
                                         fit: BoxFit.fitWidth,
                                       ),
                                     ),
                                     onLongPress: () async {
                                       print('已長按');
                                       await saveGifFile(
-                                          deepFakeImgByte, account, 0);
+                                          deepFakeImgByte_gif, account, 0);
                                       setState(() {
                                         if (gifSaved) {
                                           // 彈出 儲存完成... 視窗
