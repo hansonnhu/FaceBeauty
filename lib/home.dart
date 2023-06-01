@@ -16,6 +16,7 @@ import 'previewPage.dart';
 import 'intro.dart';
 import 'doctors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //全域變數
 //例項化選擇圖片
@@ -359,6 +360,9 @@ class _HomeState extends State<Home> {
                                   try {
                                     final pickerImages = await picker.getImage(
                                         source: ImageSource.gallery);
+                                    // var status = await Permission.camera.status;
+                                    // print(status);
+
                                     if (mounted) {
                                       setState(() {
                                         if (pickerImages != null) {
