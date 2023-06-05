@@ -45,7 +45,7 @@ class _BasicResultState extends State<BasicResult>
   @override
   bool get wantKeepAlive => true;
 
-  saveGifFile(gif, String account, int index) async {
+  saveMP4File(String account, int index) async {
     if (await Permission.storage.request().isGranted) {
       // 检查是否已授权，若未授权则发起授权请求
       print("已获取授权");
@@ -54,32 +54,25 @@ class _BasicResultState extends State<BasicResult>
         print('此设备为iOS');
         documentDirectory = await getApplicationDocumentsDirectory();
         String id = account + '(' + index.toString() + ')';
-        File file = File("${documentDirectory.path}/$id.gif");
-        await file.writeAsBytes(gif);
+        File file = File("${documentDirectory.path}/$id.mp4");
+        await file.writeAsBytes(deepFakeImgByte_mp4);
 
         // 將 gif 轉成 mp4
-        await File("${documentDirectory.path}/$id.gif")
-            .rename("${documentDirectory.path}/$id.mp4");
-        print('finish gif to mp4');
-        file = File("${documentDirectory.path}/$id.mp4");
 
         await ImageGallerySaver.saveFile(file.path);
 
         gifSaved = true;
-        print('保存GIF完成');
+        print('保存 mp4 完成');
         print('路径: ' + file.path);
       } else if (Platform.isAndroid) {
         print('此设备为Android');
         Directory tempDir = await getTemporaryDirectory();
         String id = account + '(' + index.toString() + ')';
-        String filePath = "${tempDir.path}/$id.gif";
+        String filePath = "${tempDir.path}/$id.mp4";
         File file = File(filePath);
-        await file.writeAsBytes(gif);
+        await file.writeAsBytes(deepFakeImgByte_mp4);
 
-        // 將 gif 轉成 mp4
-        await File(filePath).rename("${tempDir.path}/$id.mp4");
-        filePath = "${tempDir.path}/$id.mp4";
-        print('finish gif to mp4');
+        
 
         final result = await ImageGallerySaver.saveFile(filePath);
 
@@ -329,8 +322,7 @@ class _BasicResultState extends State<BasicResult>
                                     ),
                                     onLongPress: () async {
                                       print('已長按');
-                                      await saveGifFile(
-                                          deepFakeImgByte_gif, account, 0);
+                                      await saveMP4File(account, 0);
                                       setState(() {
                                         if (gifSaved) {
                                           // 彈出 儲存完成... 視窗
