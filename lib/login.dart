@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'dart:math';
 import 'parameter.dart';
+import 'package:flutter/material.dart';
 
 
 
@@ -27,6 +28,8 @@ class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
+
+
 
 class _LoginState extends State<Login> {
   bool firstLoginFlag = true;
@@ -82,16 +85,16 @@ class _LoginState extends State<Login> {
       iniAccount = (prefs.getString('account') ?? '');
       iniPassword = (prefs.getString('password') ?? '');
       passwordRememberFlag = prefs.getInt('passwordRememberFlag') ?? 1;
-      accountCon..text = iniAccount;
-      passwordCon..text = iniPassword;
+      accountCon.text = iniAccount;
+      passwordCon.text = iniPassword;
       print('passwordRememberFlag 為 ');
       print(passwordRememberFlag);
       if(passwordRememberFlag == 0){
         iniAccount = '';
         iniPassword = '';
       }
-      _usernameController..text = iniAccount;
-      _passwordController..text = iniPassword;
+      _usernameController.text = iniAccount;
+      _passwordController.text = iniPassword;
       firstLoginFlag = false;
       setState(() {});
     }
@@ -157,378 +160,381 @@ class _LoginState extends State<Login> {
               //帳號
               Expanded(
                 flex: 10,
-                child: SingleChildScrollView(
-                    child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        bottom: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: const [
-                              Text(
-                                '帳號',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //帳號輸入欄位
-                    Container(
-                        
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular((50.0)),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  child: SingleChildScrollView(
+                      child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 10,
                         ),
-                        child: TextField(
-                          // controller: _usernameController..text = iniAccount,
-                          controller: _usernameController,
-                          focusNode: _usernameFocus,
-                          keyboardType: TextInputType.text,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.all(2),
-                            // labelText: 'Username',
-                            // hintText: 'Enter your username',
-                            // hintText: '',
-                            filled: true,
-                            fillColor: Colors.white70,
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              width: 10,
-                              color: Colors.white,
-                            )),
-                          ),
-                          
-                          onChanged: (text) {
-                            iniAccount = text;
-                            accountCon..text = text;
-                          },
-                          onTap: () {
-                            if (!_usernameFocus.hasFocus) {
-                              _usernameFocus.requestFocus();
-                            }
-                            final TextEditingValue value = _usernameController.value;
-                            _usernameController.selection = TextSelection(
-                              baseOffset: value.selection.baseOffset,
-                              extentOffset: value.selection.extentOffset);
-                          },
-                          
-                        )
-                      ),
-
-                    //密碼
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        bottom: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: const [
-                              Text(
-                                '密碼',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              children: const [
+                                Text(
+                                  '帳號',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //密碼輸入欄位
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular((20.0)),
+                              ],
+                            ),
+                          ],
                         ),
-                        child: 
-                        TextField(
+                      ),
+                
+                      //帳號輸入欄位
+                      Container(
                           
-                          // controller: _passwordController..text = iniPassword,
-                          controller: _passwordController,
-                          focusNode: _passwordFocus,
-                          keyboardType: TextInputType.text,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular((50.0)),
                           ),
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.all(2),
-                            // labelText: 'Username',
-                            // hintText: 'Enter your password',
-                            // hintText: '',
-                            filled: true,
-                            fillColor: Colors.white70,
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                              width: 10,
-                              color: Colors.white,
-                            )),
+                          child: TextField(
+                            // controller: _usernameController..text = iniAccount,
+                            controller: _usernameController,
+                            focusNode: _usernameFocus,
+                            keyboardType: TextInputType.text,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(2),
+                              // labelText: 'Username',
+                              // hintText: 'Enter your username',
+                              // hintText: '',
+                              filled: true,
+                              fillColor: Colors.white70,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                width: 10,
+                                color: Colors.white,
+                              )),
+                            ),
+                            
+                            onChanged: (text) {
+                              iniAccount = text;
+                              accountCon.text = text;
+                            },
+                            onTap: () {
+                              if (!_usernameFocus.hasFocus) {
+                                _usernameFocus.requestFocus();
+                              }
+                              final TextEditingValue value = _usernameController.value;
+                              _usernameController.selection = TextSelection(
+                                baseOffset: value.selection.baseOffset,
+                                extentOffset: value.selection.extentOffset);
+                            },
+                            
+                          )
+                        ),
+                
+                      //密碼
+                      Container(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 10,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              children: const [
+                                Text(
+                                  '密碼',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                
+                      //密碼輸入欄位
+                      Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular((20.0)),
                           ),
-                          obscureText: true,
-                          onChanged: (text) {
-                            iniPassword = text;
-                            passwordCon..text = text;
-                          },
-                          onTap: () {
-                            if (!_passwordFocus.hasFocus) {
-                              _passwordFocus.requestFocus();
-                            }
-                          },
-                        )
-                      ),
-
-                    //登入與註冊
-                    Container(
-                      padding: const EdgeInsets.only(
-                        top: 30,
-                        bottom: 10,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            child: Text('登入'),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.teal,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                textStyle: const TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () async {
-                              print('按下登入按鈕');
-                              print(iniAccount);
-                              print(iniPassword);
-
-                              if (iniAccount == '') {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text('錯誤'),
-                                    content: const Text('帳號不能為空!'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'Cancel'),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'OK'),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else if (iniPassword == '') {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text('錯誤'),
-                                    content: const Text('密碼不能為空!'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'Cancel'),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'OK'),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else if (!stringFilter(iniAccount) ||
-                                  !stringFilter(iniPassword)) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text('錯誤'),
-                                    content: const Text('帳號或密碼出現非數字或英文!'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'Cancel'),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, 'OK'),
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                //若帳號密碼格式無誤
-
-                                //與server溝通
-                                Socket socket = await Socket.connect(serverIP, serverPort);
-                                print(
-                                    'Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
-                                // listen to the received data event stream
-
-                                
-                                String serverMsg = '';
-                                socket.listen((List<int> event) async {
-                                  //print出server回傳data
-                                  print(utf8.decode(event));
-                                  serverMsg = utf8.decode(event);
-                                });
-                                
-                                // 傳送訊息給server
-                                var randomNum = Random().nextInt(100000);
-                                String tempClientNumString = iniAccount + ':' + randomNum.toString();
-                                String msg = 'startCode103040023<' + tempClientNumString + '<' + 'login' + '<' + iniAccount + '<' + iniPassword + ';';
-                                List<int> msgBytes = [];
-                                msgBytes.addAll(utf8.encode(msg));
-                                msgBytes.add(0);
-                                socket.add(msgBytes);
-
-                                // wait 0.5 seconds
-                                while(true){
-                                  await Future.delayed(Duration(milliseconds: 500));
-
-                                  if (serverMsg == 'fail;') {
-                                    // 要求server斷線
-                                    // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
-                                    // List<int> msgBytes = [];
-                                    // msgBytes.addAll(utf8.encode(msg));
-                                    // msgBytes.add(0);
-                                    // socket.add(msgBytes);
-                                    socket.close();
-
-                                    //AlertDialog
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          AlertDialog(
-                                        title: const Text('登入失敗'),
-                                        content:
-                                            const Text('帳號或密碼錯誤\n請重新輸入帳號密碼'),
-                                        actions: <Widget>[
-                                          // TextButton(
-                                          //   onPressed: () =>
-                                          //       Navigator.pop(context, 'Cancel'),
-                                          //   child: const Text('Cancel'),
-                                          // ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, 'OK'),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                    break;
-                                  } else if (serverMsg == 'success;') {
-                                    //登入成功
-                                    // 要求server斷線
-                                    // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
-                                    // List<int> msgBytes = [];
-                                    // msgBytes.addAll(utf8.encode(msg));
-                                    // msgBytes.add(0);
-                                    // socket.add(msgBytes);
-                                    socket.close();
-
-                                    //更改UsrInfo
-                                    _modifyUserInfo(accountCon, passwordCon);
-
-                                    //AlertDialog
-                                    BuildContext dialogContext = context;
-                                    showDialog(
+                          child: 
+                          TextField(
+                            
+                            // controller: _passwordController..text = iniPassword,
+                            controller: _passwordController,
+                            focusNode: _passwordFocus,
+                            keyboardType: TextInputType.text,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(2),
+                              // labelText: 'Username',
+                              // hintText: 'Enter your password',
+                              // hintText: '',
+                              filled: true,
+                              fillColor: Colors.white70,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                width: 10,
+                                color: Colors.white,
+                              )),
+                            ),
+                            obscureText: true,
+                            onChanged: (text) {
+                              iniPassword = text;
+                              passwordCon.text = text;
+                            },
+                            onTap: () {
+                              if (!_passwordFocus.hasFocus) {
+                                _passwordFocus.requestFocus();
+                              }
+                            },
+                          )
+                        ),
+                
+                      //登入與註冊
+                      Container(
+                        padding: const EdgeInsets.only(
+                          top: 30,
+                          bottom: 10,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              child: Text('登入'),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.teal,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  textStyle: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.normal)),
+                              onPressed: () async {
+                                print('按下登入按鈕');
+                                print(iniAccount);
+                                print(iniPassword);
+                
+                                if (iniAccount == '') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('錯誤'),
+                                      content: const Text('帳號不能為空!'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else if (iniPassword == '') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('錯誤'),
+                                      content: const Text('密碼不能為空!'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else if (!stringFilter(iniAccount) ||
+                                    !stringFilter(iniPassword)) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('錯誤'),
+                                      content: const Text('帳號或密碼出現非數字或英文!'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'Cancel'),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  //若帳號密碼格式無誤
+                
+                                  //與server溝通
+                                  Socket socket = await Socket.connect(serverIP, serverPort);
+                                  print(
+                                      'Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
+                                  // listen to the received data event stream
+                
+                                  
+                                  String serverMsg = '';
+                                  socket.listen((List<int> event) async {
+                                    //print出server回傳data
+                                    print(utf8.decode(event));
+                                    serverMsg = utf8.decode(event);
+                                  });
+                                  
+                                  // 傳送訊息給server
+                                  var randomNum = Random().nextInt(100000);
+                                  String tempClientNumString = iniAccount + ':' + randomNum.toString();
+                                  String msg = 'startCode103040023<' + tempClientNumString + '<' + 'login' + '<' + iniAccount + '<' + iniPassword + ';';
+                                  List<int> msgBytes = [];
+                                  msgBytes.addAll(utf8.encode(msg));
+                                  msgBytes.add(0);
+                                  socket.add(msgBytes);
+                
+                                  // wait 0.5 seconds
+                                  while(true){
+                                    await Future.delayed(Duration(milliseconds: 500));
+                
+                                    if (serverMsg == 'fail;') {
+                                      // 要求server斷線
+                                      // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                      // List<int> msgBytes = [];
+                                      // msgBytes.addAll(utf8.encode(msg));
+                                      // msgBytes.add(0);
+                                      // socket.add(msgBytes);
+                                      socket.close();
+                
+                                      //AlertDialog
+                                      showDialog(
                                         context: context,
-                                        builder: (BuildContext context) {
-                                          dialogContext = context;
-                                          return const AlertDialog(
-                                            title: Text('登入成功!'),
-                                            content: Text('登入中......'),
-                                          );
-                                        });
-
-                                    //延遲一秒後跳轉進入APP
-                                    //查看資料庫，依照flag情形決定要跳轉之畫面(一開始共有welcome, intro, guide 頁面)
-                                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                                    int welcomeFlag = prefs.getInt('welcomeFlag') ?? 1;//若為0，直接跳過 welcome, intro 頁面
-                                    int guideFlag = prefs.getInt('guideFlag') ?? 1;//若為0，跳過guide
-
-                                    await Future.delayed(
-                                        Duration(milliseconds: 1000), () async{
-                                      Navigator.pop(dialogContext);
-                                      // push首頁進進去  
-       
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => (welcomeFlag == 1) ? const Welcome() : (guideFlag == 1) ? const Guide() : Home(),
-                                          maintainState: false,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Text('登入失敗'),
+                                          content:
+                                              const Text('帳號或密碼錯誤\n請重新輸入帳號密碼'),
+                                          actions: <Widget>[
+                                            // TextButton(
+                                            //   onPressed: () =>
+                                            //       Navigator.pop(context, 'Cancel'),
+                                            //   child: const Text('Cancel'),
+                                            // ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, 'OK'),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
                                         ),
                                       );
-                                    });
-                                    break;
+                                      break;
+                                    } else if (serverMsg == 'success;') {
+                                      //登入成功
+                                      // 要求server斷線
+                                      // String msg = 'startCode103040023<' + tempClientNumString + '<' + 'disconnect' + ';';
+                                      // List<int> msgBytes = [];
+                                      // msgBytes.addAll(utf8.encode(msg));
+                                      // msgBytes.add(0);
+                                      // socket.add(msgBytes);
+                                      socket.close();
+                
+                                      //更改UsrInfo
+                                      _modifyUserInfo(accountCon, passwordCon);
+                
+                                      //AlertDialog
+                                      BuildContext dialogContext = context;
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            dialogContext = context;
+                                            return const AlertDialog(
+                                              title: Text('登入成功!'),
+                                              content: Text('登入中......'),
+                                            );
+                                          });
+                
+                                      //延遲一秒後跳轉進入APP
+                                      //查看資料庫，依照flag情形決定要跳轉之畫面(一開始共有welcome, intro, guide 頁面)
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                                      int welcomeFlag = prefs.getInt('welcomeFlag') ?? 1;//若為0，直接跳過 welcome, intro 頁面
+                                      int guideFlag = prefs.getInt('guideFlag') ?? 1;//若為0，跳過guide
+                
+                                      await Future.delayed(
+                                          Duration(milliseconds: 1000), () async{
+                                        Navigator.pop(dialogContext);
+                                        // push首頁進進去  
+                       
+                
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => (welcomeFlag == 1) ? const Welcome() : (guideFlag == 1) ? const Guide() : Home(),
+                                            maintainState: false,
+                                          ),
+                                        );
+                                      });
+                                      break;
+                                    }
                                   }
+                                  // .. and close the socket
+                                  socket.close();
                                 }
-                                // .. and close the socket
-                                socket.close();
-                              }
-                              // log("${myController.text}");
-                            },
-                          ),
-                          ElevatedButton(
-                            child: Text('註冊'),
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.yellow[900],
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                textStyle: const TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.normal)),
-                            onPressed: () {
-                              print('按下註冊按鈕');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const Register(),
-                                  maintainState: false,
-                                ),
-                              );
-                              // log('account: ${account.text}');
-                              // log('password: ${password.text}');
-                            },
-                          ),
-                          
-                        ],
+                                // log("${myController.text}");
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text('註冊'),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.yellow[900],
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  textStyle: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.normal)),
+                              onPressed: () {
+                                print('按下註冊按鈕');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Register(),
+                                    maintainState: false,
+                                  ),
+                                );
+                                // log('account: ${account.text}');
+                                // log('password: ${password.text}');
+                              },
+                            ),
+                            
+                          ],
+                        ),
                       ),
-                    ),
-                    
-                  ],
-                )),
+                      
+                    ],
+                  )),
+                ),
               ),
               Expanded(
                 flex:1,
