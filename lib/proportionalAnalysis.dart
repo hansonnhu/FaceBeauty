@@ -112,7 +112,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
   }
 
   // 取得 雷達圖 的 score
-  // 計算"接近黃金比例之程度"，並轉換成分數
+  // 計算 "接近黃金比例之程度"，並轉換成分數
   getScore(var min, var max, var value) {
     // if (max == min) return 100;
     // var score = (100 + (-100 / (max - min)) * (value - min).abs()).abs();
@@ -179,7 +179,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     radarValues[2] = getScore(2.88, 4.5, radarValues[2]).toDouble();//眼睛
     radarValues[3] = getScore(0.12, 0.4, radarValues[3]).toDouble();//人中
     radarValues[4] = getScore(3.0, 10.0, radarValues[4]).toDouble();//嘴唇
-    radarValues[5] = getScore(4.33, 8.0, radarValues[5]).toDouble();//眉毛
+    radarValues[5] = getScore(6.33, 8.0, radarValues[5]).toDouble();//眉毛
     //
 
     //server回傳data的邏輯非常奇怪
