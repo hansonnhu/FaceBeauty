@@ -77,7 +77,7 @@ class _DetailResultState extends State<DetailResult>
         body: 
         (dataLoadedFlag == false) ? Container():
         Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       color: Colors.black,
       width: screenWidth,
       height: screenHeight,
@@ -85,7 +85,7 @@ class _DetailResultState extends State<DetailResult>
         children: [
           //切割圖
           Expanded(
-            flex: 3, 
+            flex: 2, 
             child: 
               Container(
                 padding: const EdgeInsets.only(bottom: 0),

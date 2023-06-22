@@ -279,13 +279,24 @@ class _BasicResultState extends State<BasicResult>
                   // Image.network('https://giphy.com/stickers/color-hybrid-hybridcolor-eWfqPa8CO0khmCNLA5'),
                   )
               : Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(10),
                   color: Colors.black,
                   width: screenWidth,
                   height: screenHeight,
                   child: Column(
                     children: [
-                      //切割圖
+                      //人臉動畫
+                      Container(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          '長按影片以儲存至手機相簿',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                       Expanded(
                           flex: 1,
                           child: (deepFakedataLoadedFlag == false)
