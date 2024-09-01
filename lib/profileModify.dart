@@ -134,7 +134,7 @@ class _ProfileModifyState extends State<ProfileModify> {
           // doctorCon..text = doctor;
 
           firstModifyFlag = false;
-          setState(() {});
+          if (mounted) setState(() {});
           break;
         }
       }

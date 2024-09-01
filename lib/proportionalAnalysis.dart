@@ -270,7 +270,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
     // proportionalImgByte = await base64Decode(
     //     proportionalImgString); //將proportionalImgString轉成byte，才能渲染於頁面
     imgLoadedFlag = true;
-    setState(() {});
+    if (mounted) setState(() {});
 
     // if (firstGetResult_proportional_flag) {
     //   if (mounted) {
@@ -342,7 +342,7 @@ class _PorportionalAnalysisState extends State<PorportionalAnalysis>
                                               swiper_byte_list[index],
                                               account,
                                               index);
-                                          setState(() {
+                                          if (mounted) setState(() {
                                             if (pngSaved) {
                                               // 彈出 儲存完成... 視窗
                                               showDialog(

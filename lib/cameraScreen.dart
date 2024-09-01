@@ -107,7 +107,7 @@ class _CameraScreenState extends State<CameraScreen>
         await _cameraController.lockCaptureOrientation();
         await _cameraController.initialize();
 
-        setState(() {});
+        if (mounted) setState(() {});
       });
     } on CameraException catch (e) {
       debugPrint("camera error $e");
@@ -226,7 +226,7 @@ class _CameraScreenState extends State<CameraScreen>
                           : CupertinoIcons.switch_camera_solid,
                       color: Colors.white),
                   onPressed: () {
-                    setState(
+                    if (mounted) setState(
                         () => _isRearCameraSelected = !_isRearCameraSelected);
                     initCamera(widget.cameras![_isRearCameraSelected ? 1 : 0]);
                   },

@@ -51,7 +51,7 @@ class _DetailResultState extends State<DetailResult>
     if (firstGetResult_detail_flag) {
       if (mounted) {
         firstGetResult_detail_flag = false;
-        setState(() {});
+        if (mounted) setState(() {});
       } else {
         Future.delayed(const Duration(milliseconds: 100), getAllData);
       }

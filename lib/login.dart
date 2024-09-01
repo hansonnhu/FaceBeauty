@@ -96,7 +96,7 @@ class _LoginState extends State<Login> {
       _usernameController.text = iniAccount;
       _passwordController.text = iniPassword;
       firstLoginFlag = false;
-      setState(() {});
+      if (mounted) setState(() {});
     }
 
     if (firstLoginFlag) {
@@ -567,7 +567,7 @@ class _LoginState extends State<Login> {
                             await prefs.setString('account', '');
                           }
                           await prefs.setInt('passwordRememberFlag', passwordRememberFlag);
-                          setState(() {});
+                          if (mounted) setState(() {});
                         },
                       )
                     ],

@@ -99,7 +99,7 @@ class _HistoryState extends State<History> {
         //   _scrollController.jumpTo(0);
         // });
 
-        setState(() {});
+        if (mounted) setState(() {});
       }
       catch(e){
         print(e);
@@ -159,7 +159,7 @@ class _HistoryState extends State<History> {
                       side:BorderSide(color: Colors.white),
                       value: allChooseFlag,
                       onChanged: (bool? value) {
-                        setState(() {
+                        if (mounted) setState(() {
                           allChooseFlag = value!;
                           for(int i=0; i<allOriImgChoose.length; i++){
                             allOriImgChoose[i] = allChooseFlag;
@@ -236,7 +236,7 @@ class _HistoryState extends State<History> {
                                             side: const BorderSide(color: Colors.white),
                                             value: allOriImgChoose[(oriImgCount - 1) - index],
                                             onChanged: (bool? value) {
-                                              setState(() {
+                                              if (mounted) setState(() {
                                                 allOriImgChoose[(oriImgCount - 1) - index] = value!;
                                               });
                                             },

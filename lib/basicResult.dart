@@ -133,7 +133,7 @@ class _BasicResultState extends State<BasicResult>
     }
     deepFakedataLoadedFlag = true;
     try {
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e) {}
   }
 
@@ -144,7 +144,7 @@ class _BasicResultState extends State<BasicResult>
     allBasicTextOfTitle = prefs.getStringList('allBasicTextOfTitle') ?? [];
 
     dataLoadedFlag = true; //將 flag 設為OK，代表 img 已經 load 完成
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   // void _loadResultAllMsg() async {
@@ -334,7 +334,7 @@ class _BasicResultState extends State<BasicResult>
                                     onLongPress: () async {
                                       print('已長按');
                                       await saveMP4File(account, 0);
-                                      setState(() {
+                                      if (mounted) setState(() {
                                         if (gifSaved) {
                                           // 彈出 儲存完成... 視窗
                                           showDialog(

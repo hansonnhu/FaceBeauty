@@ -71,7 +71,7 @@ class _OneTrendState extends State<OneTrend> {
       }
       avg = avg/tempList.length;
       dataLoadedFlag = true;
-      setState(() {});
+      if (mounted) setState(() {});
     }
     if(dataLoadedFlag == false){
       _loadData();

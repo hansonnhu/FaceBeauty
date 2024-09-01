@@ -223,7 +223,7 @@ class _RegisterState extends State<Register> {
                               MaterialStateProperty.resolveWith(getColor),
                           onChanged: (bool? value) {
                             // log(value.toString());
-                            setState(() {
+                            if (mounted) setState(() {
                               termIsChecked = value!;
                             });
                           },

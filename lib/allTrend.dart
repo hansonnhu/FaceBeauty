@@ -82,7 +82,7 @@ class _AllTrendState extends State<AllTrend> {
       // }
 
       dataLoadedFlag = true;
-      setState(() {});
+      if (mounted) setState(() {});
     }
 
     if (dataLoadedFlag == false) _loadData();

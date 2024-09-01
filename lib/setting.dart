@@ -69,7 +69,7 @@ class _SettingState extends State<Setting> {
         allFlag[i] = prefs.getInt(allFlagString[i]) ?? 1;
       }
       isFirstLoad = false;
-      setState(() {});
+      if (mounted) setState(() {});
     }
 
     if (isFirstLoad) _loadData();
@@ -137,7 +137,7 @@ class _SettingState extends State<Setting> {
                                           } else {
                                             allFlag[index] = 0;
                                           }
-                                          setState(() {});
+                                          if (mounted) setState(() {});
                                         },
                                       ))),
                             )

@@ -260,7 +260,7 @@ class _WelcomeState extends State<Welcome> {
                                 MaterialStateProperty.resolveWith(getColor),
                             onChanged: (bool? value) {
                               log(value.toString());
-                              setState(() {
+                              if (mounted) setState(() {
                                 welcomeIsChecked = value!;
                               });
                             },
